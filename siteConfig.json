@@ -1,0 +1,18 @@
+{
+	"title": "NFT Launch Template",
+	"description": "NFT Launch template",
+	"url": "https://mintsitedomain.xyz",
+	"iconName": "favicon.ico",
+	"smartContract": {
+		"contractName": "ContractName",
+		"name": "Contract Name",
+		"symbol": "XYZ",
+		"address": "0x...123",
+		"collectionSize": 0,
+		"mintPrice": 0.1,
+		"chainId": 1,
+		"hasWhitelist": false,
+		"hasDelayedReveal": false,
+		"abi": [] 
+	}
+}
