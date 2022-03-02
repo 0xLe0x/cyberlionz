@@ -67,46 +67,39 @@ export default {
 		return {
 			phases: [
 				{
-					title: 'Design Made Easy',
+					title: 'Establish the Pride!',
 					imageSource: phase0,
 					imageAlt: 'Phase 0',
 					description:
-						"Crafting your user experience has never been easier, with our intuitive drag'n drop interface you will be creating beatiful designs in no time.",
+						"Focus on Meaningful Organic Community Growth - Build Whitelist - !ROAR with the pride - Use our game for a series of community events. ",
 				},
 				{
-					title: 'Optimized For Conversions',
+					title: 'The Awakening',
 					imageSource: phase1,
 					imageAlt: 'Phase 1',
 					description:
-						'Backed by data, these templates have been crafted for ultimate optimization. Now, converting your visitors into customers is easier than ever before.',
+						'The Genesis mint where it all begins! You might be early, but there is already much to do in the metajungle! Shortly after, staking cubs to accumulate $HEAT, burning of cubs to evolve, and more gaming experiences come online.',
 				},
 				{
-					title: 'Optimized For Conversions',
+					title: 'Something\'s Brewing!',
 					imageSource: phase2,
 					imageAlt: 'Phase 2',
 					description:
-						'Backed by data, these templates have been crafted for ultimate optimization. Now, converting your visitors into customers is easier than ever before.',
+						'Full game that allows Cyber Lion holders to play as their own NFT. Complete a special mission in game to unlock a mystery potion...',
 				},
 				{
-					title: 'Optimized For Conversions',
+					title: 'The Next Dimension',
 					imageSource: phase3,
 					imageAlt: 'Phase 3',
 					description:
-						'Backed by data, these templates have been crafted for ultimate optimization. Now, converting your visitors into customers is easier than ever before.',
+						'Our lionz will spring to life in full 3d and roar into the metaverse in our own games and on partnered platforms! <br/>Note: you will keep your 2d Lionz, and the 2d gaming experiences will continue to grow!',
 				},
 				{
-					title: 'Optimized For Conversions',
+					title: 'A Bright Horizon',
 					imageSource: phase4,
 					imageAlt: 'Phase 4',
 					description:
-						'Backed by data, these templates have been crafted for ultimate optimization. Now, converting your visitors into customers is easier than ever before.',
-				},
-				{
-					title: 'Optimized For Conversions',
-					imageSource: phase5,
-					imageAlt: 'Phase 5',
-					description:
-						'Backed by data, these templates have been crafted for ultimate optimization. Now, converting your visitors into customers is easier than ever before.',
+						'We grow the metajungle. Together as a pride!',
 				},
 			],
 		}

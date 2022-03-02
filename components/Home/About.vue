@@ -17,7 +17,7 @@
 					<div class="w-full h-full px-20 rounded-2xl">
 						<img
 							data-aos="fade-in"
-							src="@/assets/images/lion-cub-artist-1.png"
+							src="@/assets/images/lion-cub-idle.gif"
 							alt="Lion Cub Artist" />
 					</div>
 				</div>
