@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+	font-family: bigjohn;
+	src: url('/fonts/bigjohn.otf') format('OpenType');
+}
+
+@font-face {
+	font-family: lato;
+	src: url('/fonts/lato-regular.ttf') format('TrueType');
+}
+
+@font-face {
+	font-family: press-start;
+	src: url('/fonts/press-start.ttf') format('TrueType');
+}
+
+
+
+@layer base {
+	* {
+		scroll-behavior: smooth;
+	}
+
+	html {
+		font-family: press-start, sans-serif;
+		@apply text-gray-700;
+	}
+
+	h1,
+	h2,
+	h3 {
+		font-family: bigjohn, sans-serif;
+	}
+}

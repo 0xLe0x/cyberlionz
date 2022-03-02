@@ -22,8 +22,8 @@
 			<p
 				class="
 					mt-4
-					text-sm text-gray-500
-					sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-500 sm:mt-0
+					text-sm
+					sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-700 sm:mt-0
 				">
 				© 2021 - Cyber Lionz
 			</p>

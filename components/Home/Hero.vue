@@ -6,7 +6,7 @@
 		<img
 			src="@/assets/images/lions-tree-glitched.gif"
 			class="absolute bottom-0 left-0 hidden w-96 mb-36 lg:block" />
-		<Header></Header>
+		
 		<div
 			class="
 				flex flex-col
