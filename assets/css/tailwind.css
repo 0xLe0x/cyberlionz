@@ -24,14 +24,8 @@
 		scroll-behavior: smooth;
 	}
 
-	html {
+	html{
 		font-family: press-start, sans-serif;
 		@apply text-gray-700;
-	}
-
-	h1,
-	h2,
-	h3 {
-		font-family: bigjohn, sans-serif;
 	}
 }
