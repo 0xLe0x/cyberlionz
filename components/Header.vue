@@ -1,38 +1,86 @@
 <template>
-<!-- Section 1 -->
-<section class="relative w-full py-2 bg-blue-500">
-    <div class="flex items-center justify-between h-16 px-8 mx-auto max-w-7xl">
-        <a href="#_" class="relative z-10 flex items-center w-auto text-2xl font-extrabold leading-none text-white select-none">999 Balloons</a>
-        <a href="#_" class="inline-flex items-center justify-center px-6 py-3 text-lg font-medium leading-tight text-blue-500 whitespace-no-wrap border border-blue-300 rounded-full shadow-sm bg-blue-50 focus:ring-offset-blue-600 hover:bg-white hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-100"
-		:disabled="!!$wallet.account"
-						@click="onWalletConnect">
-            <strong>{{ $wallet.accountCompact }}</strong>
-        </a>
-    </div>
-</section>
-
+	<header class="w-full px-8 text-gray-700">
+		<div
+			class="
+				container
+				flex flex-col flex-wrap
+				items-center
+				justify-between
+				py-5
+				mx-auto
+				md:flex-row
+				max-w-7xl
+			">
+			<div class="relative flex flex-col md:flex-row">
+				<nav class="flex flex-wrap items-center mb-5 text-sm md:mb-0 md:pl-10">
+					<a
+						href="#about-section"
+						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						>About</a
+					>
+					<a
+						href="#roadmap-section"
+						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						>Join the Pride</a
+					>
+					<a
+						href="#team-section"
+						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						>Team</a
+					>
+					<a
+						href="#faq-section"
+						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						>FAQ</a
+					>
+				</nav>
+			</div>
+			<div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
+				<span class="text-xl">
+					{{ displayTime }}
+				</span>
+			</div>
+		</div>
+	</header>
 </template>
 
 <script>
+import { format } from 'date-fns'
+
 export default {
+	data() {
+		return {
+			currentDate: new Date(),
+		}
+	},
 	methods: {
 		async onWalletConnect() {
 			try {
 				await this.$wallet.connect()
 			} catch (err) {
-				console.error({err})
+				console.error({ err })
 				this.$toast.error(err.message || 'Wallet connection failed', {
 					title: 'Wallet',
 					variant: 'danger',
-					action : {
-						text : 'Close',
-						onClick : (e, toastObject) => {
-							toastObject.goAway(0);
-						}
+					action: {
+						text: 'Close',
+						onClick: (e, toastObject) => {
+							toastObject.goAway(0)
+						},
 					},
 				})
 			}
-		}
-	}
+		},
+	},
+	computed: {
+		displayTime() {
+			return format(this.currentDate, 'HH:mm:ss')
+		},
+	},
+	mounted() {
+		setInterval(() => {
+			this.currentDate = new Date()
+		}, 1000)
+	},
 }
 </script>

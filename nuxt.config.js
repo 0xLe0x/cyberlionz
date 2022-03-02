@@ -38,22 +38,26 @@ export default {
 			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
 			{
 				rel: 'stylesheet',
-				href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Questrial&family=Roboto:wght@400;500;700;900&display=swap',
+				href:
+					'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Questrial&family=Roboto:wght@400;500;700;900&display=swap',
 			},
 		],
 		script: [
-			{ src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
-			  src: 'https://kit.fontawesome.com/43d7c4e320.js' },
+			{
+				src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
+				src: 'https://kit.fontawesome.com/43d7c4e320.js',
+			},
 		],
 	},
 
 	// Global CSS: https://go.nuxtjs.dev/config-css
-	css: [],
+	css: ['@/assets/css/global.css', 'aos/dist/aos.css'],
 
 	// Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
 	plugins: [
 		'@/plugins/wallet',
-		'@/plugins/siteConfig'
+		'@/plugins/siteConfig',
+		{ src: '@/plugins/aos', mode: 'client' },
 	],
 
 	// Auto import components: https://go.nuxtjs.dev/config-components
@@ -67,7 +71,7 @@ export default {
 		// https://go.nuxtjs.dev/bootstrap
 		'@nuxtjs/sitemap',
 		'@nuxtjs/axios',
-		'@nuxtjs/toast'
+		'@nuxtjs/toast',
 	],
 
 	bootstrapVue: {
@@ -75,7 +79,7 @@ export default {
 	},
 
 	toast: {
-		position: 'top-center'
+		position: 'top-center',
 	},
 
 	sitemap: {
