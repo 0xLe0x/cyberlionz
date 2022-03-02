@@ -32,7 +32,7 @@
 								alt="About" />
 						</h2>
 						<div class="flex mb-6">
-							<div class="max-w-md lg:max-w-sm">
+							<div class="max-w-md">
 								<p class="leading-loose mb-5">
 									In a cyber jungle far.. far.. away 500 Cyber Lionz were pulled
 									out of their simulation and given a new animated life by Astro
