@@ -42,9 +42,9 @@
 						md:w-7/12
 						sm:pl-16
 					">
-					<h3 class="mt-2 text-2xl sm:text-left md:text-4xl">
+					<!-- <h3 class="mt-2 text-2xl sm:text-left md:text-4xl">
 						{{ phase.title }}
-					</h3>
+					</h3> -->
 					<p class="mt-5 text-lg text-gray-700 text md:text-left">
 						{{ phase.description }}
 					</p>
