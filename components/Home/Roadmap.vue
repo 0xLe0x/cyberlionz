@@ -45,7 +45,7 @@
 					<!-- <h3 class="mt-2 text-2xl sm:text-left md:text-4xl">
 						{{ phase.title }}
 					</h3> -->
-					<p class="mt-5 text-lg text-gray-700 text md:text-left">
+					<p class="mt-5 text-lg text-lionz-accent text md:text-left">
 						{{ phase.description }}
 					</p>
 				</div>
@@ -60,7 +60,6 @@ import phase1 from '@/assets/images/lions-phase-1.png'
 import phase2 from '@/assets/images/lions-phase-2.png'
 import phase3 from '@/assets/images/lions-phase-3.png'
 import phase4 from '@/assets/images/lions-phase-4.png'
-import phase5 from '@/assets/images/lions-phase-5.png'
 
 export default {
 	data() {

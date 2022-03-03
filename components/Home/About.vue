@@ -33,19 +33,19 @@
 						</h2>
 						<div class="flex mb-6">
 							<div class="max-w-md">
-								<p class="leading-loose mb-5">
+								<p class="leading-loose text-lionz-accent mb-5 drop-shadow-md">
 									In a cyber jungle far.. far.. away 500 Cyber Lionz were pulled
 									out of their simulation and given a new animated life by Astro
 									Labs with high hopes of someday becoming fully grown KINGS &
 									QUEENS of their new metaverse.
 								</p>
-								<p class="leading-loose mb-5">
+								<p class="leading-loose text-lionz-accent mb-5">
 									Built for gamers & NFT lovers by gamers & NFT lovers, Cyber
 									Lionz will start as an initial 2500 piece 2D collection with
 									the goal of developing and innovating Web3 technologies ,
 									NFTs, and Play to Earn gaming.
 								</p>
-								<p class="leading-loose">
+								<p class="leading-loose text-lionz-accent">
 									Join the pride and together lets !ROAR
 								</p>
 							</div>

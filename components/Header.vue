@@ -15,22 +15,22 @@
 				<nav class="flex flex-wrap items-center mb-5 text-sm md:mb-0 md:pl-10">
 					<a
 						href="#about-section"
-						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>About</a
 					>
 					<a
 						href="#roadmap-section"
-						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>Join the Pride</a
 					>
 					<a
 						href="#team-section"
-						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>Team</a
 					>
 					<a
 						href="#faq-section"
-						class="mr-5 font-medium leading-6 text-gray-800 hover:text-gray-900"
+						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>FAQ</a
 					>
 				</nav>

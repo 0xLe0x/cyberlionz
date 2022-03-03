@@ -4,8 +4,10 @@ module.exports = {
 		colors: {
 			'lionz-yellow': '#fff200',
 			'lionz-brown': '#ee6f3e',
-			'lionz-light-brown': '#ffb84a',
+			'lionz-light-brown': '#efc298',
 			'lionz-blue': '#5aa9ff',
+			'lionz-dirt': '#cf968b',
+			'lionz-accent' : '#450c28',
 			'gray': {
 				50: '#f9fafb',
 				100: '#f3f4f6',

@@ -1,11 +1,11 @@
 <template>
-	<section class="relative w-full pb-48 overflow-hidden bg-lionz-blue">
+	<section class="relative w-full pb-80 overflow-hidden bg-lionz-blue bg-cover" style="background-image: url(hero-bg-baked.jpg);">
 		<img
 			src="@/assets/images/lions-tree-glitched.gif"
-			class="absolute bottom-0 right-0 hidden w-96 mb-36 lg:block" />
+			class="absolute bottom-0 right-0 hidden w-96 mb-0 lg:block" />
 		<img
-			src="@/assets/images/lions-tree-glitched.gif"
-			class="absolute bottom-0 left-0 hidden w-96 mb-36 lg:block" />
+			src="@/assets/images/hero-lion.gif"
+			class="absolute bottom-0 left-0 hidden w-96 mb-0 lg:block" />
 		
 		<div
 			class="
@@ -79,6 +79,7 @@
 			</button>
 		</div>
 
+		<!--
 		<svg
 			class="absolute bottom-0 w-full -mt-10 text-white fill-current"
 			viewBox="0 0 960 93"
@@ -88,6 +89,7 @@
 				fill="#ffb84a"
 				fill-rule="nonzero"></path>
 		</svg>
+		-->
 	</section>
 </template>
 
