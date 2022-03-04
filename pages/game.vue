@@ -69,7 +69,7 @@ export default {
 			dataUrl: '/Build/webgl.data.gz',
 			frameworkUrl: '/Build/webgl.framework.js.gz',
 			codeUrl: '/Build/webgl.wasm.gz',
-			streamingAssetsUrl: 'StreamingAssets',
+			streamingAssetsUrl: '/StreamingAssets',
 			companyName: 'Fueled on Bacon',
 			productName: 'fob-cyberlionz-runner',
 			productVersion: '0.1.4',
