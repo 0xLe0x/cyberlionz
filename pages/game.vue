@@ -5,16 +5,6 @@
 			'unity-desktop': !unityMobile,
 			'unity-mobile': unityMobile,
 		}">
-		<div class="header">
-			<a href="#default" class="logo"
-				><img src="/cyberlionz-twitimg.gif" height="32px" />
-			</a>
-			<div class="header-right">
-				<a class="active" href="#home">Game</a>
-				<a href="https://twitter.com/CyberLionzNFT" target="_blank">Twitter</a>
-			</div>
-		</div>
-
 		<canvas
 			id="unity-canvas"
 			ref="unity"
