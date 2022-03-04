@@ -10,7 +10,7 @@
 			ref="unity"
 			width="960"
 			height="600"
-      class="w-[960px] h-[600px]"
+      class="w-full md:w-[960px] md:h-[600px]"
 			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
@@ -29,7 +29,6 @@
 		<div id="unity-footer">
 			<div id="unity-webgl-logo"></div>
 			<div id="unity-fullscreen-button" @click.native="setFullscreen"></div>
-			<div id="unity-build-title">CyberLionz</div>
 		</div>
 	</div>
 </template>
@@ -84,9 +83,6 @@ export default {
 			// performance, uncomment the following line:
 			config.devicePixelRatio = 1
 
-			this.canvasWidth = window.innerWidth
-			this.canvasHeight = window.innerHeight
-
 			this.unityShowBanner(
 				'CyberLionz WebGL is not fully compatabile with mobile devices - Your experience may vary!'
 			)
@@ -94,8 +90,7 @@ export default {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
 
-		window
-			.createUnityInstance(this.$refs.unity, config, (progress) => {
+		window.createUnityInstance(this.$refs.unity, config, (progress) => {
 				this.progressBarPercent = 100 * progress + '%'
 			})
 			.then((unityInstance) => {
