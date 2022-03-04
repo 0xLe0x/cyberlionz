@@ -1,16 +1,9 @@
 <template>
-	<div
-		id="unity-container"
-		:class="{
-			'unity-desktop': !unityMobile,
-			'unity-mobile': unityMobile,
-		}">
+	<div id="unity-container" 
+      class="w-full md:w-[960px] md:h-[600px] relative">
 		<canvas
 			id="unity-canvas"
 			ref="unity"
-			width="960"
-			height="600"
-      class="w-full md:w-[960px] md:h-[600px]"
 			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
@@ -26,9 +19,8 @@
 			v-if="showUnityBanner">
 			{{ bannerMsg }}
 		</div>
-		<div id="unity-footer">
-			<div id="unity-webgl-logo"></div>
-			<div id="unity-fullscreen-button" @click.native="setFullscreen"></div>
+		<div id="unity-footer" class="absolute bottom-0 w-full">
+			<img src="~/assets/images/fullscreen-button.png" class="ml-auto h-16 w-16" @click.native="setFullscreen">
 		</div>
 	</div>
 </template>
