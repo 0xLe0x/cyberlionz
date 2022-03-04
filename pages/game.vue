@@ -1,6 +1,6 @@
 <template>
 	<div class="w-full md:w-[960px] md:h-[600px] relative">
-		<canvas ref="unity" style="background: url(/Build/webgl.jpg) center / cover"></canvas>
+		<canvas ref="unity" class="w-full md:w-[960px] md:h-[600px]" style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
 			<div id="unity-progress-bar-empty" v-if="showLoadingBar">
