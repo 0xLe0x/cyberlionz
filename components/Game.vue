@@ -1,5 +1,16 @@
 <template>
-	<div class="w-full md:w-[960px] md:h-[600px] relative">
+	<section class="relative bg-lionz-blue" id="game-section">
+		<div
+		class="
+			flex flex-col
+			items-center
+			px-8
+			mx-auto
+			space-y-12
+			max-w-7xl
+			xl:px-12
+		">
+		<div class="w-full md:w-[960px] md:h-[600px] relative hidden sm:block">
 		<canvas
 			ref="unity"
 			class="w-full md:w-[960px] md:h-[600px] bg-[url(/Build/webgl.jpg)] bg-cover bg-center"></canvas> <div
@@ -20,7 +31,7 @@
 			</div>
 		</div>
 		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`">
-			CyberLionz WebGL is not fully compatabile with mobile devices - Your
+			Cyber Lionz WebGL is not fully compatible with mobile devices - Your
 			experience may vary!
 		</div>
 		<div class="absolute bottom-0 w-full">
@@ -30,6 +41,8 @@
 				@click="setFullscreen" />
 		</div>
 	</div>
+			</div>
+</section>
 </template>
 
 <script>
