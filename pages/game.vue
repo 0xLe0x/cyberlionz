@@ -1,10 +1,6 @@
 <template>
-	<div id="unity-container" 
-      class="w-full md:w-[960px] md:h-[600px] relative">
-		<canvas
-			id="unity-canvas"
-			ref="unity"
-			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
+	<div class="w-full md:w-[960px] md:h-[600px] relative">
+		<canvas ref="unity" style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
 			<div id="unity-progress-bar-empty" v-if="showLoadingBar">
@@ -13,13 +9,8 @@
 					:style="{ width: progressBarPercent }"></div>
 			</div>
 		</div>
-		<div
-			id="unity-warning"
-			:class="`p-4 rounded-md ${bannerColor}`"
-			v-if="showUnityBanner">
-			{{ bannerMsg }}
-		</div>
-		<div id="unity-footer" class="absolute bottom-0 w-full">
+		<div :class="`p-4 rounded-md ${bannerColor}`" v-if="showUnityBanner"> {{ bannerMsg }} </div>
+		<div class="absolute bottom-0 w-full">
 			<img src="~/assets/images/fullscreen-button.png" class="ml-auto h-16 w-16" @click.native="setFullscreen">
 		</div>
 	</div>
@@ -68,9 +59,6 @@ export default {
 
 		if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 			// Mobile device style: fill the whole browser client area with the game canvas:
-
-			this.unityMobile = true
-
 			// To lower canvas resolution on mobile devices to gain some
 			// performance, uncomment the following line:
 			config.devicePixelRatio = 1
