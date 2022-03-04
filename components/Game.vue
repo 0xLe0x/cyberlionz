@@ -1,17 +1,33 @@
 <template>
 	<div class="w-full md:w-[960px] md:h-[600px] relative">
-		<canvas ref="unity" class="w-full md:w-[960px] md:h-[600px]" style="background: url(/Build/webgl.jpg) center / cover"></canvas>
-		<div v-if="showLoadingBar" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-[300px]" >
+		<canvas
+			ref="unity"
+			class="w-full md:w-[960px] md:h-[600px] bg-[url(/Build/webgl.jpg)] bg-cover bg-center"></canvas> <div
+			v-if="showLoadingBar"
+			class="
+				absolute
+				top-[50%]
+				left-[50%]
+				transform
+				translate-x-[-50%] translate-y-[-50%]
+				w-[300px]
+			">
 			<div class="w-full">
 				<div
 					id="unity-progress-bar-full"
-          class="h-8 bg-lionz-brown"
+					class="h-8 bg-lionz-brown"
 					:style="{ width: progressBarPercent }"></div>
 			</div>
 		</div>
-		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`" > CyberLionz WebGL is not fully compatabile with mobile devices - Your experience may vary! </div>
+		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`">
+			CyberLionz WebGL is not fully compatabile with mobile devices - Your
+			experience may vary!
+		</div>
 		<div class="absolute bottom-0 w-full">
-			<img src="~/assets/images/fullscreen-button.png" class="ml-auto h-16 w-16 cursor-pointer" @click="setFullscreen">
+			<img
+				src="~/assets/images/fullscreen-button.png"
+				class="ml-auto h-16 w-16 cursor-pointer"
+				@click="setFullscreen" />
 		</div>
 	</div>
 </template>
@@ -20,10 +36,7 @@
 export default {
 	data() {
 		return {
-			showUnityBanner: false,
-			bannerMsg: '',
-			bannerColor: '',
-			unityMobile: false,
+			showLoadingBar: true,
 			canvasWidth: 960,
 			canvasHeight: 600,
 			progressBarPercent: '0%',
@@ -62,21 +75,31 @@ export default {
 			// To lower canvas resolution on mobile devices to gain some
 			// performance, uncomment the following line:
 			config.devicePixelRatio = 1
-
 		} else {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
 
-		window.createUnityInstance(this.$refs.unity, config, (progress) => {
-				this.progressBarPercent = 100 * progress + '%'
-			})
-			.then((unityInstance) => {
-				this.showLoadingBar = false
-				this.unityInstance = unityInstance
-			})
-			.catch((message) => {
-				alert(message)
-			})
+		window.addEventListener('load', () => {
+			// run after everything is in-place
+			try {
+				window
+					.createUnityInstance(this.$refs.unity, config, (progress) => {
+						if(progress > .98){
+							this.showLoadingBar = false
+						}
+						this.progressBarPercent = 100 * progress + '%'
+					})
+					.then((unityInstance) => {
+						this.showLoadingBar = false
+						this.unityInstance = unityInstance
+					})
+					.catch((message) => {
+						alert(message)
+					})
+			} catch (err) {
+				console.log(err)
+			}
+		})
 	},
 	methods: {
 		setFullscreen() {
