@@ -1,0 +1,7 @@
+/Build/webgl.data.gz
+  Content-Encoding: gzip
+/Build/webgl.framework.js.gz
+  Content-Encoding: gzip
+/Build/webgl.wasm.gz
+  Content-Type: application/wasm
+  Content-Encoding: gzip

@@ -14,6 +14,20 @@
 					items-center
 				">
 
+<<<<<<< HEAD
+=======
+				<!-- // CUB LEFT				
+				<div class="w-full lg:w-1/2 lg:px-0 mb-16 hidden w-96 mb-0 lg:block">
+					<div class="w-full h-full px-20 rounded-2xl ">
+						<img
+							data-aos="fade-in"
+							src="@/assets/images/lion-cub-idle.gif"
+							alt="Lion Cub Artist" />
+					</div>
+				</div>
+				-->
+
+>>>>>>> uwebgl-raw
 				<div
 					class="w-full lg:w-1/2 mb-16 ml-0 sm:px-5 sm:pl-8 xl:pl-20 lg:mb-0">
 					<div class="relative">
@@ -47,17 +61,30 @@
 						</div>
 					</div>
 				</div>
+<<<<<<< HEAD
 				
+=======
+
+				<!-- CUB RIGHT -->
+>>>>>>> uwebgl-raw
 				<div class="w-full lg:w-1/2 lg:px-0 mb-16 hidden w-96 mb-0 lg:block">
 					<div class="w-full h-full px-20 rounded-2xl ">
 						<img
 							data-aos="fade-in"
+<<<<<<< HEAD
 							src="@/assets/images/lion-cub-idle.gif"
+=======
+							src="@/assets/images/lion-cub-idle-m.gif"
+>>>>>>> uwebgl-raw
 							alt="Lion Cub Artist" />
 					</div>
 				</div>
 
+<<<<<<< HEAD
 				
+=======
+
+>>>>>>> uwebgl-raw
 			</div>
 		</div>
 	</section>
