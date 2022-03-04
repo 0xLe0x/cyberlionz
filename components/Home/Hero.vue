@@ -1,8 +1,11 @@
 <template>
 	<section class="relative w-full pb-80 overflow-hidden bg-lionz-blue bg-cover" style="background-image: url(hero-bg-baked.jpg);">
+		<!--
 		<img
 			src="@/assets/images/lions-tree-glitched.gif"
 			class="absolute bottom-0 right-0 hidden w-96 mb-0 lg:block" />
+		-->	
+
 		<img
 			src="@/assets/images/hero-lion.gif"
 			class="absolute bottom-0 left-0 w-96 mb-0 block" />
@@ -23,6 +26,14 @@
 					alt="Cyber Lionz" />
 			</h1>
 
+			<h1 class="relative inline-block w-full sm:w-9/12">
+				<img
+					src="@/assets/images/lionz-presalemint.gif"
+					alt="Cyber Lionz" />
+			</h1>
+
+
+			<!-- /////MINT Sunday, March 6th, 11 AM EST
 			<div
 				class="
 					flex
@@ -77,6 +88,8 @@
 			<button class="w-1/2 sm:w-5/12 sm:max-w-sm px-2 py-2" @click="mint">
 				<img src="@/assets/images/lions-mint-now-button.gif" alt="Mint Now" />
 			</button>
+		-->
+
 		</div>
 
 		<!--
