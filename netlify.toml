@@ -33,7 +33,7 @@
 [context.deploy-preview]
   publish = "dist/"
 
-
+[[redirects]]
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
   for = "/*"
