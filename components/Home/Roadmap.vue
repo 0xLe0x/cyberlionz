@@ -91,7 +91,7 @@ export default {
 					imageSource: phase3,
 					imageAlt: 'Phase 3',
 					description:
-						'Our lionz will spring to life in full 3d and roar into the metaverse in our own games and on partnered platforms! <br/>Note: you will keep your 2d Lionz, and the 2d gaming experiences will continue to grow!',
+						'Our lionz will spring to life in full 3d and roar into the metaverse in our own games and on partnered platforms! Note: you will keep your 2d Lionz, and the 2d gaming experiences will continue to grow!',
 				},
 				{
 					title: 'A Bright Horizon',

@@ -40,7 +40,7 @@
 								<p class="leading-loose text-lionz-accent mb-5 drop-shadow-md">
 									In a cyber jungle far.. far.. away 500 Cyber Lionz were pulled
 									out of their simulation and given a new animated life by Astro
-									Labs with high hopes of someday becoming fully grown KINGS &
+									Labs with high hopes of someday becoming fully grown KINGS and
 									QUEENS of their new metaverse.
 								</p>
 								<!--
