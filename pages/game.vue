@@ -17,7 +17,7 @@
 
 		<canvas
 			id="unity-canvas"
-      ref="unity"
+			ref="unity"
 			:width="canvasWidth"
 			:height="canvasHeight"
 			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
@@ -58,7 +58,6 @@ export default {
 		}
 	},
 	mounted() {
-
 		// Shows a temporary message banner/ribbon for a few seconds, or
 		// a permanent error message on top of the canvas if type=='error'.
 		// If type=='warning', a yellow highlight color is used.
@@ -104,19 +103,17 @@ export default {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
 
-		var script = {}
-		script.onload = () => {
-			window.createUnityInstance(this.$refs.unity, config, (progress) => {
-					this.progressBarPercent = 100 * progress + '%'
-				})
-				.then((unityInstance) => {
-					this.showLoadingBar = false
-					this.unityInstance = unityInstance
-				})
-				.catch((message) => {
-					alert(message)
-				})
-		}
+		window
+			.createUnityInstance(this.$refs.unity, config, (progress) => {
+				this.progressBarPercent = 100 * progress + '%'
+			})
+			.then((unityInstance) => {
+				this.showLoadingBar = false
+				this.unityInstance = unityInstance
+			})
+			.catch((message) => {
+				alert(message)
+			})
 	},
 	methods: {
 		setFullscreen() {
