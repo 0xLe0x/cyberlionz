@@ -10,6 +10,7 @@
 			ref="unity"
 			width="960"
 			height="600"
+      class="w-[960px] h-[600px]"
 			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
