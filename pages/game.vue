@@ -18,8 +18,8 @@
 		<canvas
 			id="unity-canvas"
 			ref="unity"
-			:width="canvasWidth"
-			:height="canvasHeight"
+			width="960"
+			height="600"
 			style="background: url(/Build/webgl.jpg) center / cover"></canvas>
 		<div id="unity-loading-bar" class="block">
 			<div id="unity-logo"></div>
