@@ -9,9 +9,9 @@
 					:style="{ width: progressBarPercent }"></div>
 			</div>
 		</div>
-		<div :class="`p-4 rounded-md ${bannerColor}`" v-if="showUnityBanner"> {{ bannerMsg }} </div>
+		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`" > CyberLionz WebGL is not fully compatabile with mobile devices - Your experience may vary! </div>
 		<div class="absolute bottom-0 w-full">
-			<img src="~/assets/images/fullscreen-button.png" class="ml-auto h-16 w-16" @click.native="setFullscreen">
+			<img src="~/assets/images/fullscreen-button.png" class="ml-auto h-16 w-16 cursor-pointer" @click.native="setFullscreen">
 		</div>
 	</div>
 </template>
@@ -83,7 +83,7 @@ export default {
 	},
 	methods: {
 		setFullscreen() {
-			window.unityInstance.SetFullscreen(1)
+			this.unityInstance.SetFullscreen(1)
 		},
 		unityShowBanner(msg, type) {
 			const _this = this
