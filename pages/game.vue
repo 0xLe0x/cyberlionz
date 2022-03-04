@@ -1,11 +1,11 @@
 <template>
 	<div class="w-full md:w-[960px] md:h-[600px] relative">
 		<canvas ref="unity" class="w-full md:w-[960px] md:h-[600px]" style="background: url(/Build/webgl.jpg) center / cover"></canvas>
-		<div id="unity-loading-bar" class="block">
-			<div id="unity-logo"></div>
-			<div id="unity-progress-bar-empty" v-if="showLoadingBar">
+		<div v-if="showLoadingBar" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] w-[300px]" >
+			<div class="w-full">
 				<div
 					id="unity-progress-bar-full"
+          class="h-8 bg-lionz-brown"
 					:style="{ width: progressBarPercent }"></div>
 			</div>
 		</div>
@@ -63,9 +63,6 @@ export default {
 			// performance, uncomment the following line:
 			config.devicePixelRatio = 1
 
-			this.unityShowBanner(
-				'CyberLionz WebGL is not fully compatabile with mobile devices - Your experience may vary!'
-			)
 		} else {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
@@ -84,18 +81,6 @@ export default {
 	methods: {
 		setFullscreen() {
 			this.unityInstance.SetFullscreen(1)
-		},
-		unityShowBanner(msg, type) {
-			const _this = this
-			this.bannerMsg = msg
-			this.showUnityBanner = true
-			if (type == 'error') this.bannerColor = 'bg-red-400'
-			else {
-				if (type == 'warning') this.bannerColor = 'bg-yellow-400'
-				setTimeout(function () {
-					this.showUnityBanner = false
-				}, 5000)
-			}
 		},
 	},
 }
