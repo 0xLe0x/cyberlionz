@@ -42,9 +42,7 @@
 					mb-5
 					w-1/2
 					sm:w-5/12 sm:max-w-sm
-					
-				"				
-				>
+				">
 				<button
 					@click="changeMintQuantity('dec')"
 					class="
@@ -62,8 +60,7 @@
 						focus:ring-2
 						focus:ring-offset-2
 						focus:ring-gray-900
-					"
-					>
+					">
 					-
 				</button>
 				<span class="text-4xl">{{ mintQuantity }}</span>
