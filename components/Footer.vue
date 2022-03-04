@@ -25,7 +25,7 @@
 					text-sm
 					sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-700 sm:mt-0
 				">
-				© 2021 - Cyber Lionz
+				© 2021 - 🦁 Cyber Lionz <a href="https://fueledonbacon.com">🥓</a>
 			</p>
 			<span
 				class="
@@ -35,6 +35,8 @@
 					space-x-5
 					sm:ml-auto sm:mt-0 sm:justify-start
 				">
+
+				<!--
 				<a href="#" class="text-gray-600 hover:text-gray-800">
 					<span class="sr-only">Facebook</span>
 					<svg
@@ -63,7 +65,9 @@
 					</svg>
 				</a>
 
-				<a href="#" class="text-gray-600 hover:text-gray-800">
+				-->
+
+				<a href="https://twitter.com/CyberLionzNFT" class="text-gray-600 hover:text-gray-800">
 					<span class="sr-only">Twitter</span>
 					<svg
 						class="w-6 h-6"
@@ -75,6 +79,7 @@
 					</svg>
 				</a>
 
+				<!--
 				<a href="#" class="text-gray-600 hover:text-gray-800">
 					<span class="sr-only">GitHub</span>
 					<svg
@@ -88,6 +93,8 @@
 							clip-rule="evenodd"></path>
 					</svg>
 				</a>
+
+				-->
 			</span>
 		</div>
 	</footer>

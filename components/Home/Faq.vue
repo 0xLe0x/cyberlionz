@@ -22,6 +22,7 @@
 						border-b-2 border-orange-400
 						select-none
 					">
+					
 					<h4
 						@click="showAnswer(index)"
 						class="
@@ -96,39 +97,39 @@ export default {
 			faqs: [
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'How many cubs will there be?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'500 Cubs will spring into the MetaJungle. Supply decreases as cubs are combined for adults.',
 				},
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'What blockchain?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'The metajungle will be built on the Ethereum network. We are excited for ETH2 and future enhancements and efficiencies.',
 				},
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'Mint Price?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'TBA - Be first to know by joining our Discord!',
 				},
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'Token?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'Oh yeah! It\'s called $HEAT and it\'s neat!',
 				},
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'Market place?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'OpenSea',
 				},
 				{
 					show: false,
-					question: 'Where do I go to upgrade my account?',
+					question: 'Utility Ready at Launch?',
 					answer:
-						'You can upgrade your account by visiting The Pro Upgrade Page. You will also gain access to many other applications and sections of the site.',
+						'Heck yes! No empty promises!',
 				},
 			],
 		}
