@@ -44,7 +44,12 @@ export default {
 		],
 		script: [
 			{
+				src: '/Build/webgl.loader.js'
+			},
+			{
 				src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
+			},
+			{
 				src: 'https://kit.fontawesome.com/43d7c4e320.js',
 			},
 		],
