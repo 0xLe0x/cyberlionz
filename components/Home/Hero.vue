@@ -5,7 +5,7 @@
 			class="absolute bottom-0 right-0 hidden w-96 mb-0 lg:block" />
 		<img
 			src="@/assets/images/hero-lion.gif"
-			class="absolute bottom-0 left-0 hidden w-96 mb-0 lg:block" />
+			class="absolute bottom-0 left-0 w-96 mb-0 block" />
 		
 		<div
 			class="
