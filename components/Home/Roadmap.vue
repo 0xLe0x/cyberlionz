@@ -27,7 +27,7 @@
 				<div
 					class="flex items-center sm:justify-center mb-8 sm:w-1/2 md:w-5/12">
 					<img
-						class="rounded-lg shadow-xl h-10 md:h-14"
+						class="h-10 md:h-14"
 						:src="phase.imageSource"
 						:alt="phase.imageAlt" />
 				</div>
