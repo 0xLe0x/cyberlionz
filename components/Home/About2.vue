@@ -1,6 +1,6 @@
 <template>
 	<!-- Section 3 -->
-	<section class="relative pb-80 bg-cover" id="about2-section" style="background-image: url(citynight-bg-baked.jpg);">
+	<section class="relative pb-30 bg-cover" id="about2-section" style="background-image: url(citynight-bg-baked.jpg);">
 		<div class="max-w-2xl lg:max-w-7xl px-12 mx-auto">
 			<div
 				class="
@@ -15,7 +15,7 @@
 				">
 
 				<!-- CUB LEFT  -->
-				<div class="w-full lg:w-1/2 lg:px-0 mb-16 hidden w-96 mb-0 lg:block">
+				<div class="w-full lg:w-1/2 lg:px-0 mb-2 hidden w-96 mb-0 lg:block">
 					<div class="w-full h-full px-20 rounded-2xl ">
 						<img
 							data-aos="fade-in"
