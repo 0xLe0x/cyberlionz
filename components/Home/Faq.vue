@@ -129,7 +129,7 @@ export default {
 					show: false,
 					question: 'Utility Ready at Launch?',
 					answer:
-						'Heck yes! No empty promises!',
+						'You know it! No empty promises!',
 				},
 			],
 		}
