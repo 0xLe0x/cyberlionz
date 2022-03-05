@@ -45,8 +45,8 @@
 					<!-- <h3 class="mt-2 text-2xl sm:text-left md:text-4xl">
 						{{ phase.title }}
 					</h3> -->
-					<p class="mt-5 text-lg text-lionz-accent text md:text-left">
-						{{ phase.description }}
+					<p class="mt-5 text-lg text-lionz-accent text md:text-left" v-html="phase.description">
+						
 					</p>
 				</div>
 			</div>
@@ -70,14 +70,14 @@ export default {
 					imageSource: phase0,
 					imageAlt: 'Phase 0',
 					description:
-						"Focus on Meaningful Organic Community Growth - Build Whitelist - !ROAR with the pride - Use our game for a series of community events. ",
+						"Focus on Meaningful Organic Community Growth<br/> - Build Whitelist<br/> - !ROAR with the pride<br/> - Use our game for a series of community events. ",
 				},
 				{
 					title: 'The Awakening',
 					imageSource: phase1,
 					imageAlt: 'Phase 1',
 					description:
-						'The Genesis mint where it all begins! You might be early, but there is already much to do in the metajungle! Shortly after, staking cubs to accumulate $HEAT, burning of cubs to evolve, and more gaming experiences come online.',
+						'The Genesis mint where it all begins! You might be early, but there is already much to do in the metajungle!<br/> Shortly after, staking cubs to accumulate $HEAT, burning of cubs to evolve, and more gaming experiences come online.',
 				},
 				{
 					title: 'Something\'s Brewing!',

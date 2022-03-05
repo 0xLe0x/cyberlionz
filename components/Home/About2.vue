@@ -15,11 +15,11 @@
 				">
 
 				<!-- CUB LEFT  -->
-				<div class="w-full lg:w-1/2 lg:px-0 hidden w-96 lg:block relative min-h-[500px]">
+				<div class="w-full lg:w-1/2 lg:px-0 w-96 hidden lg:block relative min-h-[500px]">
 					<div class="w-full px-20 rounded-2xl ">
 						<img
 							data-aos="fade-in"
-							class="absolute w-[335px] left-1/2 bottom-[-55px]"
+							class="absolute w-[335px] bottom-[-55px]"
 							src="@/assets/images/lions-catman-popout.gif"
 							alt="Lion Cub Artist" />
 					</div>

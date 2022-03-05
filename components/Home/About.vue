@@ -7,9 +7,6 @@
 					flex
 					justify-center
 					lg:flex-row
-					py-12
-					sm:py-12
-					xl:py-16
 					flex-col-reverse
 					items-center
 				">
@@ -26,7 +23,7 @@
 						</h2>
 						<div class="flex mb-6">
 							<div class="max-w-md">
-								<p class="leading-loose text-lionz-accent mb-5 drop-shadow-md">
+								<p class="leading-loose text-lionz-accent mb-5 text-shadow-xl">
 									In a cyber jungle far.. far.. away 500 Cyber Lionz were pulled
 									out of their simulation and given a new animated life by Astro
 									Labs with high hopes of someday becoming fully grown KINGS &

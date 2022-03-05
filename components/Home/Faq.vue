@@ -31,7 +31,7 @@
 							justify-start
 							text-lg
 							font-medium
-							text-gray-700
+							text-lionz-accent
 							cursor-pointer
 							sm:text-xl
 							md:text-2xl

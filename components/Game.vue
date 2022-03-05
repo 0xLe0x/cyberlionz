@@ -1,48 +1,49 @@
 <template>
 	<section class="relative bg-lionz-purple" id="game-section">
-		<div
-		class="
-			flex flex-col
-			items-center
-			px-8
-			mx-auto
-			space-y-12
-			max-w-7xl
-			xl:px-12
-		">
-		<div class="w-full pb-10 md:w-[960px] md:h-[600px] relative hidden sm:block">
-		<canvas
-			ref="unity"
-			class="w-full md:w-[960px] md:h-[600px] bg-[url(/Build/webgl.jpg)] bg-cover bg-center"></canvas> <div
-			v-if="showLoadingBar"
-			class="
-				absolute
-				top-[50%]
-				left-[50%]
-				transform
-				translate-x-[-50%] translate-y-[-50%]
-				w-[300px]
-			">
-			<div class="w-full">
+		<div class="flex flex-col items-center mx-auto md:w-[960px]">
+			<div class="w-full md:w-[960px] md:h-[600px] relative hidden sm:block">
+				<canvas
+					ref="unity"
+					class="
+						w-full
+						md:w-[960px] md:h-[600px]
+						text-lionz-yellow
+						bg-[url(/Build/webgl.jpg)] bg-cover bg-center
+					"></canvas>
 				<div
-					id="unity-progress-bar-full"
-					class="h-8 bg-lionz-brown"
-					:style="{ width: progressBarPercent }"></div>
+					v-if="showLoadingBar"
+					class="
+						absolute
+						top-[50%]
+						left-[50%]
+						transform
+						translate-x-[-50%] translate-y-[-50%]
+						w-[300px]
+					">
+					<div class="w-full">
+						<div
+							id="unity-progress-bar-full"
+							class="h-8 bg-lionz-brown"
+							:style="{ width: progressBarPercent }"></div>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`">
-			Cyber Lionz WebGL is not fully compatible with mobile devices - Your
-			experience may vary!
-		</div>
-		<div class="absolute bottom-0 w-full">
-			<img
-				src="~/assets/images/fullscreen-button.png"
-				class="ml-auto h-16 w-16 cursor-pointer"
-				@click="setFullscreen" />
-		</div>
-	</div>
+
+
+			<!-- SMALL MODE ONLY -->
+			<div class="text-lionz-yellow md:hidden p-4 rounded-md block sm:hidden">
+				Download our game on Google Play Store today!
 			</div>
-</section>
+			<div class="w-full hidden sm:block">
+				<img
+					src="~/assets/images/fullscreen-button.png"
+					class="ml-auto h-16 w-16 cursor-pointer"
+					@click="setFullscreen" />
+			</div>
+
+
+		</div>
+	</section>
 </template>
 
 <script>
@@ -97,7 +98,7 @@ export default {
 			try {
 				window
 					.createUnityInstance(this.$refs.unity, config, (progress) => {
-						if(progress > .98){
+						if (progress > 0.98) {
 							this.showLoadingBar = false
 						}
 						this.progressBarPercent = 100 * progress + '%'
