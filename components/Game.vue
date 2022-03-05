@@ -1,5 +1,5 @@
 <template>
-	<section class="relative bg-lionz-blue" id="game-section">
+	<section class="relative bg-lionz-purple" id="game-section">
 		<div
 		class="
 			flex flex-col
@@ -10,7 +10,7 @@
 			max-w-7xl
 			xl:px-12
 		">
-		<div class="w-full md:w-[960px] md:h-[600px] relative hidden sm:block">
+		<div class="w-full pb-10 md:w-[960px] md:h-[600px] relative hidden sm:block">
 		<canvas
 			ref="unity"
 			class="w-full md:w-[960px] md:h-[600px] bg-[url(/Build/webgl.jpg)] bg-cover bg-center"></canvas> <div

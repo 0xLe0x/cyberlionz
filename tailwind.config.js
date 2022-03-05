@@ -6,6 +6,7 @@ module.exports = {
 			'lionz-brown': '#ee6f3e',
 			'lionz-light-brown': '#efc298',
 			'lionz-blue': '#5aa9ff',
+			'lionz-purple': '#403057',
 			'lionz-dirt': '#cf968b',
 			'lionz-accent' : '#450c28',
 			'gray': {

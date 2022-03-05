@@ -3,6 +3,7 @@
 		<main>
 			<HomeHero/>
 			<HomeAbout/>
+			<HomeAbout2/>
 			<Game/>
 			<HomeRoadmap/>
 			<HomeTeam/>
