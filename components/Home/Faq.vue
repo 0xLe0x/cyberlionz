@@ -8,7 +8,7 @@
 				<img
 					data-aos="fade-down"
 					class="h-16"
-					src="@/assets/images/lions-about.png"
+					src="@/assets/images/lions-faq.png"
 					alt="FAQ" />
 			</h2>
 
