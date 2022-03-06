@@ -74,7 +74,7 @@
 								px-2
 								pt-0
 								-mt-2
-								text-sm text-gray-800
+								text-sm text-lionz-accent
 								sm:text-base
 								md:text-lg
 								py-7
