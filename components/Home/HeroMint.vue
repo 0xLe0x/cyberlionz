@@ -71,14 +71,15 @@
 					<img src="@/assets/images/lions-mint-now-button.gif" alt="Mint Now" />
 				</button>
 			</div>
-		</div>
-		<div v-if="soldOut" class="mx-auto max-w-md text-center">
-			Sold out. Buy a cub on
-			<a
-				class="underline decoration-2"
-				href="https://opensea.io/collection/cyberlionz"
-				>OpenSea.</a
-			>
+			<div class="py-4">{{totalSupply}} / 500 cubs released</div>
+			<div v-if="soldOut" class="mx-auto max-w-md text-center">
+				Sold out. Buy a cub on
+				<a
+					class="underline decoration-2"
+					href="https://opensea.io/collection/cyberlionzcubz"
+					>OpenSea.</a
+				>
+			</div>
 		</div>
 	</section>
 </template>
@@ -87,6 +88,7 @@
 import { ethers } from 'ethers'
 import { generateProof } from '@/utils/merkle-proof.js'
 import whitelist from '@/assets/json/whitelist.json'
+
 export default {
 	async mounted() {
 		const { chainId, address, abi } = this.$siteConfig.smartContract
@@ -107,10 +109,25 @@ export default {
 				this.$wallet.provider.getSigner()
 			)
 			this.saleStatus = await signedContract.saleStatus()
-			this.totalSupply = await signedContract.totalSupply()
-			this.soldOut = this.totalSupply > 499
+			this.totalSupply = parseInt((await signedContract.totalSupply())?._hex)
+			if(this.saleStatus > 0 && this.totalSupply < 500){
+				const supplyWatcher = setInterval(async () => {
+					if(this.soldOut){
+						clearInterval(supplyWatcher)
+					}
+
+					const response = await signedContract.totalSupply()
+					this.totalSupply = parseInt((await signedContract.totalSupply())?._hex)
+					console.log('check total supply: ', this.totalSupply)
+				}, 5000)
+			}
 		} catch (e) {
 			console.log(e)
+		}
+	},
+	computed: {
+		soldOut(){
+			return this.totalSupply > 499
 		}
 	},
 	data() {
@@ -118,7 +135,6 @@ export default {
 			mintQuantity: 1,
 			saleStatus: 0,
 			isBusy: false,
-			soldOut: false,
 			totalSupply: 0,
 		}
 	},
