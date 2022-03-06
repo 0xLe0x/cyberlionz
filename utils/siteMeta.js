@@ -1,8 +1,8 @@
 const type = "website";
-const url = "https://999balloons.io";
-const title = "999 Balloons";
+const url = "https://fueledonbacon.com";
+const title = "Fueled on Bacon";
 const description = "";
-const mainImage = "https://999balloons.io/999Balloons_TwitImg.jpg";
+const mainImage = "https://fueledonbacon.com/fob-twit-img.jpg";
 const twitterCard = "summary_large_image";
 
 export default (meta) => {

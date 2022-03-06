@@ -23,6 +23,7 @@
 				class="
 					mt-4
 					text-sm
+					text-lionz-accent
 					sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-700 sm:mt-0
 				">
 				© 2021 - 🦁 Cyber Lionz <a href="https://fueledonbacon.com">🥓</a>
@@ -67,7 +68,7 @@
 
 				-->
 
-				<a href="https://twitter.com/CyberLionzNFT" class="text-gray-600 hover:text-gray-800">
+				<a href="https://twitter.com/CyberLionzNFT" class="text-lionz-accent hover:text-gray-800">
 					<span class="sr-only">Twitter</span>
 					<svg
 						class="w-6 h-6"

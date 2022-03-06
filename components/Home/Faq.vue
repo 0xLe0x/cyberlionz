@@ -31,7 +31,7 @@
 							justify-start
 							text-lg
 							font-medium
-							text-gray-700
+							text-lionz-accent
 							cursor-pointer
 							sm:text-xl
 							md:text-2xl
@@ -129,7 +129,7 @@ export default {
 					show: false,
 					question: 'Utility Ready at Launch?',
 					answer:
-						'Heck yes! No empty promises!',
+						'You know it! No empty promises!',
 				},
 			],
 		}

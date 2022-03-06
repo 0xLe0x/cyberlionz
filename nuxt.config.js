@@ -26,7 +26,7 @@ export default {
 				url: url,
 				title: title,
 				description: description,
-				mainImage: `${url}/${iconName}`,
+				mainImage: `https://cyberlionz.io/cyberlionz-twitimg.gif`,
 			}),
 		],
 		link: [
@@ -77,7 +77,12 @@ export default {
 		'@nuxtjs/sitemap',
 		'@nuxtjs/axios',
 		'@nuxtjs/toast',
+		'@nuxtjs/gtm',
 	],
+
+	gtm: {
+		id: 'GTM-W9T26K4',
+	},
 
 	bootstrapVue: {
 		icons: true,

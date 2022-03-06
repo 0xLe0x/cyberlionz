@@ -11,6 +11,7 @@
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/gtm": "^2.4.0",
     "@nuxtjs/sitemap": "^2.4.0",
     "@nuxtjs/toast": "^3.3.1",
     "@openzeppelin/contracts": "4.4.1",

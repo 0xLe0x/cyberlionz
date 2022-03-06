@@ -1,48 +1,64 @@
 <template>
 	<section class="relative bg-lionz-purple" id="game-section">
-		<div
-		class="
-			flex flex-col
-			items-center
-			px-8
-			mx-auto
-			space-y-12
-			max-w-7xl
-			xl:px-12
-		">
-		<div class="w-full pb-10 md:w-[960px] md:h-[600px] relative hidden sm:block">
-		<canvas
-			ref="unity"
-			class="w-full md:w-[960px] md:h-[600px] bg-[url(/Build/webgl.jpg)] bg-cover bg-center"></canvas> <div
-			v-if="showLoadingBar"
-			class="
-				absolute
-				top-[50%]
-				left-[50%]
-				transform
-				translate-x-[-50%] translate-y-[-50%]
-				w-[300px]
-			">
-			<div class="w-full">
-				<div
-					id="unity-progress-bar-full"
-					class="h-8 bg-lionz-brown"
-					:style="{ width: progressBarPercent }"></div>
-			</div>
-		</div>
-		<div :class="`absolute md:hidden p-4 rounded-md bg-red-400`">
-			Cyber Lionz WebGL is not fully compatible with mobile devices - Your
-			experience may vary!
-		</div>
-		<div class="absolute bottom-0 w-full">
+		<h2 class="mb-2 flex justify-center">
+			<!-- TODO: change this to the right title when available -->
 			<img
-				src="~/assets/images/fullscreen-button.png"
-				class="ml-auto h-16 w-16 cursor-pointer"
-				@click="setFullscreen" />
-		</div>
-	</div>
+				data-aos="fade-down"
+				class="h-16"
+				src="@/assets/images/lions-game.png"
+				alt="FAQ" />
+		</h2>
+
+		<div class="flex justify-center">
+			<div class="max-w-2xl">
+				<p class="leading-loose text-lionz-yellow mb-5 text-shadow-xl">
+					Play the first of many metajungle games and experiences right now, right here!
+				</p>
 			</div>
-</section>
+		</div>
+
+		<div class="flex flex-col items-center mx-auto md:w-[960px]">
+			<div class="w-full md:w-[960px] md:h-[600px] relative block">
+				<canvas
+					ref="unity"
+					class="
+						w-full
+						md:w-[960px] md:h-[600px]
+						text-lionz-yellow
+						bg-[url(/Build/webgl.jpg)] bg-cover bg-center
+					"></canvas>
+				<div
+					v-if="showLoadingBar"
+					class="
+						absolute
+						top-[50%]
+						left-[50%]
+						transform
+						translate-x-[-50%] translate-y-[-50%]
+						w-[300px]
+					">
+					<div class="w-full">
+						<div
+							id="unity-progress-bar-full"
+							class="h-8 bg-lionz-accent"
+							:style="{ width: progressBarPercent }"></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- SMALL MODE ONLY -->
+			<div class="text-lionz-yellow md:hidden p-4 rounded-md block sm:hidden">
+				Play on Desktop - Coming soon to Google Play Store
+			</div>
+			<div class="w-full block">
+				<!-- hidden sm:block"> -->
+				<img
+					src="~/assets/images/fullscreen-button.png"
+					class="ml-auto h-16 w-16 cursor-pointer"
+					@click="setFullscreen" />
+			</div>
+		</div>
+	</section>
 </template>
 
 <script>
@@ -87,7 +103,7 @@ export default {
 			// Mobile device style: fill the whole browser client area with the game canvas:
 			// To lower canvas resolution on mobile devices to gain some
 			// performance, uncomment the following line:
-			config.devicePixelRatio = 1
+			// config.devicePixelRatio = 1
 		} else {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
@@ -97,7 +113,7 @@ export default {
 			try {
 				window
 					.createUnityInstance(this.$refs.unity, config, (progress) => {
-						if(progress > .98){
+						if (progress > 0.98) {
 							this.showLoadingBar = false
 						}
 						this.progressBarPercent = 100 * progress + '%'
