@@ -88,7 +88,7 @@ export default {
 			// Mobile device style: fill the whole browser client area with the game canvas:
 			// To lower canvas resolution on mobile devices to gain some
 			// performance, uncomment the following line:
-			config.devicePixelRatio = 1
+			// config.devicePixelRatio = 1
 		} else {
 			// Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 		}
