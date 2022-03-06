@@ -1,6 +1,5 @@
 /*
-CyberLionz (https://www.cyberlionz.io)
-Twitter @cyberlionz
+CyberLionz Cubz (https://www.cyberlionz.io)
 
 Code crafted by Fueled on Bacon (https://fueledonbacon.com)
 */
@@ -29,19 +28,20 @@ contract CyberLionzCubz is ERC721, Ownable {
     SaleStatus public saleStatus = SaleStatus.PAUSED;
 
     bool public finalized = false;
-    bool public airdropped = false;
+    uint public airdropped = 0;
     
     string private _baseUri;
 
     mapping(address => uint) private _mintedCountMap;
     mapping(address => bool) private _presaleMap;
 
-    constructor(string memory baseUri) ERC721("CyberLionzCubz", "CLC") {
+    constructor(string memory baseUri, bytes32 merkleRoot) ERC721("CyberLionzCubz", "CLC") {
         _baseUri = baseUri;
+        presaleMerkleRoot = merkleRoot;
     }
 
     function setPresaleMerkleRoot(bytes32 merkleRoot) onlyOwner external {
-        require(finalized == false, "The presale list has been finalized.");
+        require(!finalized, "The presale list has been finalized.");
         presaleMerkleRoot = merkleRoot; 
     }
 
@@ -56,12 +56,11 @@ contract CyberLionzCubz is ERC721, Ownable {
 
     /// @notice sets aside 15 tokens for use
     function airdrop(address to, uint count) onlyOwner external{
-        require(airdropped == false, "already airdropped");
-        require(count <= 15, "Can not airdrop more than publicly disclosed to team.");
-        require(_tokenIds.current() + count <= COLLECTION_SIZE, "Number of requested tokens will exceed collection size");
-
+        require(airdropped + count <= 15, "Can not airdrop more than publicly disclosed to team");
+        require(_tokenIds.current() + count <= COLLECTION_SIZE, "Number of tokens requested exceeds collection size");
+        
+        airdropped += count;
         _mintTokens(to, count);
-        airdropped = true;
     }
 
     /// @notice Set sales status
@@ -94,10 +93,12 @@ contract CyberLionzCubz is ERC721, Ownable {
         require(balance > 0, "No balance");
 
         uint256 payout1 = balance * 6500 / 10000; 
-        uint256 payout2 = balance * 3500 / 10000; 
+        uint256 payout2 = balance * 2500 / 10000;
+        uint256 payout3 = balance * 1000 / 10000; 
 
         payable(0xaff176E6bedDdF28cBBC8579C54A81ACa7b90f4c).transfer(payout1);
         payable(0x18316EAD5871424d13c13556bfBa43e7eC118f21).transfer(payout2);
+        payable(0x09949453Aea9876764fEB874b198693BaCD7E0d3).transfer(payout3);
     }
 
     function onWhitelist(address addr, bytes32[] calldata _merkleProof) public view returns(bool) {
@@ -105,24 +106,23 @@ contract CyberLionzCubz is ERC721, Ownable {
     }
 
     function presaleMint(bytes32[] calldata _merkleProof) external payable {
-        require(saleStatus == SaleStatus.PRESALE, "Presale is not happening right now");
+        require(saleStatus == SaleStatus.PRESALE, "Presale is not active");
         require(onWhitelist(msg.sender, _merkleProof), "Sender is not on the presale list");
         require(msg.value >= MINT_PRICE, "Ether value sent is less than .077");
-        require(_tokenIds.current() + 1 <= COLLECTION_SIZE, "Collection size limit has already been reached.");
-        require(!_presaleMap[msg.sender], "This address has already minted during presale.");
+        require(_tokenIds.current() + 1 <= COLLECTION_SIZE, "Collection size limit has already been reached");
+        require(!_presaleMap[msg.sender], "This address has already minted during presale");
+        
         _presaleMap[msg.sender] = true;
-
         _mintTokens(msg.sender, 1);
     }
 
     function mint(uint count) external payable {
-        require(saleStatus == SaleStatus.PUBLIC, "Public mint is not active right now.");
+        require(saleStatus == SaleStatus.PUBLIC, "Public mint is not active");
         require(msg.value >= count * MINT_PRICE, "Ether value sent is not sufficient");
-        require(_tokenIds.current() + count <= COLLECTION_SIZE, "Number of requested tokens will exceed collection size");
+        require(_tokenIds.current() + count <= COLLECTION_SIZE, "Minting this many tokens would exceed the total collection size");
         require(_mintedCountMap[msg.sender] + count <= PUBLIC_MINT_LIMIT, "Each address may only mint 6 tokens");
-        require(saleStatus == SaleStatus.PUBLIC, "Public sale is off");
-        _mintedCountMap[msg.sender] += count;
 
+        _mintedCountMap[msg.sender] += count;
         _mintTokens(msg.sender, count);
     }
 

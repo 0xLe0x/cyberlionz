@@ -7,10 +7,10 @@
 		"contractName": "CyberLionz",
 		"name": "CyberLionz",
 		"symbol": "CLZ",
-		"address": "0xC1A41e58C431e8500a1c58A85CdE301d8e15dD17",
+		"address": "0x1013051039BD988E8f150CC6C676aa4e32BF6120",
 		"collectionSize": 500,
 		"mintPrice": 0.077,
-		"chainId": 4,
+		"chainId": 1,
 		"hasWhitelist": true,
 		"hasDelayedReveal": false,
 		"abi": [
