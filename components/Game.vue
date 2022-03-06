@@ -1,7 +1,7 @@
 <template>
 	<section class="relative bg-lionz-purple" id="game-section">
 		<div class="flex flex-col items-center mx-auto md:w-[960px]">
-			<div class="w-full md:w-[960px] md:h-[600px] relative hidden sm:block">
+			<div class="w-full md:w-[960px] md:h-[600px] relative block">
 				<canvas
 					ref="unity"
 					class="
@@ -32,9 +32,9 @@
 
 			<!-- SMALL MODE ONLY -->
 			<div class="text-lionz-yellow md:hidden p-4 rounded-md block sm:hidden">
-				Download our game on Google Play Store today!
+				Play on Desktop - Coming soon to Google Play Store
 			</div>
-			<div class="w-full hidden sm:block">
+			<div class="w-full block"> <!-- hidden sm:block"> -->
 				<img
 					src="~/assets/images/fullscreen-button.png"
 					class="ml-auto h-16 w-16 cursor-pointer"
