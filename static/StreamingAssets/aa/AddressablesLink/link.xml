@@ -76,6 +76,7 @@
     <type fullname="MoreMountains.Tools.MMSelectionBase" preserve="all" />
     <type fullname="MoreMountains.Tools.MMTouchButton" preserve="all" />
     <type fullname="MoreMountains.Tools.SelectionBase" preserve="all" />
+    <type fullname="MoreMountains.Tools.MMTimedActivation" preserve="all" />
     <type fullname="MoreMountains.Tools.MMProgressBar" preserve="all" />
     <type fullname="MoreMountains.Tools.MMMultipleObjectPooler" preserve="all" />
     <type fullname="MoreMountains.Tools.MMAutoDestroyParticleSystem" preserve="all" />
@@ -123,6 +124,7 @@
     <type fullname="MoreMountains.InfiniteRunnerEngine.AnimatedSpawnerAnimEvents" preserve="all" />
     <type fullname="MoreMountains.InfiniteRunnerEngine.AnimatedSpawner" preserve="all" />
     <type fullname="MoreMountains.InfiniteRunnerEngine.TimedSpawner" preserve="all" />
+    <type fullname="MoreMountains.InfiniteRunnerEngine.Coin" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.CanvasRenderer" preserve="all" />
