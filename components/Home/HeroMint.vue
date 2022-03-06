@@ -1,125 +1,238 @@
 <template>
-	<section class="relative w-full pb-80 overflow-hidden bg-lionz-blue bg-cover" style="background-image: url(hero-bg-baked.jpg);">
-		<!--
-		<img
-			src="@/assets/images/lions-tree-glitched.gif"
-			class="absolute bottom-0 right-0 hidden w-96 mb-0 lg:block" />
-		-->	
-
+	<section
+		class="relative w-full min-h-[53vw] pt-[6rem] pb-[3rem] overflow-hidden bg-lionz-blue bg-cover"
+		style="background-image: url(hero-bg-baked.jpg)">
 		<img
 			src="@/assets/images/hero-lion.gif"
-			class="absolute bottom-0 left-0 w-96 mb-0 block" />
-		
+			class="absolute bottom-0 left-0 hidden md:w-[25vw] max-w-xl mb-0 md:block" />
+
 		<div
 			class="
 				flex flex-col
 				items-center
 				justify-center
 				px-10
-				py-40
 				mx-auto
 				max-w-7xl
+				lg:absolute
+				lg:top-[20vw]
+				lg:left-[50%]
+				lg:transform
+				lg:translate-y-[-50%]
+				lg:translate-x-[-50%]
 			">
-			<h1 class="relative inline-block w-full sm:w-9/12">
-				<img
-					src="@/assets/images/lions-logo-transparent.png"
-					alt="Cyber Lionz" />
-			</h1>
+			<div class="relative w-full sm:w-9/12">
+				<img src="@/assets/images/lions-logo-transparent.png" alt="Cyber Lionz" />
+			</div>
 
-			<!--
-			<h1 class="relative inline-block w-full sm:w-9/12">
-				<img
-					src="@/assets/images/lionz-presalemint.gif"
-					alt="Cyber Lionz" />
-			</h1>
-			-->
+			<div v-if="!soldOut" class="max-w-xl">
+				<div v-if="saleStatus == 0" class="relative sm:w-full">
+					<img class="w-[350px] md:w-full" src="@/assets/images/lionz-presalemint.gif" alt="Cyber Lionz" />
+				</div>
 
-			<!-- /////MINT Sunday, March 6th, 11 AM EST -->
-			<div
-				class="
-					flex
-					items-center
-					justify-around
-					mb-5
-					w-1/2
-					sm:w-5/12 sm:max-w-sm
-				">
+				<!-- /////MINT Sunday, March 6th, 11 AM EST -->
+				<div
+					v-if="saleStatus == 2"
+					class="flex items-center justify-around mb-5 w-full">
+					<button
+						@click="changeMintQuantity('dec')"
+						class="
+							flex
+							items-center
+							justify-center
+							text-4xl
+							font-medium
+							text-center text-white
+							rounded-lg
+							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
+						">
+						<img src="@/assets/images/minus-normal.png" alt="Decrease" />
+					</button>
+					<span class="text-4xl text-lionz-accent">{{ mintQuantity }}</span>
+					<button
+						@click="changeMintQuantity('inc')"
+						class="
+							flex
+							items-center
+							justify-center
+							text-4xl
+							font-medium
+							text-center text-white
+							rounded-lg
+							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
+						">
+						<img src="@/assets/images/plus-normal.png" alt="Increase" />
+					</button>
+				</div>
 				<button
-					@click="changeMintQuantity('dec')"
-					class="
-						flex
-						items-center
-						justify-center
-						text-4xl
-						font-medium
-						text-center text-white
-						rounded-lg
-						focus:outline-none
-						focus:ring-2
-						focus:ring-offset-2
-						focus:ring-gray-900
-					">
-					<img src="@/assets/images/minus-normal.png" alt="Decrease" />
-				</button>
-				<span class="text-4xl text-lionz-accent">{{ mintQuantity }}</span>
-				<button
-					@click="changeMintQuantity('inc')"
-					class="
-						flex
-						items-center
-						justify-center
-						text-4xl
-						font-medium
-						text-center text-white
-						rounded-lg
-						focus:outline-none
-						focus:ring-2
-						focus:ring-offset-2
-						focus:ring-gray-900
-					">
-					<img src="@/assets/images/plus-normal.png" alt="Increase" />
+					v-if="saleStatus != 0"
+					class="w-1/2 sm:w-full sm:max-w-sm px-2 py-2 mx-auto block"
+					@click="handleMint">
+					<img src="@/assets/images/lions-mint-now-button.gif" alt="Mint Now" />
 				</button>
 			</div>
-			<button class="w-1/2 sm:w-5/12 sm:max-w-sm px-2 py-2" @click="mint">
-				<img src="@/assets/images/lions-mint-now-button.gif" alt="Mint Now" />
-			</button>
-
 		</div>
-
-		<!--
-		<svg
-			class="absolute bottom-0 w-full -mt-10 text-white fill-current"
-			viewBox="0 0 960 93"
-			xmlns="http://www.w3.org/2000/svg">
-			<path
-				d="m0 0 5.2 11.2C10.3 22.3 20.7 44.7 31 43.5c10.3-1.2 20.7-25.8 31-20.7C72.3 28 82.7 63 93 78.5s20.7 11.5 31 5.3c10.3-6.1 20.7-14.5 31-25.5s20.7-24.6 31-21.3c10.3 3.3 20.7 23.7 31 21.2s20.7-27.9 31-36.2c10.3-8.3 20.7.3 31 15.7C289.3 53 299.7 75 310 75s20.7-22 31-39.2c10.3-17.1 20.7-29.5 31-18.8s20.7 44.3 31 55.5c10.3 11.2 20.7-.2 31-.8 10.3-.7 20.7 9.3 30.8 6 10.2-3.4 20.2-20 30.4-28.7 10.1-8.7 20.5-9.3 30.8-10.8s20.7-3.9 31 .8 20.7 16.3 31 26.3 20.7 18.4 31 7.4c10.3-11 20.7-41.4 31-44 10.3-2.7 20.7 22.3 31 26.5 10.3 4.1 20.7-12.5 31-20.9 10.3-8.3 20.7-8.3 31-1.3 10.3 7 20.7 21 31 31.5S794.7 82 805 72s20.7-37 31-35.3c10.3 1.6 20.7 32 31 35.3 10.3 3.3 20.7-20.3 31-22 10.3-1.7 20.7 18.7 31 14.2s20.7-33.9 25.8-48.5L960 1v92H0V0Z"
-				fill="#ffb84a"
-				fill-rule="nonzero"></path>
-		</svg>
-		-->
+		<div v-if="soldOut" class="mx-auto max-w-md text-center">
+			Sold out. Buy a cub on
+			<a
+				class="underline decoration-2"
+				href="https://opensea.io/collection/cyberlionz"
+				>OpenSea.</a
+			>
+		</div>
 	</section>
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
-
+import { ethers } from 'ethers'
+import { generateProof } from '@/utils/merkle-proof.js'
+import whitelist from '@/assets/json/whitelist.json'
 export default {
-	components: {
-		Header,
+	async mounted() {
+		const { chainId, address, abi } = this.$siteConfig.smartContract
+		this.isBusy = true
+
+		try {
+			if (this.$wallet.chainId !== chainId) {
+				await this.$wallet.switchNetwork(chainId)
+			}
+
+			if (!this.$wallet.account) {
+				await this.$wallet.connect()
+			}
+
+			const signedContract = new ethers.Contract(
+				address,
+				abi,
+				this.$wallet.provider.getSigner()
+			)
+			this.saleStatus = await signedContract.saleStatus()
+			this.totalSupply = await signedContract.totalSupply()
+			this.soldOut = this.totalSupply > 499
+		} catch (e) {
+			console.log(e)
+		}
 	},
 	data() {
 		return {
-			mintQuantity: 0,
+			mintQuantity: 1,
+			saleStatus: 0,
+			isBusy: false,
+			soldOut: false,
+			totalSupply: 0,
 		}
 	},
 	methods: {
 		changeMintQuantity(type) {
 			type === 'inc' ? (this.mintQuantity += 1) : (this.mintQuantity -= 1)
 			this.mintQuantity = Math.max(0, this.mintQuantity)
-			this.mintQuantity = Math.min(20, this.mintQuantity)
+			this.mintQuantity = Math.min(6, this.mintQuantity)
 		},
-		mint() {
-			alert(`minting ${this.mintQuantity}`)
+		async handleMint() {
+			const MINT_PRICE = 0.0771
+			const { chainId, address, abi } = this.$siteConfig.smartContract
+			this.isBusy = true
+
+			try {
+				if (this.$wallet.chainId !== chainId) {
+					await this.$wallet.switchNetwork(chainId)
+				}
+
+				if (!this.$wallet.account) {
+					await this.$wallet.connect()
+				}
+
+				const signedContract = new ethers.Contract(
+					address,
+					abi,
+					this.$wallet.provider.getSigner()
+				)
+
+				this.saleStatus = await signedContract.saleStatus()
+
+				const SaleStatus = { PAUSED: 0, PRESALE: 1, PUBLIC: 2 }
+
+				if (this.saleStatus == SaleStatus.PAUSED) {
+					this.$toast.show('Minting is paused or has not started yet.', {
+						title: 'Mint',
+						variant: 'error',
+						// you can pass a single action as below
+						action: {
+							text: 'Close',
+							onClick: (e, toastObject) => {
+								toastObject.goAway(0)
+							},
+						},
+					})
+					return
+				}
+
+				let txResponse
+				if (this.saleStatus == SaleStatus.PRESALE) {
+					const value = ethers.utils.parseEther(MINT_PRICE.toString())
+
+					const proof = await generateProof(this.$wallet.account, whitelist)
+
+					txResponse = await signedContract.presaleMint(proof, {
+						value,
+					})
+				} else {
+					const value = ethers.utils.parseEther(
+						(MINT_PRICE * this.mintQuantity).toString()
+					)
+
+					txResponse = await signedContract.mint(this.mintQuantity, {
+						value,
+					})
+				}
+
+				this.$toast.show('Minted successfully! Wait for transaction to clear.', {
+					title: 'Mint',
+					variant: 'success',
+					// you can pass a single action as below
+					action: {
+						text: 'Close',
+						onClick: (e, toastObject) => {
+							toastObject.goAway(0)
+						},
+					},
+				})
+
+				txResponse.wait().then((res) => {
+					console.log({ res })
+					this.$toast.show(
+						'Mint transaction confirmed. NFT should be in your wallet now!',
+						{
+							title: 'Mint',
+							variant: 'success',
+							action: {
+								text: 'Close',
+								onClick: (e, toastObject) => {
+									toastObject.goAway(0)
+								},
+							},
+						}
+					)
+				})
+			} catch (err) {
+				console.error({ err })
+				const { data, reason, message, code, method, error } = err
+				this.$toast.show(
+					error?.message || data?.message || reason || message || 'Minting failed',
+					{
+						title: 'Mint',
+						variant: 'danger',
+						action: {
+							text: 'Close',
+							onClick: (e, toastObject) => {
+								toastObject.goAway(0)
+							},
+						},
+					}
+				)
+			} finally {
+				this.isBusy = false
+			}
 		},
 		async onWalletConnect() {
 			try {

@@ -1,8 +1,8 @@
-s/*
+/*
 CyberLionz (https://www.cyberlionz.io)
 Twitter @cyberlionz
 
-Contract crafted by Fueled on Bacon (https://fueledonbacon.com)
+Code crafted by Fueled on Bacon (https://fueledonbacon.com)
 */
 
 // SPDX-License-Identifier: MIT
@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract CyberLionz is ERC721, Ownable {
+contract CyberLionzCubz is ERC721, Ownable {
     using Counters for Counters.Counter;
     using Strings for uint;
     enum SaleStatus{ PAUSED, PRESALE, PUBLIC }
@@ -32,20 +32,16 @@ contract CyberLionz is ERC721, Ownable {
     bool public airdropped = false;
     
     string private _baseUri;
-    //address private immutable _revenueRecipient;
 
     mapping(address => uint) private _mintedCountMap;
     mapping(address => bool) private _presaleMap;
 
-    // constructor(string memory baseUri, address revenueRecipient) 
-    // ERC721("CyberLionz", "CLZ")
-    // {
-    //     _baseUri = baseUri;
-    //     _revenueRecipient = revenueRecipient;
-    // }
-    constructor() ERC721("CyberLionz", "CLZ") {}
+    constructor(string memory baseUri) ERC721("CyberLionzCubz", "CLC") {
+        _baseUri = baseUri;
+    }
 
-    function setPresaleMerkleRoot(bytes32 merkleRoot) external onlyOwner {
+    function setPresaleMerkleRoot(bytes32 merkleRoot) onlyOwner external {
+        require(finalized == false, "The presale list has been finalized.");
         presaleMerkleRoot = merkleRoot; 
     }
 
@@ -59,7 +55,7 @@ contract CyberLionz is ERC721, Ownable {
     }
 
     /// @notice sets aside 15 tokens for use
-    function airdrop(address to, uint count) external onlyOwner{
+    function airdrop(address to, uint count) onlyOwner external{
         require(airdropped == false, "already airdropped");
         require(count <= 15, "Can not airdrop more than publicly disclosed to team.");
         require(_tokenIds.current() + count <= COLLECTION_SIZE, "Number of requested tokens will exceed collection size");
@@ -74,18 +70,18 @@ contract CyberLionz is ERC721, Ownable {
     }
 
     /// @notice After metadata is revealed and all is in working order, it will be finalized permanently.
-    function finalizeMetadata() external onlyOwner {
-        require(finalized == false, "Metadata is already finalized.");
+    function finalizeMetadata() onlyOwner external {
+        require(!finalized, "Metadata has already been finalized.");
         finalized = true;
     }
 
     /// @notice Reveal metadata for all the tokens
     function setBaseURI(string memory baseUri) onlyOwner external {
-        require(!finalized,"Metadata has been finalized already.");
+        require(!finalized,"Metadata has already been finalized.");
         _baseUri = baseUri;
     }
 
-    /// @notice Get token's URI. In case of delayed reveal we give user the json of the placeholer metadata.
+    /// @notice Get token's URI.
     /// @param tokenId token ID
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token ID does not exist in this collection");
@@ -98,28 +94,25 @@ contract CyberLionz is ERC721, Ownable {
         require(balance > 0, "No balance");
 
         uint256 payout1 = balance * 6500 / 10000; 
-        uint256 payout2 = balance * 2500 / 10000; 
-        uint256 payout3 = balance * 1000 / 10000; 
+        uint256 payout2 = balance * 3500 / 10000; 
 
         payable(0xaff176E6bedDdF28cBBC8579C54A81ACa7b90f4c).transfer(payout1);
-        payable(0xCf83D441D8838acb8C4d77f7Dbc661aD9aAea7Da).transfer(payout2);
-        payable(0x09949453Aea9876764fEB874b198693BaCD7E0d3).transfer(payout3);
+        payable(0x18316EAD5871424d13c13556bfBa43e7eC118f21).transfer(payout2);
     }
 
     function onWhitelist(address addr, bytes32[] calldata _merkleProof) public view returns(bool) {
         return (MerkleProof.verify(_merkleProof, presaleMerkleRoot, keccak256(abi.encodePacked(addr))) == true);
     }
 
-    function presaleMint(uint count, bytes32[] calldata _merkleProof) public payable {
+    function presaleMint(bytes32[] calldata _merkleProof) external payable {
         require(saleStatus == SaleStatus.PRESALE, "Presale is not happening right now");
-        require(MerkleProof.verify(_merkleProof, presaleMerkleRoot, keccak256(abi.encodePacked(msg.sender))) == true, "You are not on the presale list");
-        require(msg.value >= count * MINT_PRICE, "Ether value sent is not sufficient");
-        require(_tokenIds.current() + count <= COLLECTION_SIZE, "Number of requested tokens will exceed collection size");
-
-        require(!_presaleMap[msg.sender], "Presale already redeemed by this address.");
+        require(onWhitelist(msg.sender, _merkleProof), "Sender is not on the presale list");
+        require(msg.value >= MINT_PRICE, "Ether value sent is less than .077");
+        require(_tokenIds.current() + 1 <= COLLECTION_SIZE, "Collection size limit has already been reached.");
+        require(!_presaleMap[msg.sender], "This address has already minted during presale.");
         _presaleMap[msg.sender] = true;
 
-        _mintTokens(msg.sender, count);
+        _mintTokens(msg.sender, 1);
     }
 
     function mint(uint count) external payable {
@@ -138,9 +131,9 @@ contract CyberLionz is ERC721, Ownable {
         for(uint index = 0; index < count; index++) {
 
             _tokenIds.increment();
-            uint newItemId = _tokenIds.current();
+            uint id = _tokenIds.current();
 
-            _safeMint(to, newItemId);
+            _safeMint(to, id);
         }
     }
 }

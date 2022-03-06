@@ -1,5 +1,5 @@
 <template>
-	<section class="relative w-full pb-80 overflow-hidden bg-lionz-blue bg-cover" style="background-image: url(hero-bg-baked.jpg);">
+	<section class="relative w-full min-h-[56vw] overflow-hidden bg-lionz-blue bg-cover" style="background-image: url(hero-bg-baked.jpg);">
 		<!--
 		<img
 			src="@/assets/images/lions-tree-glitched.gif"
@@ -16,7 +16,6 @@
 				items-center
 				justify-center
 				px-10
-				py-40
 				mx-auto
 				max-w-7xl
 			">

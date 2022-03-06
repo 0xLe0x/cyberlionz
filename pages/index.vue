@@ -1,7 +1,7 @@
 <template>
 	<div id="app" class="min-h-screen w-full bg-gray-200">
 		<main>
-			<HomeHero/>
+			<HomeHeroMint/>
 			<HomeAbout/>
 			<HomeAbout2/>
 			<Game/>
@@ -18,8 +18,5 @@
 export default {
 	name: 'Home',
 	components: {},
-	data() {
-		return {}
-	},
 }
 </script>

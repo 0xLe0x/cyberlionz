@@ -1,7 +1,6 @@
 <template>
 <div class="mt-12">
-	<pill-button @click.native="handleMint(event, true)"> Presale </pill-button>
-	<pill-button @click.native="handleMint(event, false)"> Mint </pill-button>
+	<pill-button @click.native="handleMint()"> Mint </pill-button>
 </div>
 </template>
 
@@ -12,6 +11,10 @@ import { generateProof } from '@/utils/merkle-proof.js';
 import whitelist from '@/assets/json/whitelist.json';
 
 export default {
+	props: {
+		quantity: Number,
+		isPresale: false
+	},
 	data() {
 		return {
 			amount: 0.077,
@@ -49,7 +52,8 @@ export default {
 				this.isBusy = false
 			}
 		},
-		async handleMint(event, isPresale = false) {
+		async handleMint() {
+			const MINT_PRICE = 0.077;
 			const { chainId, address, abi } = this.$siteConfig.smartContract
 			this.isBusy = true
 
@@ -68,10 +72,28 @@ export default {
 					abi,
 					this.$wallet.provider.getSigner()
 				)
+				const saleStatus = await signedContract.saleStatus()
+				console.log('sale status', saleStatus)
+				const SaleStatus = { PAUSED: 0, PRESALE: 1, PUBLIC: 2}
+				if(saleStatus == SaleStatus.PAUSED){
+
+					this.$toast.show('Minting is paused or has not started yet.', {
+						title: 'Mint',
+						variant: 'error',
+						// you can pass a single action as below
+						action : {
+							text : 'Close',
+							onClick : (e, toastObject) => {
+								toastObject.goAway(0);
+							}
+						},
+					})
+					return
+				}
+
 				let txResponse 
-				if(isPresale){
-					const value = ethers.utils.parseEther(this.amount.toString())
-	
+				if(saleStatus == SaleStatus.PRESALE){
+					const value = ethers.utils.parseEther(MINT_PRICE.toString())
 			
 					const proof = await generateProof(this.$wallet.account, whitelist);
 
@@ -79,7 +101,7 @@ export default {
 						value,
 					})
 				} else {
-					const value = ethers.utils.parseEther((this.amount * this.quantity).toString())
+					const value = ethers.utils.parseEther((MINT_PRICE * this.quantity).toString())
 
 					txResponse = await signedContract.mint(this.quantity, {
 						value,
