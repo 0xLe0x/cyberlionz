@@ -1,5 +1,22 @@
 <template>
 	<section class="relative bg-lionz-purple" id="game-section">
+		<h2 class="mb-2 flex justify-center">
+			<!-- TODO: change this to the right title when available -->
+			<img
+				data-aos="fade-down"
+				class="h-16"
+				src="@/assets/images/lions-game.png"
+				alt="FAQ" />
+		</h2>
+
+		<div class="flex justify-center">
+			<div class="max-w-2xl">
+				<p class="leading-loose text-lionz-yellow mb-5 text-shadow-xl">
+					Play the first of many metajungle games and experiences right now, right here!
+				</p>
+			</div>
+		</div>
+
 		<div class="flex flex-col items-center mx-auto md:w-[960px]">
 			<div class="w-full md:w-[960px] md:h-[600px] relative block">
 				<canvas
@@ -23,25 +40,23 @@
 					<div class="w-full">
 						<div
 							id="unity-progress-bar-full"
-							class="h-8 bg-lionz-brown"
+							class="h-8 bg-lionz-accent"
 							:style="{ width: progressBarPercent }"></div>
 					</div>
 				</div>
 			</div>
 
-
 			<!-- SMALL MODE ONLY -->
 			<div class="text-lionz-yellow md:hidden p-4 rounded-md block sm:hidden">
 				Play on Desktop - Coming soon to Google Play Store
 			</div>
-			<div class="w-full block"> <!-- hidden sm:block"> -->
+			<div class="w-full block">
+				<!-- hidden sm:block"> -->
 				<img
 					src="~/assets/images/fullscreen-button.png"
 					class="ml-auto h-16 w-16 cursor-pointer"
 					@click="setFullscreen" />
 			</div>
-
-
 		</div>
 	</section>
 </template>
