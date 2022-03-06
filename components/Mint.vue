@@ -1,17 +1,21 @@
 <template>
 <div class="mt-12">
-	<pill-button @click.native="handleMint"> Mint </pill-button>
+	<pill-button @click.native="handleMint(event, true)"> Presale </pill-button>
+	<pill-button @click.native="handleMint(event, false)"> Mint </pill-button>
 </div>
 </template>
 
 <script>
 
-import { ethers } from 'ethers'
+import { ethers } from 'ethers';
+import { generateProof } from '@/utils/merkle-proof.js';
+import whitelist from '@/assets/json/whitelist.json';
 
 export default {
 	data() {
 		return {
-			amount: 0.05,
+			amount: 0.077,
+			quantity: 4,
 			mintedCount: 0,
 			isBusy: false,
 		}
@@ -45,7 +49,7 @@ export default {
 				this.isBusy = false
 			}
 		},
-		async handleMint() {
+		async handleMint(event, isPresale = false) {
 			const { chainId, address, abi } = this.$siteConfig.smartContract
 			this.isBusy = true
 
@@ -64,12 +68,23 @@ export default {
 					abi,
 					this.$wallet.provider.getSigner()
 				)
-				
-				const value = ethers.utils.parseEther(this.amount.toString())
+				let txResponse 
+				if(isPresale){
+					const value = ethers.utils.parseEther(this.amount.toString())
+	
+			
+					const proof = await generateProof(this.$wallet.account, whitelist);
 
-				const txResponse = await signedContract.mint({
-					value,
-				})
+					txResponse = await signedContract.presaleMint(proof, {
+						value,
+					})
+				} else {
+					const value = ethers.utils.parseEther((this.amount * this.quantity).toString())
+
+					txResponse = await signedContract.mint(this.quantity, {
+						value,
+					})
+				}
 
 				this.$toast.show('Minted successfully! Wait for transaction to clear.', {
 					title: 'Mint',

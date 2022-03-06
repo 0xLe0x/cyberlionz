@@ -69,7 +69,10 @@ export default {
 	components: true,
 
 	// Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-	buildModules: ['nuxt-vite', '@nuxtjs/tailwindcss'],
+	buildModules: [
+		// 'nuxt-vite',
+		'@nuxtjs/tailwindcss'
+	],
 
 	// Modules: https://go.nuxtjs.dev/config-modules
 	modules: [
