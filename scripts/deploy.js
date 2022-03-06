@@ -3,7 +3,7 @@ const updateEnv = require('./updateEnv.js');
 const updateSiteConfig = require('./updateSiteConfig.js');
 
 async function main() {
-  const contractFactory = await ethers.getContractFactory("TheMutantMushies")
+  const contractFactory = await ethers.getContractFactory("CyberLionz");
 
   const [deployer] = await ethers.getSigners();
 
