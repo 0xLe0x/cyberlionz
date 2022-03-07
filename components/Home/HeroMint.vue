@@ -27,7 +27,7 @@
 
 			<div v-if="!soldOut" class="max-w-xl">
 				<div v-if="saleStatus == 0" class="relative sm:w-full">
-					<img class="w-[350px] md:w-full" src="@/assets/images/lionz-presalemint.gif" alt="Cyber Lionz" />
+					<img class="w-[350px] md:w-full" src="@/assets/images/lions-sold-out.gif" alt="Cyber Lionz" />
 				</div>
 
 				<!-- /////MINT Sunday, March 6th, 11 AM EST -->
