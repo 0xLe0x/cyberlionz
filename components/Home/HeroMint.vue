@@ -76,9 +76,8 @@
 				Sold out. Buy a cub on
 				<a
 					class="underline decoration-2"
-					href="https://opensea.io/collection/cyberlionzcubz"
-					>OpenSea.</a
-				>
+					href="https://opensea.io/collection/cyberlionzofficial"
+					>OpenSea</a>.
 			</div>
 		</div>
 	</section>
