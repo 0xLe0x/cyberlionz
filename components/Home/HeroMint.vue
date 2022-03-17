@@ -71,8 +71,8 @@
 					<img src="@/assets/images/lions-mint-now-button.gif" alt="Mint Now" />
 				</button>
 			</div>
-			<div class="py-4">{{totalSupply}} / 500 cubs released</div>
-			<div v-if="soldOut" class="mx-auto max-w-md text-center">
+			<div class="py-4" v-if="saleStatus != 0">{{totalSupply}} / 500 cubs released</div>
+			<div class="mx-auto max-w-md text-center">
 				Sold out. Buy a cub on
 				<a
 					class="underline decoration-2"
