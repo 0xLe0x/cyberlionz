@@ -8,8 +8,7 @@
 			:controlsVisible="controlsVisible"
 			:autoplay="autoplay"
 			border="0"
-			class="py-20"
-			style="margin: 0 !important; height: 100%">
+			class="py-20 !m-0 !h-full">
 			<slide v-for="(image, i) in images" :index="i">
 				<img class="w-full h-auto" :src="image" />
 			</slide>
