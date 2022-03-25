@@ -1,4 +1,4 @@
-# NFT Launch Template
+# CyberLions website and contracts
 
 ## Build Setup
 
