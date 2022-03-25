@@ -29,6 +29,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "nuxt": "^2.15.7",
+    "vue-carousel-3d": "^1.0.1",
     "web3": "^1.7.1"
   },
   "devDependencies": {
