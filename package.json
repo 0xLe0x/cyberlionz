@@ -30,6 +30,8 @@
     "moment-timezone": "^0.5.34",
     "nuxt": "^2.15.7",
     "vue-carousel-3d": "^1.0.1",
+    "vue-loading-overlay": "3.0",
+    "vue2-perfect-scrollbar": "^1.5.5",
     "web3": "^1.7.1"
   },
   "devDependencies": {

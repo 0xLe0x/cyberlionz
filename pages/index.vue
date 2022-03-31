@@ -2,6 +2,7 @@
 	<div id="app" class="min-h-screen w-full bg-gray-200">
 		<main>
 			<HomeHeroMint />
+			<CubzWallet />
 			<HomeAbout />
 			<HomeCarousel />
 			<HomeAbout2 />

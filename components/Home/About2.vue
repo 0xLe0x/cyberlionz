@@ -57,14 +57,10 @@
 								<p class="leading-loose text-lionz-yellow">
 									Join the pride and together lets !ROAR
 								</p>
-								
 							</div>
 						</div>
 					</div>
 				</div>
-
-
-				
 			</div>
 		</div>
 	</section>

@@ -44,7 +44,7 @@ export default {
 		],
 		script: [
 			{
-				src: '/Build/webgl.loader.js'
+				src: '/Build/webgl.loader.js',
 			},
 			{
 				src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
@@ -71,7 +71,7 @@ export default {
 	// Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
 	buildModules: [
 		// 'nuxt-vite',
-		'@nuxtjs/tailwindcss'
+		'@nuxtjs/tailwindcss',
 	],
 
 	// Modules: https://go.nuxtjs.dev/config-modules
@@ -116,4 +116,10 @@ export default {
 
 	// Build Configuration: https://go.nuxtjs.dev/config-build
 	build: {},
+
+	publicRuntimeConfig: {
+		contractAddress: process.env.CONTRACT_ADDRESS,
+		moralisApiKey: process.env.MORALIS_API_KEY,
+		cubzNetwork: process.env.CUBZ_NETWORK,
+	},
 }

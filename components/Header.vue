@@ -16,14 +16,14 @@
 					<a
 						href="#about-section"
 						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
-						>About</a
-					>
+						>About
+					</a>
 
 					<a
 						href="#game-section"
 						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
-						>Game</a
-					>
+						>Game
+					</a>
 
 					<a
 						href="#roadmap-section"
