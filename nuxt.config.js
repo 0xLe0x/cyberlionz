@@ -10,7 +10,9 @@ export default {
 	// Target: https://go.nuxtjs.dev/config-target
 	target: 'static',
 
-	env: {},
+	env: {
+		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER || 'http://localhost:5000'
+	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
 	head: {
@@ -121,5 +123,6 @@ export default {
 		contractAddress: process.env.CONTRACT_ADDRESS,
 		moralisApiKey: process.env.MORALIS_API_KEY,
 		cubzNetwork: process.env.CUBZ_NETWORK,
+		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
 	},
 }

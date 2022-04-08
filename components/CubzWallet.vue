@@ -18,7 +18,7 @@
   		></div>
   		<div class="pl-2">
   			INVENTORY : 
-  			<span class="text-xl">{{ $wallet.nfts.length }}</span>
+  			<span class="text-xl">{{ $wallet.nfts === undefined ? 0 : $wallet.nfts.length }}</span>
   			ITEMS
   		</div>
 			<perfect-scrollbar :watch-options="true">
@@ -36,9 +36,37 @@
 			</perfect-scrollbar>
 		</div>
 		<div
-			class="justify-center sm:px-20 md:px-30 py-5 flex flex-wrap md:justify-between gap-y-5">
-			<breed-slot @dropped="onDrop_1" @exchange="onExchange" ref="slot1">Keep Slot</breed-slot> 
-			<breed-slot @dropped="onDrop_2" @exchange="onExchange" ref="slot2">Burn Slot</breed-slot>
+			class="justify-center sm:px-50 md:px-60 py-5 flex flex-wrap md:justify-between gap-y-5">
+			<breed-slot :toggleState="toggleValue" @dropped="onDrop_1" @exchange="onExchange" ref="slot1">Keep Slot</breed-slot>
+			<div>
+				<div class="bg-gray-300 w-[150px] h-[150px] mt-6">
+					<loading
+						:active="previewImageLoading"
+						:width="100"
+						:height="100"
+						color="#f59e0b"
+						loader="dots"
+						:opacity="0.6"
+						:is-full-page="false"
+					/>
+					<img
+						:src="previewImage"
+						data-aos="fade"
+						v-if="previewImage != undefined" />
+				</div>
+	    		<button href="#_" class="flex items-center justify-center px-4 py-2 mt-2 text-blue-500 whitespace-no-wrap border border-blue-300 shadow-sm bg-blue-50 focus:ring-offset-blue-600 hover:bg-white hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-100 disabled:opacity-50"
+						:disabled="dropId1 === -1 || dropId2 === -1" @click="onPreview">
+					<strong>Preview</strong>
+				</button>
+				<div class="flex flex-col mt-6">
+					<div v-for="(val, index) in trait_type" :key="`toggle-${val}`">
+						<div class="toggles h-[33px] flex items-center justify-center">
+							<trait-toggle v-model="toggleValue[val]" :id="`t-${val}`" :data-aos="index > 4 ? 'fade-left' : 'fade-right'" data-aos-offset="0px" /> 
+						</div>
+					</div>
+				</div>
+			</div>
+			<breed-slot :toggleState="toggleValueR" @dropped="onDrop_2" @exchange="onExchange" ref="slot2">Burn Slot</breed-slot>
 		</div>
 	</section>
 </template>
@@ -48,19 +76,40 @@ import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+import axios from 'axios'
 
 export default {
 	data() {
 		return {
 			dropId1: -1,
 			dropId2: -1,
+			trait_type: ['Background', 'Body', 'Clothing', 'Shoes', 'Hands', 'Mouth', 'Eyewear', 'Headwear', 'Companion'],
+			toggleValue: {
+				Background: true,
+				Body: true,
+				Clothing: true,
+				Shoes: true,
+				Hands: true,
+				Mouth: true,
+				Eyewear: true,
+				Headwear: true,
+				Companion: true,
+			},
+			previewImage: undefined,
+			previewImageLoading: false,
 		}
 	},
 	components: {
 		Loading,
 		PerfectScrollbar,
 	},
-	computed: {},
+	computed: {
+		toggleValueR() {
+			let toggleValR = new Object
+			Object.entries(this.toggleValue).forEach(([key, value]) => toggleValR[key] = !value)
+			return toggleValR
+		},
+	},
 	methods: {
 		startDrag(evt, index) {
 			evt.dataTransfer.dropEffect = 'copy'
@@ -94,6 +143,18 @@ export default {
 			temp = this.dropId1
 			this.dropId1 = this.dropId2
 			this.dropId2 = temp
+		},
+		async onPreview() {
+			let params = {}
+			Object.entries(this.toggleValue).forEach(([key, value], index) => params[key] = this.$wallet.nfts[(value ? this.$refs.slot1.id : this.$refs.slot2.id)].attributes[index].value)
+			try {
+				this.previewImageLoading = true
+				const res = await axios.get(`${process.env.hackslipsBackendServer}/api/evolve`,{ params })
+				this.previewImageLoading = false
+				this.previewImage = `${process.env.hackslipsBackendServer}/cubz/` + res.data + '.gif'
+			} catch (err) {
+				console.log(err)
+			}
 		}
 	},
 }
