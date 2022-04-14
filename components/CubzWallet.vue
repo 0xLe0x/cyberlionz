@@ -149,7 +149,8 @@ export default {
 			Object.entries(this.toggleValue).forEach(([key, value], index) => params[key] = this.$wallet.nfts[(value ? this.$refs.slot1.id : this.$refs.slot2.id)].attributes[index].value)
 			try {
 				this.previewImageLoading = true
-				const res = await axios.get(`${process.env.hackslipsBackendServer}/api/evolve`,{ params })
+				const res = await fetch(`${document.location.origin}/.netlify/functions/evolve`,{ params })
+				console.log('netlify function response: ', res)
 				this.previewImageLoading = false
 				this.previewImage = `${process.env.hackslipsBackendServer}/cubz/` + res.data + '.gif'
 			} catch (err) {
