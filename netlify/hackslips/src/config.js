@@ -1,6 +1,6 @@
-const basePath = process.cwd();
-const { MODE } = require(`${basePath}/constants/blend_mode.js`);
-const { NETWORK } = require(`${basePath}/constants/network.js`);
+//const basePath = process.cwd();
+const { MODE } = require(`../constants/blend_mode.js`);
+const { NETWORK } = require(`../constants/network.js`);
 
 const network = NETWORK.eth;
 

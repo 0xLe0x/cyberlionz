@@ -1,10 +1,10 @@
 const basePath = process.cwd();
-const { NETWORK } = require(`${basePath}/constants/network.js`);
+const { NETWORK } = require(`../constants/network.js`);
 const fs = require("fs");
-const sha1 = require(`${basePath}/node_modules/sha1`);
-const { createCanvas, loadImage } = require(`${basePath}/node_modules/canvas`);
-const buildDir = `${basePath}/build`;
-const layersDir = `${basePath}/layers`;
+const sha1 = require(`sha1`);
+const { createCanvas, loadImage } = require(`canvas`);
+const buildDir = `${basePath}/netlify/hackslips/build`;
+const layersDir = `${basePath}/netlify/hackslips/layers`;
 const {
   format,
   baseUri,
@@ -21,7 +21,7 @@ const {
   network,
   solanaMetadata,
   gif,
-} = require(`${basePath}/src/config.js`);
+} = require(`../src/config.js`);
 const path = require("path");
 let canvas = createCanvas(format.width, format.height);
 let ctx = canvas.getContext("2d");
@@ -30,7 +30,7 @@ var metadataList = [];
 var attributesList = [];
 var dnaList = new Set();
 const DNA_DELIMITER = "-";
-const HashlipsGiffer = require(`${basePath}/modules/HashlipsGiffer.js`);
+const HashlipsGiffer = require(`../modules/HashlipsGiffer.js`);
 
 let hashlipsGiffer = null;
 
@@ -378,10 +378,6 @@ function shuffle(array) {
 }
 
 const startCreating = async (query, filename) => {
-  if (fs.existsSync(buildDir + '/gifs/' + filename + '.gif')) {
-    return filename;
-  }
-
   let layerConfigIndex = 0;
   let editionCount = 1;
   let failedCount = 0;
@@ -407,7 +403,6 @@ const startCreating = async (query, filename) => {
       editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
     ) {
       let newDna = createDna(layers, query);
-      console.log(newDna);
       //      if (isDnaUnique(dnaList, newDna)) {
       let results = constructLayerToDna(newDna, layers);
       let loadedElements = [];
