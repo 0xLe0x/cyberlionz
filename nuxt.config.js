@@ -10,7 +10,9 @@ export default {
 	// Target: https://go.nuxtjs.dev/config-target
 	target: 'static',
 
-	env: {},
+	env: {
+		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER || 'http://localhost:5000'
+	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
 	head: {
@@ -44,7 +46,7 @@ export default {
 		],
 		script: [
 			{
-				src: '/Build/webgl.loader.js'
+				src: '/Build/webgl.loader.js',
 			},
 			{
 				src: 'https://identity.netlify.com/v1/netlify-identity-widget.js',
@@ -71,7 +73,7 @@ export default {
 	// Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
 	buildModules: [
 		// 'nuxt-vite',
-		'@nuxtjs/tailwindcss'
+		'@nuxtjs/tailwindcss',
 	],
 
 	// Modules: https://go.nuxtjs.dev/config-modules
@@ -116,4 +118,11 @@ export default {
 
 	// Build Configuration: https://go.nuxtjs.dev/config-build
 	build: {},
+
+	publicRuntimeConfig: {
+		contractAddress: process.env.CONTRACT_ADDRESS,
+		moralisApiKey: process.env.MORALIS_API_KEY,
+		cubzNetwork: process.env.CUBZ_NETWORK,
+		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
+	},
 }

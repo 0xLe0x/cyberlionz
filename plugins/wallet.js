@@ -2,8 +2,10 @@ import Vue from 'vue'
 import { ethers } from 'ethers'
 import MetaMaskOnboarding from '@metamask/onboarding'
 import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
+import axios from 'axios'
+import siteConfig from '@/siteConfig.json'
 
-export default ({store}, inject) => {
+export default ({store, $config: {contractAddress, moralisApiKey, cubzNetwork}}, inject) => {
 
     const wallet = Vue.observable({
         account: null,
@@ -11,6 +13,8 @@ export default ({store}, inject) => {
         network: null,
         balance: null,
         provider: null,
+        nfts: [],
+        loaded: false,
 
         get hexChainId() {
             return '0x' + this.network?.chainId?.toString(16)
@@ -27,16 +31,55 @@ export default ({store}, inject) => {
             this.network = await this.provider.getNetwork()
             const [account] = await this.provider.listAccounts()
 
-            !!account && this.setAccount(account)
+            this.loaded = false
+
+            !!account && this.setAccount(account)  
+        },
+
+        async getNfts(newAccount) {
+            try{
+                let res = await axios.get(
+                    `https://deep-index.moralis.io/api/v2/${newAccount}/nft/${contractAddress}`,
+                    {
+                        params: {
+                            chain: cubzNetwork,
+                            format: 'decimal',
+                        },
+                        headers: {
+                            'x-api-key': moralisApiKey,
+                        },
+                    }
+                )
+
+                const { chainId, abi, address } = siteConfig.smartContract
+
+                const nftContract = new ethers.Contract(contractAddress, abi, this.provider)
+                let results = [], i = 0
+                for(let nft of res.data.result) {
+                    const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
+                    let metadata = await axios.get(
+                        'https://ipfs.io/ipfs' + token_uri.substring(6)
+                    )
+                    metadata.data.id = i++
+                    results.push(metadata.data)
+                }
+                return results
+            } catch(err) {
+                console.log(err)
+            }
         },
 
         async setAccount(newAccount) {
             if(newAccount) {
+                this.loaded = false
                 this.account = newAccount
                 this.accountCompact = `${newAccount.substring(0, 4)}...${newAccount.substring(newAccount.length - 4)}`
 
                 const balance = (await this.provider.getBalance(newAccount)).toString()
                 this.balance = `${(+ethers.utils.formatEther(balance)).toFixed(3)} ${getCurrency(this.network.chainId)}`
+                this.nfts = await this.getNfts(newAccount)
+                console.log('nfts: ', this.nfts)
+                this.loaded = true
             }
             else {
                 this.disconnect()
@@ -56,7 +99,7 @@ export default ({store}, inject) => {
             console.info('wallet connected', {account})
 
             if(account) {
-                await wallet.setAccount(account)
+                // await wallet.setAccount(account)
             }
         },
 
@@ -64,6 +107,8 @@ export default ({store}, inject) => {
             wallet.account = null
             wallet.accountCompact = null
             wallet.balance = null
+            wallet.nfts = []
+            wallet.loaded = false
         },
 
         async switchNetwork(chainId) {
@@ -79,7 +124,7 @@ export default ({store}, inject) => {
 					{ chainId: config.chainId },
 				])
 
-                await this.init()
+                // await this.init()
 
                 // create a small delay to let the wallet reset to new network
                 return new Promise((resolve) => {
@@ -113,7 +158,6 @@ export default ({store}, inject) => {
             console.info('chainChanged', chainId)
             wallet.init()
         })
-
         wallet.init()
     }
 

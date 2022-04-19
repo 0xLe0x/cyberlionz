@@ -38,5 +38,11 @@ module.exports = {
 			// add modifications to styling classes here
 		},
 	},
+	variants: {
+    extend: {
+      backgroundColor: ['disabled'],
+      opacity: ['disabled']
+   },
+  },
 	plugins: [],
 }

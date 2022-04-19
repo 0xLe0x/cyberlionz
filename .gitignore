@@ -93,3 +93,5 @@ sw.*
 
 # Local Netlify folder
 .netlify
+
+hackslips/node_modules
