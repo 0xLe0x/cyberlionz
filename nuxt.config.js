@@ -11,7 +11,8 @@ export default {
 	target: 'static',
 
 	env: {
-		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER || 'http://localhost:5000'
+		hackslipsBackendServer:
+			process.env.HACKSLIPS_BACKEND_SERVER || 'http://localhost:5000',
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
@@ -83,6 +84,7 @@ export default {
 		'@nuxtjs/axios',
 		'@nuxtjs/toast',
 		'@nuxtjs/gtm',
+		'@nuxtjs/proxy',
 	],
 
 	gtm: {
@@ -124,5 +126,16 @@ export default {
 		moralisApiKey: process.env.MORALIS_API_KEY,
 		cubzNetwork: process.env.CUBZ_NETWORK,
 		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
+	},
+
+	axios: {
+		proxy: true,
+	},
+
+	proxy: {
+		'/.netlify/functions/': {
+			target: 'http://localhost:9999/.netlify/functions/',
+			pathRewrite: { '^/.netlify/functions/': '' },
+		},
 	},
 }
