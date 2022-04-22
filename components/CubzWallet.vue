@@ -1,6 +1,54 @@
 <template>
 	<section class="relative bg-lionz-light-brown px-20" id="cubzwallet-section">
-		<div class="relative bg-[url('@/static/Evolving/Lions-UI_Inventory.png')] bg-cover px-12 py-3 h-[220px]">
+		<div
+			class="
+				relative
+				bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
+				bg-no-repeat
+				bg-[length:100%_100%]
+				h-[100px]
+				flex
+				justify-around
+				items-center
+			">
+			<button
+				class="
+					bg-[url('@/static/Buttons/btn-stake.gif')]
+					hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
+					active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
+					bg-no-repeat bg-contain bg-center
+					h-[60%]
+					w-[20%]
+				"></button>
+			<button
+				class="
+					bg-[url('@/static/Buttons/btn-evolve.gif')]
+					hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
+					active:bg-[url('@/static/Buttons/btn-evolve-active.gif')]
+					bg-no-repeat bg-contain bg-center
+					h-[60%]
+					w-[20%]
+				"></button>
+			<button
+				class="
+					bg-[url('@/static/Buttons/btn-market.gif')]
+					hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
+					active:bg-[url('@/static/Buttons/btn-market-active.gif')]
+					bg-no-repeat bg-contain bg-center
+					h-[60%]
+					w-[20%]
+				"></button>
+		</div>
+		<div
+			class="
+				relative
+				bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
+				bg-no-repeat
+				bg-[length:100%_100%]
+				px-12
+				py-3
+				h-[220px]
+			">
 			<loading
 				:active="!this.$wallet.loaded"
 				:width="120"
@@ -14,7 +62,7 @@
 				@drop="onDrop($event)"
 				@dragover.prevent
 				@dragenter.prevent></div>
-			<div class="ml-44 mt-1 text-gray-300">
+			<div class="ml-[18%] mt-1 text-gray-300">
 				<span class="text-xl">{{
 					$wallet.nfts === undefined ? 0 : $wallet.nfts.length
 				}}</span>
@@ -177,7 +225,7 @@ export default {
 			this.dropId2 = index
 		},
 		onExchange() {
-			[this.dropId1, this.dropId2] = [this.dropId2, this.dropId1]
+			;[this.dropId1, this.dropId2] = [this.dropId2, this.dropId1]
 		},
 		async onPreview() {
 			let params = {}
@@ -190,16 +238,13 @@ export default {
 			)
 			try {
 				this.previewImageLoading = true
-				const res = await axios.get(
-					`/.netlify/functions/evolve`,
+				const res = await axios.get(`/.netlify/functions/evolve`, {
+					headers: {
+						'Access-Control-Allow-Origin': '*',
+						'Content-Type': 'application/json',
+					},
 					params,
-					{
-						headers: {
-				      		'Access-Control-Allow-Origin': '*',
-				      		'Content-Type': 'application/json',
-				    	},
-				    }
-				)
+				})
 				this.previewImageLoading = false
 				this.previewImage = res.data
 			} catch (err) {
