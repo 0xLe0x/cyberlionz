@@ -632,7 +632,7 @@
 		"contractName": "CLStaking",
 		"name": "CLStaking",
 		"symbol": "CLS",
-		"address": "0x27dAA6c4931131E49a991e948935ac9818B1Bc07",
+		"address": "0x7eB232a07c483244a2359e5c2D68397ba57CE82b",
 		"abi": [
 			{
 				"inputs": [
@@ -693,7 +693,35 @@
 						"name": "collectionAddress",
 						"type": "address"
 					},
-					{ "internalType": "uint256", "name": "rewardPerDay", "type": "uint256" }
+					{ "internalType": "uint256", "name": "rewardPerDay", "type": "uint256" },
+					{
+						"internalType": "uint256",
+						"name": "totalAmountStaked",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{ "internalType": "uint256", "name": "_collectionID", "type": "uint256" }
+				],
+				"name": "getTotalStakedItemsCount",
+				"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{ "internalType": "address", "name": "_userAddress", "type": "address" },
+					{ "internalType": "address", "name": "_collectionAddr", "type": "address" }
+				],
+				"name": "getUserInformation",
+				"outputs": [
+					{ "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+					{ "internalType": "uint256", "name": "", "type": "uint256" },
+					{ "internalType": "uint256", "name": "", "type": "uint256" }
 				],
 				"stateMutability": "view",
 				"type": "function"

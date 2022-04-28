@@ -66,18 +66,34 @@
 						col-span-3
 					">
 					<loading
-						:active="!this.$wallet.loaded"
+						:active="this.$wallet.loaded == false"
 						:width="120"
 						:height="120"
 						color="#f59e0b"
+						background-color="#000000"
 						loader="dots"
-						:opacity="0.6"
+						:opacity="0.5"
 						:is-full-page="false" />
 					<div class="ml-[18%] mt-1 text-gray-300">
 						<span class="text-xl">{{
-							$wallet.nfts === undefined ? 0 : $wallet.nfts.length
+							$wallet.nfts !== undefined && $wallet.nfts.length
 						}}</span>
 						ITEMS
+					</div>
+					<div
+						v-if="
+							$wallet.nfts !== undefined &&
+							$wallet.loaded &&
+							$wallet.nfts.length == 0 &&
+							$wallet.loaded != -1
+						"
+						class="flex justify-center items-center h-[170px]">
+						<p class="text-[#d1d5db]">Inventory is empty</p>
+					</div>
+					<div
+						v-if="$wallet.loaded == -1"
+						class="flex justify-center items-center h-[170px]">
+						<p class="text-[#d1d5db]">Please connect your wallet</p>
 					</div>
 					<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
 						<div
@@ -103,9 +119,39 @@
 				<ul class="bg-opacity-30 border-4 rounded border-[#24142c]">
 					<li
 						class="text-[#3dff6e] text-center h-[25px] bg-[#24142c] overflow-hidden">
-						STAKED ITEMS({{ this.$wallet.stakeInfo.items.length }})
+						STAKED ITEMS({{
+							this.$wallet.stakeInfo.userInfo.length
+								? this.$wallet.stakeInfo.userInfo[0].length
+								: 0
+						}})
 					</li>
 					<div
+						v-if="
+							this.$wallet.loaded == false && !this.$wallet.stakeInfo.userInfo.length
+						"
+						class="h-[187px] bg-[#061f5f] relative">
+						<loading
+							:active="
+								this.$wallet.loaded != -1 && !this.$wallet.stakeInfo.userInfo.length
+							"
+							:width="80"
+							:height="80"
+							color="#f59e0b"
+							background-color="#000000"
+							loader="dots"
+							:opacity="0.5"
+							:is-full-page="false" />
+					</div>
+					<div
+						v-else-if="
+							this.$wallet.stakeInfo.userInfo.length &&
+							this.$wallet.stakeInfo.userInfo[0].length == 0
+						"
+						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
+						<p class="text-center text-[#9ca3af]">No Staked Items</p>
+					</div>
+					<div
+						v-else
 						class="
 							h-[187px]
 							overflow-y-auto overflow-x-hidden
@@ -115,7 +161,7 @@
 							bg-[#061f5f]
 						">
 						<li
-							v-for="item in this.$wallet.stakeInfo.items"
+							v-for="item in this.$wallet.stakeInfo.userInfo[0]"
 							:key="`li-${item}`"
 							class="
 								flex
@@ -145,20 +191,45 @@
 			</div>
 		</div>
 
-		<div class="h-[100px] flex justify-center items-center">
+		<div class="h-[100px] flex justify-center items-center gap-4">
 			<button
 				class="
-					bg-[url('@/static/Buttons/btn-stake.gif')]
-					hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
+					bg-[url('@/static/Buttons/Lions-Blue_Stake_Button.png')]
+					hover:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Hover.png')]
+					active:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
 					w-[20%]
 				"
 				@click="onStake"
+				data-aos="fade-right"
+				data-aos-offset="0px"></button>
+			<button
+				class="
+					bg-[url('@/static/Buttons/Lions-Red_Unstake_Button.png')]
+					hover:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Hover.png')]
+					active:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Active.png')]
+					bg-no-repeat bg-contain bg-center
+					h-[60%]
+					w-[20%]
+				"
+				@click="onUnstake"
 				data-aos="fade-left"
 				data-aos-offset="0px"></button>
 		</div>
+		<loading
+			:active="this.$wallet.staking != ''"
+			:width="120"
+			:height="120"
+			color="#f59e0b"
+			background-color="#000000"
+			loader="dots"
+			:opacity="0.8"
+			:is-full-page="true"
+			:lock-scroll="true"
+			><p class="text-[#d1d5db]">{{ this.$wallet.staking }}</p></loading
+		>
+		<notifications group="foo" />
 	</section>
 </template>
 

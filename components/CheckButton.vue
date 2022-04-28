@@ -2,7 +2,17 @@
 	<button
 		@click="$emit('toggle')"
 		:style="backgroundStyles"
-		class="text-[9px] font-semibold py-1 px-3 border">
+		class="
+			text-[9px]
+			font-semibold
+			py-1
+			px-3
+			border
+			transition-[background-color,
+			color]
+			duration-[200ms]
+			ease-in-out
+		">
 		<slot></slot>
 	</button>
 </template>

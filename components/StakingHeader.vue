@@ -12,7 +12,9 @@
 				max-w-7xl
 			">
 			<div>
-				<span class="mr-5">Total Items Staked: 10</span>
+				<span class="mr-5"
+					>Total Items Staked: {{ this.$wallet.stakeInfo.total }}</span
+				>
 				<span>Heat Amount: {{ this.$wallet.heatAmount }}</span>
 			</div>
 			<div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
