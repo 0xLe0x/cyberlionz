@@ -97,7 +97,6 @@ export default (
 			)
 
 			this.heatAmount = await heatContract.balanceOf(this.account)
-			// console.log(this.heatAmount)
 		},
 
 		async getStakeInfo() {
@@ -125,7 +124,7 @@ export default (
 					group: 'foo',
 					type: 'error',
 					title: '',
-					text: 'Please Select Any Items To Stake',
+					text: 'Please Select Any Items To <b>Stake</b>',
 				})
 				return
 			}
@@ -176,7 +175,7 @@ export default (
 				Vue.notify({
 					group: 'foo',
 					type: 'success',
-					text: `Successfully Staked ${stakeCount} Item(s).`,
+					text: `Successfully Staked <b>${stakeCount} Item(s).</b>`,
 				})
 				Vue.notify({
 					group: 'foo',
@@ -198,7 +197,7 @@ export default (
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
-					text: 'Please Select Any Items To Unstake',
+					text: 'Please Select Any Items To <b>Unstake</b>',
 				})
 				return
 			}
@@ -227,7 +226,7 @@ export default (
 				Vue.notify({
 					group: 'foo',
 					type: 'success',
-					text: `Successfully Unstaked ${unstakeCount} Item(s). It may take some time to get updated inventory`,
+					text: `Successfully Unstaked <b>${unstakeCount} Item(s)</b>.`,
 				})
 				Vue.notify({
 					group: 'foo',

@@ -164,9 +164,9 @@
 							v-for="item in this.$wallet.stakeInfo.userInfo[0]"
 							:key="`li-${item}`"
 							class="
-								flex
+								flex flex-wrap
 								p-2
-								gap-[15%]
+								gap-[15%] gap-y-2
 								border-b
 								last:border-b-0
 								border-[#3dff6e] border-opacity-30

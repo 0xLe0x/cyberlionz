@@ -11,7 +11,7 @@
 				md:flex-row
 				max-w-7xl
 			">
-			<div>
+			<div class="flex flex-wrap justify-center">
 				<span class="mr-5"
 					>Total Items Staked: {{ this.$wallet.stakeInfo.total }}</span
 				>
