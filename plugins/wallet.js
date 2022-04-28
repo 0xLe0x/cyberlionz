@@ -80,7 +80,6 @@ export default (
 					metadata.data.id = i++
 					results.push(metadata.data)
 				}
-				console.log(results)
 				this.loaded = true
 				return results
 			} catch (err) {
@@ -114,7 +113,6 @@ export default (
 				'0xC24AB607B2c0206793d255393F7E3F0592b2db15'
 			)
 			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
-			console.log(this.stakeInfo)
 		},
 
 		async stake(stakeItems) {
