@@ -1,153 +1,291 @@
 <template>
-	<section class="relative bg-lionz-light-brown px-20" id="cubzwallet-section">
-		<div
-			class="
-				relative
-				bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
-				bg-no-repeat
-				bg-[length:100%_100%]
-				h-[100px]
-				flex
-				justify-around
-				items-center
-			">
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-stake.gif')]
-					hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-evolve.gif')]
-					hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-evolve-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-market.gif')]
-					hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-market-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-		</div>
-		<div
-			class="
-				relative
-				bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
-				bg-no-repeat
-				bg-[length:100%_100%]
-				px-12
-				py-3
-				h-[220px]
-			">
-			<loading
-				:active="!this.$wallet.loaded"
-				:width="120"
-				:height="120"
-				color="#f59e0b"
-				loader="dots"
-				:opacity="0.6"
-				:is-full-page="false" />
+	<section
+		class="
+			bg-[url('@/static/hero-bg-baked.jpg')]
+			relative
+			w-full
+			min-h-[53vw]
+			pb-[3rem]
+			overflow-hidden
+			bg-lionz-blue bg-cover
+		"
+		id="cubzwallet-section">
+		<StakingHeader />
+		<div class="px-[5%]">
 			<div
-				class="w-full h-[190px] bg-transparent absolute"
-				@drop="onDrop($event)"
-				@dragover.prevent
-				@dragenter.prevent></div>
-			<div class="ml-[18%] mt-1 text-gray-300">
-				<span class="text-xl">{{
-					$wallet.nfts === undefined ? 0 : $wallet.nfts.length
-				}}</span>
-				ITEMS
+				class="
+					relative
+					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
+					bg-no-repeat
+					bg-[length:100%_100%]
+					h-[50px]
+					md:h-[100px]
+					flex
+					justify-around
+					items-center
+					mb-3
+				">
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-stake.gif')]
+						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-evolve.gif')]
+						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-evolve-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-market.gif')]
+						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-market-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
 			</div>
-			<perfect-scrollbar :watch-options="true">
-				<div class="flex">
-					<p></p>
+			<div class="grid grid-cols-4 gap-4">
+				<div
+					class="
+						relative
+						bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
+						bg-no-repeat
+						bg-[length:100%_100%]
+						px-[5%]
+						py-3
+						h-[220px]
+						col-span-3
+					">
+					<loading
+						:active="this.$wallet.loaded == false"
+						:width="120"
+						:height="120"
+						color="#f59e0b"
+						background-color="#000000"
+						loader="dots"
+						:opacity="0.5"
+						:is-full-page="false" />
+					<div class="ml-[18%] mt-1 text-gray-300">
+						<span class="text-xl">{{
+							$wallet.nfts !== undefined && $wallet.nfts.length
+						}}</span>
+						ITEMS
+					</div>
 					<div
-						v-for="(item, i) in this.$wallet.nfts
-							? this.$wallet.nfts.filter((item, index) => index != stakeId)
-							: []"
-						:key="i"
-						class="flex-none p-3">
-						<img
-							:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
-							class="w-[140px] h-[140px] hover:cursor-pointer"
-							data-aos="fade-right"
-							@dragstart="startDrag($event, item.id)" />
+						v-if="
+							$wallet.nfts !== undefined &&
+							$wallet.loaded &&
+							$wallet.nfts.length == 0 &&
+							$wallet.loaded != -1
+						"
+						class="flex justify-center items-center h-[170px]">
+						<p class="text-[#d1d5db]">Inventory is empty</p>
+					</div>
+					<div
+						v-if="$wallet.loaded == -1"
+						class="flex justify-center items-center h-[170px]">
+						<p class="text-[#d1d5db]">Please connect your wallet</p>
+					</div>
+					<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+						<div
+							v-for="(item, i) in this.$wallet.nfts"
+							:key="i"
+							class="flex-none pt-3">
+							<div class="flex flex-col justify-center gap-y-1">
+								<img
+									:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
+									class="w-[120px] h-[120px]"
+									data-aos="fade-right" />
+								<CheckButton
+									@toggle="onStakeCheck(item.id)"
+									:value="stakeItems.includes(item.id)"
+									color="#db2777"
+									>Stake</CheckButton
+								>
+							</div>
+						</div>
 					</div>
 				</div>
-			</perfect-scrollbar>
-		</div>
-		<div class="flex justify-center mt-2">
-			<div
-				class="w-[140px] h-[140px] bg-gray-300"
-				@drop="onDrop($event)"
-				@dragover.prevent
-				@dragenter.prevent>
-				<img :src="stakeImage" data-aos="fade" v-if="stakeImage != undefined" />
+
+				<ul class="bg-opacity-30 border-4 rounded border-[#24142c]">
+					<li
+						class="text-[#3dff6e] text-center h-[25px] bg-[#24142c] overflow-hidden">
+						STAKED ITEMS({{
+							this.$wallet.stakeInfo.userInfo.length
+								? this.$wallet.stakeInfo.userInfo[0].length
+								: 0
+						}})
+					</li>
+					<div
+						v-if="
+							this.$wallet.loaded == false && !this.$wallet.stakeInfo.userInfo.length
+						"
+						class="h-[187px] bg-[#061f5f] relative">
+						<loading
+							:active="
+								this.$wallet.loaded != -1 && !this.$wallet.stakeInfo.userInfo.length
+							"
+							:width="80"
+							:height="80"
+							color="#f59e0b"
+							background-color="#000000"
+							loader="dots"
+							:opacity="0.5"
+							:is-full-page="false" />
+					</div>
+					<div
+						v-else-if="
+							this.$wallet.stakeInfo.userInfo.length &&
+							this.$wallet.stakeInfo.userInfo[0].length == 0
+						"
+						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
+						<p class="text-center text-[#9ca3af]">No Staked Items</p>
+					</div>
+					<div
+						v-else
+						class="
+							h-[187px]
+							overflow-y-auto overflow-x-hidden
+							hover:scroll-auto
+							custom-scrollbar
+							px-2
+							bg-[#061f5f]
+						">
+						<li
+							v-for="item in this.$wallet.stakeInfo.userInfo[0]"
+							:key="`li-${item}`"
+							class="
+								flex flex-wrap
+								p-2
+								gap-[15%] gap-y-2
+								border-b
+								last:border-b-0
+								border-[#3dff6e] border-opacity-30
+								justify-center
+							"
+							data-aos="fade-right"
+							data-aos-offset="0px">
+							<img
+								:src="`https://ipfs.io/ipfs/QmP6U3ED69wcZxAYL2xbNoNL2HNW7EmhBUB5LPToKzxmbv/${item}.gif`"
+								class="w-[50px] h-[50px] rounded" />
+							<div class="flex items-center">
+								<CheckButton
+									@toggle="onUnstakeCheck(item)"
+									:value="unstakeItems.includes(item)"
+									color="#28c074"
+									>Unstake</CheckButton
+								>
+							</div>
+						</li>
+					</div>
+				</ul>
 			</div>
 		</div>
-		<div class="h-[100px] flex justify-center items-center">
+
+		<div class="h-[100px] flex justify-center items-center gap-4">
 			<button
 				class="
-					bg-[url('@/static/Buttons/btn-stake.gif')]
-					hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
+					bg-[url('@/static/Buttons/Lions-Blue_Stake_Button.png')]
+					hover:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Hover.png')]
+					active:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
 					w-[20%]
 				"
-				@click="onStake"></button>
+				@click="onStake"
+				data-aos="fade-right"
+				data-aos-offset="0px"></button>
+			<button
+				class="
+					bg-[url('@/static/Buttons/Lions-Red_Unstake_Button.png')]
+					hover:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Hover.png')]
+					active:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Active.png')]
+					bg-no-repeat bg-contain bg-center
+					h-[60%]
+					w-[20%]
+				"
+				@click="onUnstake"
+				data-aos="fade-left"
+				data-aos-offset="0px"></button>
 		</div>
+		<loading
+			:active="this.$wallet.staking != ''"
+			:width="120"
+			:height="120"
+			color="#f59e0b"
+			background-color="#000000"
+			loader="dots"
+			:opacity="0.8"
+			:is-full-page="true"
+			:lock-scroll="true"
+			><p class="text-[#d1d5db]">{{ this.$wallet.staking }}</p></loading
+		>
+		<notifications group="foo" />
 	</section>
 </template>
+
+<style>
+::-webkit-scrollbar {
+	width: 15px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(214, 222, 225, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d6dee1;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #a8bbbf;
+}
+</style>
 
 <script>
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
-import axios from 'axios'
 
 export default {
 	data() {
 		return {
-			stakeId: undefined,
+			stakeItems: [],
+			unstakeItems: [],
 		}
 	},
 	components: {
 		Loading,
 		PerfectScrollbar,
 	},
-	computed: {
-		stakeImage() {
-			if (this.stakeId === undefined || this.$wallet.nfts.length === 0)
-				return undefined
-			return (
-				'https://ipfs.io/ipfs' + this.$wallet.nfts[this.stakeId].image.substring(6)
-			)
-		},
-	},
 	methods: {
-		startDrag(evt, index) {
-			evt.dataTransfer.dropEffect = 'copy'
-			evt.dataTransfer.effectAllowed = 'copyMove'
-			evt.dataTransfer.setData('metadata', index)
+		onStakeCheck(id) {
+			const index = this.stakeItems.indexOf(id)
+			if (index != -1) this.stakeItems.splice(index, 1)
+			else this.stakeItems.push(id)
 		},
-		onDrop(evt) {
-			const id = parseInt(evt.dataTransfer.getData('metadata'))
-			this.stakeId = id
+		onUnstakeCheck(id) {
+			const index = this.unstakeItems.indexOf(id)
+			if (index != -1) this.unstakeItems.splice(index, 1)
+			else this.unstakeItems.push(id)
 		},
 		onStake() {
-			this.$wallet.stake(this.stakeId)
+			this.$wallet.stake(this.stakeItems)
+		},
+		onUnstake() {
+			this.$wallet.unstake(this.unstakeItems)
 		},
 	},
 }
