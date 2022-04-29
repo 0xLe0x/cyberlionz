@@ -1,5 +1,8 @@
 <template>
+
 	<header class="w-full px-8 text-gray-700 absolute z-50">
+				<ConnectModal />
+
 		<div
 			class="
 				container

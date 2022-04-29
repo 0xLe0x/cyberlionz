@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { ethers } from 'ethers'
-import MetaMaskOnboarding from '@metamask/onboarding'
+
 import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
 import axios from 'axios'
 import siteConfig from '@/siteConfig.json'
@@ -17,6 +17,8 @@ export default (
         provider: null,
         nfts: [],
         loaded: false,
+        Web3Modal: null,
+        async contractState(){},
 
         get hexChainId() {
             return '0x' + this.network?.chainId?.toString(16)
@@ -28,15 +30,30 @@ export default (
             return this.network?.chainId
         },
 
-        async init() {
-            this.provider = new ethers.providers.Web3Provider(window.ethereum) //prefably diff node like Infura, Alchemy or Moralis
-            this.network = await this.provider.getNetwork()
-            const [account] = await this.provider.listAccounts()
+		async init() {
+			// skip this and autologin
+			if (!window.ethereum) {
+				window.ethereum = await this.Web3Modal.connect();
+			}
 
-            this.loaded = false
+			window.ethereum.on('accountsChanged', ([newAddress]) => {
+				console.info('accountsChanged', newAddress)
+				this.setAccount(newAddress)
+			})
+	
+			window.ethereum.on('chainChanged', (chainId) => {
+				console.info('chainChanged', chainId)
+				window.location.reload()
+			})
 
-            !!account && this.setAccount(account)
-        },
+			this.provider = new ethers.providers.Web3Provider(window.ethereum) //prefably diff node like Infura, Alchemy or Moralis
+			this.network = await this.provider.getNetwork()
+			const [account] = await this.provider.listAccounts()
+
+			if(account){
+				await this.setAccount(account)
+			}
+		},
 
         async getNfts(newAccount) {
             try {
@@ -121,12 +138,9 @@ export default (
         },
 
         async connect() {
-            if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
-                const onboarding = new MetaMaskOnboarding()
-                onboarding.startOnboarding()
-                return
-            }
-
+           if (!window.ethereum) {
+				window.ethereum = await this.Web3Modal.connect();
+			}
             wallet.network = await wallet.provider.getNetwork()
 
             const [account] = await wallet.provider.send('eth_requestAccounts')
