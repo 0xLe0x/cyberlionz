@@ -42,7 +42,8 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"></button>
+					"
+					@click="showModal = true"></button>
 				<button
 					class="
 						bg-[url('@/static/Buttons/btn-market.gif')]
@@ -51,7 +52,8 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"></button>
+					"
+					@click="showModal = true"></button>
 			</div>
 			<div class="grid grid-cols-4 gap-4">
 				<div
@@ -230,6 +232,14 @@
 			><p class="text-[#d1d5db]">{{ this.$wallet.staking }}</p></loading
 		>
 		<notifications group="foo" />
+		<VueFinalModal
+			v-model="showModal"
+			classes="modal-container"
+			content-class="modal-content">
+			<div>
+				<p class="text-gray-300">Coming Soon</p>
+			</div>
+		</VueFinalModal>
 	</section>
 </template>
 
@@ -253,22 +263,42 @@
 }
 </style>
 
+<style scoped>
+::v-deep .modal-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+::v-deep .modal-content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin: 0 1rem;
+	padding: 1rem;
+	border-color: #2d3748;
+	background-color: #1a202c;
+}
+</style>
+
 <script>
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+import { VueFinalModal } from 'vue-final-modal'
 
 export default {
 	data() {
 		return {
 			stakeItems: [],
 			unstakeItems: [],
+			showModal: false,
 		}
 	},
 	components: {
 		Loading,
 		PerfectScrollbar,
+		VueFinalModal,
 	},
 	methods: {
 		onStakeCheck(id) {

@@ -13,9 +13,13 @@
 			">
 			<div class="flex flex-wrap justify-center">
 				<span class="mr-5"
-					>Total Items Staked: {{ this.$wallet.stakeInfo.total }}</span
+					>Total Items Staked:
+					<span class="text-xl">{{ this.$wallet.stakeInfo.total }}</span></span
 				>
-				<span>Heat Amount: {{ this.$wallet.heatAmount }}</span>
+				<span
+					>Heat Amount:
+					<span class="text-xl">{{ this.$wallet.heatAmount }}</span></span
+				>
 			</div>
 			<div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
 				<connected-button />
