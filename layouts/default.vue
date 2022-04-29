@@ -1,12 +1,9 @@
 <template>
 	<div class="app">
-		<Header />
 		<Nuxt />
 	</div>
 </template>
 
 <script>
-	export default {}
+export default {}
 </script>
-
-
