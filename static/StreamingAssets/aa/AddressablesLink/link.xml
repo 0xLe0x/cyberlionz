@@ -125,6 +125,7 @@
     <type fullname="MoreMountains.InfiniteRunnerEngine.AnimatedSpawner" preserve="all" />
     <type fullname="MoreMountains.InfiniteRunnerEngine.TimedSpawner" preserve="all" />
     <type fullname="MoreMountains.InfiniteRunnerEngine.Coin" preserve="all" />
+    <type fullname="MoreMountains.InfiniteRunnerEngine.ZooverseScenario" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.CanvasRenderer" preserve="all" />
