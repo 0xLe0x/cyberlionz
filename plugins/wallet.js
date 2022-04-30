@@ -1,45 +1,41 @@
 import Vue from 'vue'
 import Notifications from 'vue-notification'
 import { ethers } from 'ethers'
-
-import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
 import axios from 'axios'
-import siteConfig from '@/siteConfig.json'
+import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
+
 Vue.use(Notifications)
-export default (
-	{
-		store,
-		$config: {
-			contractAddress,
-			stakingContractAddress,
-			heatContractAddress,
-			moralisApiKey,
-			cubzNetwork,
+export default async ({ $config, store }, inject) => {
+
+    const { clStakinABi, clStakinAddress, cyberLizonAbi,cyberLizonAddress, heatContractAbi, heatContractAddress } = $config.smartContracts
+    const { infuraId,moralisApiKey } = $config.providers
+
+	const wallet = Vue.observable({
+		account: null,
+		accountCompact: 'Connect',
+		network: null,
+		balance: null,
+		provider: null,
+		nfts: [],
+		stakeInfo: {
+			userInfo: [],
+			total: 0,
 		},
-	},
-	inject
-) => {
+		heatAmount: 0,
+		loaded: -1,
+		staking: '',
+    Web3Modal: null,
+    async contractState(){},
 
-    const wallet = Vue.observable({
-        account: null,
-        accountCompact: 'Connect',
-        network: null,
-        balance: null,
-        provider: null,
-        nfts: [],
-        loaded: false,
-        Web3Modal: null,
-        async contractState(){},
-
-        get hexChainId() {
-            return '0x' + this.network?.chainId?.toString(16)
-        },
-        get networkName() {
-            return this.network?.name
-        },
-        get chainId() {
-            return this.network?.chainId
-        },
+		get hexChainId() {
+			return '0x' + this.network?.chainId?.toString(16)
+		},
+		get networkName() {
+			return this.network?.name
+		},
+		get chainId() {
+			return this.network?.chainId
+		},
 
 		async init() {
 			// skip this and autologin
@@ -51,12 +47,10 @@ export default (
 				console.info('accountsChanged', newAddress)
 				this.setAccount(newAddress)
 			})
-	
 			window.ethereum.on('chainChanged', (chainId) => {
 				console.info('chainChanged', chainId)
 				window.location.reload()
 			})
-
 
 			this.provider = new ethers.providers.Web3Provider(window.ethereum) //prefably diff node like Infura, Alchemy or Moralis
 			this.network = await this.provider.getNetwork()
@@ -67,158 +61,283 @@ export default (
 			}
 		},
 
-        async getNfts(newAccount) {
+		async getNfts(newAccount) {
+            const nftContract = new ethers.Contract(cyberLizonAddress, cyberLizonAbi, this.provider)
             try {
-                let res = await axios.get(
-                    `https://deep-index.moralis.io/api/v2/${newAccount}/nft/${contractAddress}`,
-                    {
-                        params: {
-                            chain: cubzNetwork,
-                            format: 'decimal',
-                        },
-                        headers: {
-                            'x-api-key': moralisApiKey,
-                        },
-                    }
-                )
+				let res = await axios.get(
+					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
+					{
+						params: {
+							chain: 'Rinkeby',
+							format: 'decimal',
+						},
+						headers: {
+							'x-api-key': moralisApiKey,
+						},
+					}
+				)
 
-                const { chainId, abi, address } = siteConfig.smartContract
+				let results = [],
+					i = 0
+				for (let nft of res.data.result) {
+					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
+					let metadata = await axios.get(
+						'https://ipfs.io/ipfs' + token_uri.substring(6)
+					)
+					metadata.data.id = i++
+					results.push(metadata.data)
+				}
+				this.loaded = true
+				return results
+			} catch (err) {
+				console.log(err)
+			}
+		},
 
-                const nftContract = new ethers.Contract(contractAddress, abi, this.provider)
-                let results = [],
-                    i = 0
-                for (let nft of res.data.result) {
-                    const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
-                    let metadata = await axios.get(
-                        'https://ipfs.io/ipfs' + token_uri.substring(6)
-                    )
-                    console.log(metadata)
-                    metadata.data.id = i++
-                    results.push(metadata.data)
-                }
-                return results
-            } catch (err) {
-                console.log(err)
-            }
-        },
+		async getHeatInfo() {
 
-        async stake(stakeId) {
-            const nftContract = new ethers.Contract(
-                contractAddress,
-                siteConfig.smartContract.abi,
-                this.provider.getSigner()
-            )
-            const { abi, address } = siteConfig.stakingContract
+			const heatContract = new ethers.Contract(
+			    heatContractAddress,
+                heatContractAbi,
+				this.provider
+			)
 
-            const tokenId = parseInt(this.nfts[stakeId].name.split('#')[1])
-            try {
-                const tx = await nftContract.approve(address, tokenId)
-                await tx.wait()
+			this.heatAmount = await heatContract.balanceOf(this.account)
+		},
 
-                const stakingContract = new ethers.Contract(
-                    address,
-                    abi,
-                    this.provider.getSigner()
-                )
+		async getStakeInfo() {
+			this.stakeInfo.userInfo = []
 
-                await stakingContract.stake(0, tokenId)
-                alert('successfully staked!')
-            } catch (err) {
-                console.log(err)
-            }
-        },
 
-        async setAccount(newAccount) {
-            if (newAccount) {
-                this.loaded = false
-                this.account = newAccount
-                this.accountCompact = `${newAccount.substring(
-                    0,
-                    4
-                )}...${newAccount.substring(newAccount.length - 4)}`
+			const stakingContract = new ethers.Contract(
+				clStakinAddress,
+				clStakinABi,
+				this.provider
+			)
 
-                const balance = (await this.provider.getBalance(newAccount)).toString()
-                this.balance = `${(+ethers.utils.formatEther(balance)).toFixed(
-                    3
-                )} ${getCurrency(this.network.chainId)}`
-                this.nfts = await this.getNfts(newAccount)
-                console.log('nfts: ', this.nfts)
-                this.loaded = true
-            } else {
-                this.disconnect()
-            }
-        },
+			this.stakeInfo.userInfo = await stakingContract.getUserInformation(
+				this.account,
+				cyberLizonAddress
+			)
+			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
+		},
 
-        async connect() {
-           if (!window.ethereum) {
+		async stake(stakeItems) {
+			const stakeCount = stakeItems.length
+			if (!stakeCount) {
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Please Select Any Items To <b>Stake</b>',
+				})
+				return
+			}
+			const nftContract = new ethers.Contract(
+				cyberLizonAddress,
+				cyberLizonAbi,
+				this.provider.getSigner()
+			)
+
+
+			const tokenIds = stakeItems.map((id) =>
+				parseInt(this.nfts[id].name.split('#')[1])
+			)
+
+			try {
+				this.staking = 'Confirming...'
+
+				const isApproved = await nftContract.isApprovedForAll(
+					this.account,
+					clStakinAddress
+				)
+
+				if (!isApproved) {
+					const tx = await nftContract.setApprovalForAll(
+						clStakinAddress,
+						true
+					)
+					await tx.wait()
+				}
+
+				const stakingContract = new ethers.Contract(
+					clStakinAddress,
+					clStakinABi,
+					this.provider.getSigner()
+				)
+
+				const tx_stake = await stakingContract.batchStake(0, tokenIds)
+				this.staking = 'Staking...'
+				await tx_stake.wait()
+
+				this.nfts = []
+				this.loaded = false
+
+				await this.getStakeInfo()
+				await this.getHeatInfo()
+				await this.getNfts(this.account)
+
+				Vue.notify({
+					group: 'foo',
+					type: 'success',
+					text: `Successfully Staked <b>${stakeCount} Item(s).</b>`,
+				})
+				Vue.notify({
+					group: 'foo',
+					type: 'warn',
+					text: `It may take some time to get updated inventory. Your items may not be displayed correctly.`,
+					duration: 8000,
+				})
+
+				this.staking = ''
+			} catch (err) {
+				console.log(err)
+				this.staking = ''
+			}
+		},
+
+		async unstake(unstakeItems) {
+			const unstakeCount = unstakeItems.length
+			if (!unstakeCount) {
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					text: 'Please Select Any Items To <b>Unstake</b>',
+				})
+				return
+			}
+
+
+			try {
+				this.staking = 'Confirming...'
+
+				const stakingContract = new ethers.Contract(
+					clStakinAddress,
+                    clStakinABi,
+					this.provider.getSigner()
+				)
+
+				const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems)
+				this.staking = 'Unstaking...'
+				await tx_unstake.wait()
+
+				this.nfts = []
+				this.loaded = false
+
+				await this.getStakeInfo()
+				await this.getHeatInfo()
+				await this.getNfts(this.account)
+
+				Vue.notify({
+					group: 'foo',
+					type: 'success',
+					text: `Successfully Unstaked <b>${unstakeCount} Item(s)</b>.`,
+				})
+				Vue.notify({
+					group: 'foo',
+					type: 'warn',
+					text: `It may take some time to get updated inventory. Your items may not be displayed correctly.`,
+					duration: 8000,
+				})
+
+				this.staking = ''
+			} catch (err) {
+				console.log(err)
+				this.staking = ''
+			}
+		},
+
+		async setAccount(newAccount) {
+			if (newAccount) {
+				this.loaded = false
+				this.account = newAccount
+				this.accountCompact = `${newAccount.substring(
+					0,
+					4
+				)}...${newAccount.substring(newAccount.length - 4)}`
+
+				const balance = (await this.provider.getBalance(newAccount)).toString()
+				this.balance = `${(+ethers.utils.formatEther(balance)).toFixed(
+					3
+				)} ${getCurrency(this.network.chainId)}`
+				this.nfts = await this.getNfts(newAccount)
+				this.getStakeInfo()
+				this.getHeatInfo()
+			} else {
+				this.disconnect()
+			}
+		},
+
+		async connect() {
+            if (!window.ethereum) {
 				window.ethereum = await this.Web3Modal.connect();
 			}
-            wallet.network = await wallet.provider.getNetwork()
 
-            const [account] = await wallet.provider.send('eth_requestAccounts')
-            console.info('wallet connected', { account })
+			wallet.network = await wallet.provider.getNetwork()
 
-            if (account) {
-                // await wallet.setAccount(account)
-            }
-        },
+			const [account] = await wallet.provider.send('eth_requestAccounts')
+			console.info('wallet connected', { account })
 
-        disconnect() {
-            wallet.account = null
-            wallet.accountCompact = null
-            wallet.balance = null
-            wallet.nfts = []
-            wallet.loaded = false
-        },
+			if (account) {
+				// await wallet.setAccount(account)
+			}
+		},
 
-        async switchNetwork(chainId) {
-            if (!chainId || this.chainId === chainId || this.hexChainId === chainId) {
-                return
-            }
+		disconnect() {
+			wallet.account = null
+			wallet.accountCompact = null
+			wallet.balance = null
+			wallet.nfts = []
+			wallet.loaded = false
+		},
 
-            const config = CHAINID_CONFIG_MAP[chainId]
+		async switchNetwork(chainId) {
+			if (!chainId || this.chainId === chainId || this.hexChainId === chainId) {
+				return
+			}
 
-            try {
-                await this.provider.send('wallet_switchEthereumChain', [
-                    { chainId: config.chainId },
-                ])
+			const config = CHAINID_CONFIG_MAP[chainId]
 
-                // await this.init()
+			try {
+				await this.provider.send('wallet_switchEthereumChain', [
+					{ chainId: config.chainId },
+				])
 
-                // create a small delay to let the wallet reset to new network
-                return new Promise((resolve) => {
-                    setTimeout(() => resolve(), 1000)
-                })
-            } catch (err) {
-                // This error code indicates that the chain has not been added to MetaMask.
-                if (err.code === 4902) {
-                    await this.provider.send('wallet_addEthereumChain', [config])
-                } else {
-                    throw err
-                }
-            }
-        },
+				// await this.init()
 
-        async requestSignature(nonce) {
-            const signer = this.provider.getSigner()
-            const msg = `Hi there from the Zero Code NFT! Sign this unique ID to sign in: ${nonce}`
-            return signer.signMessage(msg)
-        },
-    })
+				// create a small delay to let the wallet reset to new network
+				return new Promise((resolve) => {
+					setTimeout(() => resolve(), 1000)
+				})
+			} catch (err) {
+				// This error code indicates that the chain has not been added to MetaMask.
+				if (err.code === 4902) {
+					await this.provider.send('wallet_addEthereumChain', [config])
+				} else {
+					throw err
+				}
+			}
+		},
 
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', ([newAddress]) => {
-            console.info('accountsChanged', newAddress)
-            wallet.setAccount(newAddress)
-        })
+		async requestSignature(nonce) {
+			const signer = this.provider.getSigner()
+			const msg = `Hi there from the Zero Code NFT! Sign this unique ID to sign in: ${nonce}`
+			return signer.signMessage(msg)
+		},
+	})
 
-        window.ethereum.on('chainChanged', async (chainId) => {
-            console.info('chainChanged', chainId)
-            wallet.init()
-        })
-        wallet.init()
-    }
+	if (window.ethereum) {
+		window.ethereum.on('accountsChanged', ([newAddress]) => {
+			console.info('accountsChanged', newAddress)
+			wallet.setAccount(newAddress)
+		})
 
-    inject('wallet', wallet)
+		window.ethereum.on('chainChanged', async (chainId) => {
+			console.info('chainChanged', chainId)
+			wallet.init()
+		})
+		wallet.init()
+	}
 
+	inject('wallet', wallet)
 }
