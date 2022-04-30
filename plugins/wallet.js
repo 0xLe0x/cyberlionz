@@ -1,14 +1,25 @@
 import Vue from 'vue'
+import Notifications from 'vue-notification'
 import { ethers } from 'ethers'
 
 import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
 import axios from 'axios'
 import siteConfig from '@/siteConfig.json'
-
+Vue.use(Notifications)
 export default (
-    { store, $config: { contractAddress, moralisApiKey, cubzNetwork } },
-    inject
+	{
+		store,
+		$config: {
+			contractAddress,
+			stakingContractAddress,
+			heatContractAddress,
+			moralisApiKey,
+			cubzNetwork,
+		},
+	},
+	inject
 ) => {
+
     const wallet = Vue.observable({
         account: null,
         accountCompact: 'Connect',
@@ -45,6 +56,7 @@ export default (
 				console.info('chainChanged', chainId)
 				window.location.reload()
 			})
+
 
 			this.provider = new ethers.providers.Web3Provider(window.ethereum) //prefably diff node like Infura, Alchemy or Moralis
 			this.network = await this.provider.getNetwork()
@@ -208,4 +220,5 @@ export default (
     }
 
     inject('wallet', wallet)
+
 }

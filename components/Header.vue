@@ -55,7 +55,7 @@
 						>FAQ</a
 					>
 				</nav>
-				<nav class="md:flex items-center mb-5 text-sm md:mb-0 md:pl-10">
+				<!-- <nav class="md:flex items-center mb-5 text-sm md:mb-0 md:pl-10">
 					<a
 						href="/stake"
 						class="
@@ -93,7 +93,7 @@
 						"
 						>Market</a
 					>
-				</nav>
+				</nav> -->
 			</div>
 			<div class="inline-flex items-center space-x-6 lg:justify-end">
 				<connected-button />

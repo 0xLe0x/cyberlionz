@@ -127,6 +127,8 @@ export default {
 	publicRuntimeConfig: {
 		infuraId: process.env.INFURA_SECRET,
 		contractAddress: process.env.CONTRACT_ADDRESS,
+		stakingContractAddress: process.env.STAKING_CONTRACT_ADDRESS,
+		heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
 		moralisApiKey: process.env.MORALIS_API_KEY,
 		cubzNetwork: process.env.CUBZ_NETWORK,
 		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
