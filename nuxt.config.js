@@ -15,7 +15,10 @@ export default {
 			heatContractAbi: 	heatContractAbi,
 			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
 			cubzNetwork: process.env.CUBZ_NETWORK,
+			chainId: process.env.CHAIN_ID,
+			
 		},
+		hasDelayedReveal: false,
 		providers:{
 			infuraId: process.env.INFURA_SECRET,
 			moralisApiKey: process.env.MORALIS_API_KEY,	

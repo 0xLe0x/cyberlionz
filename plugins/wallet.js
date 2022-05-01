@@ -6,9 +6,15 @@ import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
 
 Vue.use(Notifications)
 export default async ({ $config, store }, inject) => {
-
-    const { clStakinABi, clStakinAddress, cyberLizonAbi,cyberLizonAddress, heatContractAbi, heatContractAddress } = $config.smartContracts
-    const { infuraId,moralisApiKey } = $config.providers
+	const {
+		clStakinABi,
+		clStakinAddress,
+		cyberLizonAbi,
+		cyberLizonAddress,
+		heatContractAbi,
+		heatContractAddress,
+	} = $config.smartContracts
+	const { infuraId, moralisApiKey } = $config.providers
 
 	const wallet = Vue.observable({
 		account: null,
@@ -24,8 +30,8 @@ export default async ({ $config, store }, inject) => {
 		heatAmount: 0,
 		loaded: -1,
 		staking: '',
-    Web3Modal: null,
-    async contractState(){},
+		Web3Modal: null,
+		async contractState() {},
 
 		get hexChainId() {
 			return '0x' + this.network?.chainId?.toString(16)
@@ -40,7 +46,7 @@ export default async ({ $config, store }, inject) => {
 		async init() {
 			// skip this and autologin
 			if (!window.ethereum) {
-				window.ethereum = await this.Web3Modal.connect();
+				window.ethereum = await this.Web3Modal.connect()
 			}
 
 			window.ethereum.on('accountsChanged', ([newAddress]) => {
@@ -56,14 +62,18 @@ export default async ({ $config, store }, inject) => {
 			this.network = await this.provider.getNetwork()
 			const [account] = await this.provider.listAccounts()
 
-			if(account){
+			if (account) {
 				await this.setAccount(account)
 			}
 		},
 
 		async getNfts(newAccount) {
-            const nftContract = new ethers.Contract(cyberLizonAddress, cyberLizonAbi, this.provider)
-            try {
+			const nftContract = new ethers.Contract(
+				cyberLizonAddress,
+				cyberLizonAbi,
+				this.provider
+			)
+			try {
 				let res = await axios.get(
 					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
 					{
@@ -95,10 +105,9 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async getHeatInfo() {
-
 			const heatContract = new ethers.Contract(
-			    heatContractAddress,
-                heatContractAbi,
+				heatContractAddress,
+				heatContractAbi,
 				this.provider
 			)
 
@@ -107,7 +116,6 @@ export default async ({ $config, store }, inject) => {
 
 		async getStakeInfo() {
 			this.stakeInfo.userInfo = []
-
 
 			const stakingContract = new ethers.Contract(
 				clStakinAddress,
@@ -139,7 +147,6 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 
-
 			const tokenIds = stakeItems.map((id) =>
 				parseInt(this.nfts[id].name.split('#')[1])
 			)
@@ -153,10 +160,7 @@ export default async ({ $config, store }, inject) => {
 				)
 
 				if (!isApproved) {
-					const tx = await nftContract.setApprovalForAll(
-						clStakinAddress,
-						true
-					)
+					const tx = await nftContract.setApprovalForAll(clStakinAddress, true)
 					await tx.wait()
 				}
 
@@ -207,13 +211,12 @@ export default async ({ $config, store }, inject) => {
 				return
 			}
 
-
 			try {
 				this.staking = 'Confirming...'
 
 				const stakingContract = new ethers.Contract(
 					clStakinAddress,
-                    clStakinABi,
+					clStakinABi,
 					this.provider.getSigner()
 				)
 
@@ -246,6 +249,31 @@ export default async ({ $config, store }, inject) => {
 				this.staking = ''
 			}
 		},
+		async setContract() {
+			if (this.network.chainId !== $config.smartContracts.chainId) {
+				await this.switchNetwork($config.smartContracts.chainId)
+			}
+			if (!this.account) {
+				await this.connect()
+			}
+
+			const contract = new ethers.Contract(cyberLizonAddress, cyberLizonAbi, this.provider.getSigner())
+
+			this.contract = contract
+			console.log(`Contected to: ${$config.smartContracts.cyberLizonAddress} Contract`)
+		},
+		async getContract(){
+			if(this.contract)
+			  return this.contract
+			try{
+				await this.setContract()
+				return this.contract
+			} catch(e) {
+				console.log(e)
+			}
+
+		},
+
 
 		async setAccount(newAccount) {
 			if (newAccount) {
@@ -269,8 +297,8 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async connect() {
-            if (!window.ethereum) {
-				window.ethereum = await this.Web3Modal.connect();
+			if (!window.ethereum) {
+				window.ethereum = await this.Web3Modal.connect()
 			}
 
 			wallet.network = await wallet.provider.getNetwork()
