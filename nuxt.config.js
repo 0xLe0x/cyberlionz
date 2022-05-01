@@ -46,7 +46,7 @@ export default {
 			{
 				hid: 'canonical',
 				rel: 'canonical',
-				href: 'localhost-changeme',
+				href: process.env.URL,
 			},
 			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
 			{
@@ -109,7 +109,7 @@ export default {
 	},
 
 	sitemap: {
-		hostname: 'localhost-changeme',
+		hostname:process.env.URL,
 		exclude: ['/admin/**'],
 		defaults: {
 			changefreq: 'daily',
