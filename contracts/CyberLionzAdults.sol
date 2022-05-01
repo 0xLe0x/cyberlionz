@@ -19,7 +19,7 @@ contract CyberLionzAdults is ERC721, Ownable {
     enum SaleStatus{ PAUSED, PRESALE, PUBLIC }
 
     Counters.Counter private _tokenIds;
-
+    address private immutable _revenueRecipient;
     bytes32 public presaleMerkleRoot;
 
     uint public constant PUBLIC_MINT_LIMIT = 6;
@@ -35,9 +35,10 @@ contract CyberLionzAdults is ERC721, Ownable {
     mapping(address => uint) private _mintedCountMap;
     mapping(address => bool) private _presaleMap;
 
-    constructor(string memory baseUri, bytes32 merkleRoot) ERC721("CyberLionzAdults", "CLA") {
+    constructor(string memory baseUri, bytes32 merkleRoot, address revenueRecipient) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
         presaleMerkleRoot = merkleRoot;
+        _revenueRecipient = revenueRecipient;
     }
 
     function setPresaleMerkleRoot(bytes32 merkleRoot) onlyOwner external {
@@ -90,15 +91,10 @@ contract CyberLionzAdults is ERC721, Ownable {
     /// @notice Withdraw's contract's balance to stakeholders
     function withdraw() external {
         uint256 balance = address(this).balance;
-        require(balance > 0, "No balance");
-
-        uint256 payout1 = balance * 6500 / 10000; 
-        uint256 payout2 = balance * 2500 / 10000;
-        uint256 payout3 = balance * 1000 / 10000; 
-        //TODO: necessary addresses?
-        payable(0xaff176E6bedDdF28cBBC8579C54A81ACa7b90f4c).transfer(payout1);
-        payable(0x18316EAD5871424d13c13556bfBa43e7eC118f21).transfer(payout2);
-        payable(0x09949453Aea9876764fEB874b198693BaCD7E0d3).transfer(payout3);
+        require(balance > 0, "withdraw: no balance");
+        
+        (bool success, ) = payable(_revenueRecipient).call{ value: balance } ("");
+        require(success, "withdraw: withdraw failed");
     }
 
     function onWhitelist(address addr, bytes32[] calldata _merkleProof) public view returns(bool) {
