@@ -1,14 +1,30 @@
-import getSiteMeta from './utils/siteMeta'
-
-const siteConfig = require('./siteConfig.json')
-const { title, description, url, iconName } = siteConfig
+import { abi  as cyberLizonAbi  } from  './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
+import { abi as clStakinABi } from  './artifacts/contracts/CLstaking.sol/CyberlionStaking.json'
+import { abi as heatContractAbi } from  './artifacts/contracts/HeatToken.sol/HeatToken.json'
 
 export default {
-	// Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-	ssr: false,
+	ssr: false, 
+	target: 'static', //Static page generation 
 
-	// Target: https://go.nuxtjs.dev/config-target
-	target: 'static',
+	publicRuntimeConfig: {
+		smartContracts: {
+			clStakinABi:clStakinABi,
+			clStakinAddress:process.env.STAKING_CONTRACT_ADDRESS,
+			cyberLizonAbi:cyberLizonAbi,
+			cyberLizonAddress: process.env.CONTRACT_ADDRESS,
+			heatContractAbi: 	heatContractAbi,
+			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
+			cubzNetwork: process.env.CUBZ_NETWORK,
+			chainId: process.env.CHAIN_ID,
+			
+		},
+		hasDelayedReveal: false,
+		providers:{
+			infuraId: process.env.INFURA_SECRET,
+			moralisApiKey: process.env.MORALIS_API_KEY,	
+		},
+		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
+	},
 
 	env: {
 		hackslipsBackendServer:
@@ -17,7 +33,7 @@ export default {
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
 	head: {
-		title: title,
+		title:'',
 		htmlAttrs: {
 			lang: 'en',
 		},
@@ -25,18 +41,12 @@ export default {
 			{ charset: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' }, // mobile responsive https://search.google.com/test/mobile-friendly
 			{ name: 'format-detection', content: 'telephone=no' },
-			...getSiteMeta({
-				url: url,
-				title: title,
-				description: description,
-				mainImage: `https://cyberlionz.io/cyberlionz-twitimg.gif`,
-			}),
 		],
 		link: [
 			{
 				hid: 'canonical',
 				rel: 'canonical',
-				href: url,
+				href: process.env.URL,
 			},
 			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
 			{
@@ -64,7 +74,6 @@ export default {
 	// Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
 	plugins: [
 		'@/plugins/wallet',
-		'@/plugins/siteConfig',
 		{ src: '@/plugins/aos', mode: 'client' },
 	],
 
@@ -100,7 +109,7 @@ export default {
 	},
 
 	sitemap: {
-		hostname: url,
+		hostname:process.env.URL,
 		exclude: ['/admin/**'],
 		defaults: {
 			changefreq: 'daily',
@@ -123,15 +132,6 @@ export default {
 		transpile:[
 			'web3modal-vue'
 		]
-	},
-	publicRuntimeConfig: {
-		infuraId: process.env.INFURA_SECRET,
-		contractAddress: process.env.CONTRACT_ADDRESS,
-		stakingContractAddress: process.env.STAKING_CONTRACT_ADDRESS,
-		heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
-		moralisApiKey: process.env.MORALIS_API_KEY,
-		cubzNetwork: process.env.CUBZ_NETWORK,
-		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
 	},
 
 	axios: {
