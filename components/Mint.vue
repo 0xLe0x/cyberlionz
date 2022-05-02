@@ -24,7 +24,6 @@ export default {
 		}
 	},
 	async mounted() {
-		const { chainId, abi, address } = this.$siteConfig.smartContract
 		try {
 			if (!this.$wallet.provider) return
 
@@ -32,7 +31,7 @@ export default {
 				await this.$wallet.switchNetwork(chainId)
 			}
 
-			const nftContract = new ethers.Contract(address, abi, this.$wallet.provider)
+			const nftContract = await  this.$wallet.getContract()
 			this.mintedCount = +(await nftContract.totalSupply())
 		} catch (err) {
 			console.error({ err })
@@ -59,19 +58,14 @@ export default {
 
 			try {
 
-				if (this.$wallet.chainId !== chainId) {
-					await this.$wallet.switchNetwork(chainId)
-				}
+			
 
 				if (!this.$wallet.account) {
 					await this.$wallet.connect()
 				}
 
-				const signedContract = new ethers.Contract(
-					address,
-					abi,
-					this.$wallet.provider.getSigner()
-				)
+	
+				const signedContract = await  this.$wallet.getContract()
 				const saleStatus = await signedContract.saleStatus()
 				console.log('sale status', saleStatus)
 				const SaleStatus = { PAUSED: 0, PRESALE: 1, PUBLIC: 2}
