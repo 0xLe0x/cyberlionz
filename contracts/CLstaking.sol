@@ -8,17 +8,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-<<<<<<< HEAD
-// import "@openzeppelin/contracts/ERC20PresetMinterPauser.sol";
-
-
-
-import "./libs/Array.sol";
-=======
 
 import "./libs/Array.sol";
 
->>>>>>> a2fdb4ab36ac78a6369b7b062d2924f119da5208
 interface Mintable {
    function mint(address to, uint256 amount) external returns(bool);
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
