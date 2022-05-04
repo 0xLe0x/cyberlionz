@@ -8,18 +8,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/ERC20PresetMinterPauser.sol";
-
-
-
 
 import "./libs/Array.sol";
-interface mintable {
+
+interface Mintable {
    function mint(address to, uint256 amount) external returns(bool);
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
 }
+
 contract CyberlionStaking is Ownable {
-    
     using SafeMath for uint256;
 
     using Address for address;
