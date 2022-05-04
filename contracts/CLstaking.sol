@@ -7,20 +7,24 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "@openzeppelin/contracts/ERC20PresetMinterPauser.sol";
+
 
 
 
 import "./libs/Array.sol";
-
+interface mintable {
+   function mint(address to, uint256 amount) external  returns(bool);
+}
 contract CyberlionStaking is Ownable {
+    
     using SafeMath for uint256;
     using Address for address;
     using Array for uint256[];
 
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10 * 60;
-
-    ERC20 public rewardsTokenAddress;
+    mintable rewardsTokenAddress;
 
     struct UserInfo {
         mapping(address => uint256[]) stakedTokens;
@@ -39,7 +43,7 @@ contract CyberlionStaking is Ownable {
 
     CollectionInfo[] public collectionInfo;
 
-    constructor(ERC20 _rewardsToken) {
+    constructor(mintable _rewardsToken) {
         rewardsTokenAddress = _rewardsToken;
     }
 
@@ -118,17 +122,18 @@ contract CyberlionStaking is Ownable {
             .mul(collection.rewardPerDay);
 
         
-        ERC20(rewardsTokenAddress).transferFrom(address(this) , msg.sender,payableAmount);
-                
+        // IERC20().transferFrom(address(this) , msg.sender,payableAmount);
+    
         mintMinerReward(payableAmount);
     }
 
 
         function mintMinerReward(uint256 payableAmount) public {
-            rewardsTokenAddress._mint(address(this), payableAmount);
+
+            rewardsTokenAddress.mint(address(this), payableAmount);
         }
     
-        function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyOwner {
+        function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
         );
@@ -138,7 +143,7 @@ contract CyberlionStaking is Ownable {
         uint256 _collectionID,
         address _collectionAddress,
         uint256 _rewardPerDay
-    ) public onlyOwner {
+    ) public  {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         collection.collectionAddress = _collectionAddress;
         collection.rewardPerDay = _rewardPerDay;
