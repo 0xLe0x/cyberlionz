@@ -16,7 +16,7 @@ contract HeatToken is ERC20, AccessControl {
     function issueToken(uint256 amount) public{
         _mint(msg.sender, amount);
     }
-    function mint(address to, uint256 amount) external {
+    function mint(address to, uint256 amount) public {
         _mint(to, amount);
 
     }

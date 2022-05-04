@@ -7,10 +7,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/MintableToken.sol";
+
+
+
 import "./libs/Array.sol";
 
-contract CyberlionStaking is Ownable{
+contract CyberlionStaking is Ownable {
     using SafeMath for uint256;
     using Address for address;
     using Array for uint256[];
@@ -18,7 +20,7 @@ contract CyberlionStaking is Ownable{
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10 * 60;
 
-    address public rewardsTokenAddress;
+    ERC20 public rewardsTokenAddress;
 
     struct UserInfo {
         mapping(address => uint256[]) stakedTokens;
@@ -37,9 +39,8 @@ contract CyberlionStaking is Ownable{
 
     CollectionInfo[] public collectionInfo;
 
-    constructor(address _rewardsToken) {
+    constructor(ERC20 _rewardsToken) {
         rewardsTokenAddress = _rewardsToken;
-
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
@@ -115,13 +116,19 @@ contract CyberlionStaking is Ownable{
         uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
-        
-        IERC20(rewardsTokenAddress).transferFrom(address(this) , msg.sender,payableAmount);
-       rewardsTokenAddress.issueToken.call(payableAmount);
 
+        
+        ERC20(rewardsTokenAddress).transferFrom(address(this) , msg.sender,payableAmount);
+                
+        mintMinerReward(payableAmount);
     }
 
-    function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyOwner {
+
+        function mintMinerReward(uint256 payableAmount) public {
+            rewardsTokenAddress._mint(address(this), payableAmount);
+        }
+    
+        function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyOwner {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
         );
