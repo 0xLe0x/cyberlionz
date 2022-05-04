@@ -10,7 +10,7 @@ contract HeatToken is ERC20, AccessControl {
     bytes32 private  _ADMIN_ROLE = keccak256("ADMIN");
 
     constructor() ERC20("HeatToken", "HT") {
-        _setupRole(_ADMIN_ROLE, msg.sender);
+
     }
     function _setRole(address minter) public {
         _setupRole(_MINTER_ROLE, minter);
@@ -18,7 +18,6 @@ contract HeatToken is ERC20, AccessControl {
     
 
     function mint(address to, uint256 amount) public {
-        _checkRole("MINTER_ROLE",msg.sender);
         _mint(to, amount);
 
     }

@@ -3,6 +3,7 @@
 pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -20,6 +21,7 @@ interface mintable {
 contract CyberlionStaking is Ownable {
     
     using SafeMath for uint256;
+
     using Address for address;
     using Array for uint256[];
 
@@ -44,7 +46,7 @@ contract CyberlionStaking is Ownable {
 
     CollectionInfo[] public collectionInfo;
 
-    constructor(mintable _rewardsToken, _heatClAddress) {
+    constructor(mintable _rewardsToken, address _heatClAddress) {
         rewardsTokenAddress = _rewardsToken;
         heatClAddress = _heatClAddress;
     }
