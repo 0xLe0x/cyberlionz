@@ -7,18 +7,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+// import "@openzeppelin/contracts/token/MintableToken.sol";
 import "./libs/Array.sol";
 
-contract CyberlionStaking is Ownable {
+contract CyberlionStaking is Ownable{
     using SafeMath for uint256;
     using Address for address;
     using Array for uint256[];
 
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
-    uint256 constant SECONDS_PER_DAY = 24 * 60 * 60;
+    uint256 constant SECONDS_PER_DAY = 10 * 60;
 
-    IERC20 public rewardsToken;
+    address public rewardsTokenAddress;
 
     struct UserInfo {
         mapping(address => uint256[]) stakedTokens;
@@ -37,8 +37,9 @@ contract CyberlionStaking is Ownable {
 
     CollectionInfo[] public collectionInfo;
 
-    constructor(IERC20 _rewardsToken) {
-        rewardsToken = _rewardsToken;
+    constructor(address _rewardsToken) {
+        rewardsTokenAddress = _rewardsToken;
+
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
@@ -111,11 +112,13 @@ contract CyberlionStaking is Ownable {
     function _claimReward(address _userAddress, uint256 _collectionID) internal {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-
         uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
-        rewardsToken.transfer(_userAddress, payableAmount);
+        
+        IERC20(rewardsTokenAddress).transferFrom(address(this) , msg.sender,payableAmount);
+       rewardsTokenAddress.issueToken.call(payableAmount);
+
     }
 
     function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyOwner {

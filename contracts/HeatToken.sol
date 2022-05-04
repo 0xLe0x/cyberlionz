@@ -8,14 +8,15 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract HeatToken is ERC20, AccessControl {
     bytes32 private  _MINTER_ROLE = keccak256("MINTER_ROLE");
 
-
-    constructor(address minter) ERC20("HeatToken", "HT") {
+    constructor() ERC20("HeatToken", "HT") {}
+    function _setRole(address minter) public {
         _setupRole(_MINTER_ROLE, minter);
-
     }
-
+    
+    function issueToken(uint256 amount) public{
+        _mint(msg.sender, amount);
+    }
     function mint(address to, uint256 amount) external {
-        require(hasRole(_MINTER_ROLE, msg.sender), "DOES_NOT_HAVE_MINTER_ROLE");
         _mint(to, amount);
 
     }
@@ -23,6 +24,7 @@ contract HeatToken is ERC20, AccessControl {
     function _setApprovalForAll(address owner, address operator) public {
         _setApprovalForAll(owner, operator);
     }
+
 
    function _burn(uint256 tokenId) external {
        // Todo write this funcionality
