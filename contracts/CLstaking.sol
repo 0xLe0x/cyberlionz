@@ -14,7 +14,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./libs/Array.sol";
 interface mintable {
-   function mint(address to, uint256 amount) external  returns(bool);
+   function mint(address to, uint256 amount) external returns(bool);
+   function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
 }
 contract CyberlionStaking is Ownable {
     
@@ -25,7 +26,7 @@ contract CyberlionStaking is Ownable {
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10 * 60;
     mintable rewardsTokenAddress;
-
+    address heatClAddress;
     struct UserInfo {
         mapping(address => uint256[]) stakedTokens;
         mapping(address => uint256) timeStaked;
@@ -43,8 +44,9 @@ contract CyberlionStaking is Ownable {
 
     CollectionInfo[] public collectionInfo;
 
-    constructor(mintable _rewardsToken) {
+    constructor(mintable _rewardsToken, _heatClAddress) {
         rewardsTokenAddress = _rewardsToken;
+        heatClAddress = _heatClAddress;
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
@@ -120,19 +122,17 @@ contract CyberlionStaking is Ownable {
         uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
-
-        
-        // IERC20().transferFrom(address(this) , msg.sender,payableAmount);
-    
-        mintMinerReward(payableAmount);
+            mintMinerReward(payableAmount);
+            rewardsTokenAddress.transferFrom(heatClAddress, msg.sender,  payableAmount);
     }
 
 
         function mintMinerReward(uint256 payableAmount) public {
+            rewardsTokenAddress.mint(heatClAddress, payableAmount);
 
-            rewardsTokenAddress.mint(address(this), payableAmount);
+
         }
-    
+
         function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
