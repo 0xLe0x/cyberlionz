@@ -9,31 +9,16 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-
-
-
 interface Mintable {
    function mint(address to, uint256 amount) external returns(bool);
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
-}
-library Array {
-    function removeElement(uint256[] storage _array, uint256 _element) public {
-        for (uint256 i; i < _array.length; i++) {
-            if (_array[i] == _element) {
-                _array[i] = _array[_array.length - 1];
-                _array.pop();
-                break;
-            }
-        }
-    }
 }
 
 contract CyberlionStaking is Ownable {
     using SafeMath for uint256;
 
     using Address for address;
-    using Array for uint256[];
-
+    
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10*60;
     Mintable rewardsTokenAddress;
@@ -57,7 +42,6 @@ contract CyberlionStaking is Ownable {
 
     constructor(Mintable _rewardsToken) {
         rewardsTokenAddress = _rewardsToken;
-
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
@@ -112,7 +96,7 @@ contract CyberlionStaking is Ownable {
 
         _claimReward(msg.sender, _collectionID);
         
-        user.stakedTokens[collection.collectionAddress].removeElement(_tokenID);
+        removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
         delete tokenOwners[collection.collectionAddress][_tokenID];
 
         user.timeStaked[collection.collectionAddress] = block.timestamp;
@@ -138,7 +122,7 @@ contract CyberlionStaking is Ownable {
 
 
 
-        function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
+    function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
         );
@@ -170,5 +154,15 @@ contract CyberlionStaking is Ownable {
         bytes calldata data
     ) public returns (bytes4) {
         return _ERC721_RECEIVED;
+    }
+
+    function removeElement(uint256[] storage _array, uint256 _element) internal {
+        for (uint256 i; i < _array.length; i++) {
+            if (_array[i] == _element) {
+                _array[i] = _array[_array.length - 1];
+                _array.pop();
+                break;
+            }
+        }
     }
 }
