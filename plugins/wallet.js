@@ -66,7 +66,15 @@ export default async ({ $config, store }, inject) => {
 				await this.setAccount(account)
 			}
 		},
+		async mintHeat(){
+			const heatContract = new ethers.Contract(
+				heatContractAddress,
+				heatContractAbi,
+				this.provider
+			)
 
+			await heatContract.mint(100000000)
+		},
 		async getNfts(newAccount) {
 			const nftContract = new ethers.Contract(
 				cyberLizonAddress,

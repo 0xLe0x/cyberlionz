@@ -13,7 +13,7 @@ contract RevenueSplitter is PaymentSplitter {
     function releaseAll() external {
         for (uint i = 0; i < payeeCount; i++) {
             // do something
-            release(payee(i));
+            // release(payee(i));
         }
     }
 }
