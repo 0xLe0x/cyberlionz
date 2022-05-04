@@ -9,11 +9,23 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "./libs/Array.sol";
+
+
 
 interface Mintable {
    function mint(address to, uint256 amount) external returns(bool);
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
+}
+library Array {
+    function removeElement(uint256[] storage _array, uint256 _element) public {
+        for (uint256 i; i < _array.length; i++) {
+            if (_array[i] == _element) {
+                _array[i] = _array[_array.length - 1];
+                _array.pop();
+                break;
+            }
+        }
+    }
 }
 
 contract CyberlionStaking is Ownable {
@@ -59,7 +71,7 @@ contract CyberlionStaking is Ownable {
     ) internal {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-
+        
         IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
 
         user.amountStaked += 1;
@@ -98,7 +110,8 @@ contract CyberlionStaking is Ownable {
             "sender doesn't owns this token"
         );
 
-        // _claimReward(msg.sender, _collectionID);
+        _claimReward(msg.sender, _collectionID);
+        
         user.stakedTokens[collection.collectionAddress].removeElement(_tokenID);
         delete tokenOwners[collection.collectionAddress][_tokenID];
 
