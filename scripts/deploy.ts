@@ -1,14 +1,8 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const arrayLibraryAddress = '0x9acC25e86dBb789BC0e454D229dAAad095fCf651'; // TOOD: change if necessary
-  const heatTokenAddress = '0xdbF1CE189f2De6e265BBBfCca2164F556Fe9f1Be'; // TOOD: change if necessary
-
-  const CyberlionStaking = await ethers.getContractFactory("CyberlionStaking", {
-    libraries: {
-      Array: '0x9acC25e86dBb789BC0e454D229dAAad095fCf651',
-    },
-  });
+  const heatTokenAddress = '0xf18fd1dB5f39d5B96403Eea02885daF741F1e39c'; // TOOD: change if necessary
+  const CyberlionStaking = await ethers.getContractFactory("CyberlionStaking"); 
   const greeter = await CyberlionStaking.deploy(heatTokenAddress);
 
   await greeter.deployed();

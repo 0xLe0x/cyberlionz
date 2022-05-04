@@ -119,9 +119,6 @@ contract CyberlionStaking is Ownable {
             rewardsTokenAddress.mint(_userAddress, payableAmount);
     }
 
-
-
-
     function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
