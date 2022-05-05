@@ -95,3 +95,5 @@ sw.*
 .netlify
 
 hackslips/node_modules
+
+artifacts
