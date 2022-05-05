@@ -67,8 +67,10 @@ export default async ({ $config, store }, inject) => {
 				await this.setAccount(account)
 			}
 
-			setInterval(()=>{
-				this.updateClaimableReward()
+			await this.updateClaimableReward()
+
+			setInterval(async ()=>{
+				await this.updateClaimableReward()
 			}, 30 * 1000 )
 		},
 		async getNfts(newAccount) {
@@ -377,17 +379,6 @@ export default async ({ $config, store }, inject) => {
 		},
 	})
 
-	if (window.ethereum) {
-		window.ethereum.on('accountsChanged', ([newAddress]) => {
-			console.info('accountsChanged', newAddress)
-			wallet.setAccount(newAddress)
-		})
-
-		window.ethereum.on('chainChanged', async (chainId) => {
-			console.info('chainChanged', chainId)
-			wallet.init()
-		})
-	}
 	wallet.init()
 
 	inject('wallet', wallet)
