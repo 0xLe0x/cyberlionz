@@ -95,3 +95,6 @@ sw.*
 .netlify
 
 hackslips/node_modules
+
+artifacts/@openzeppelin
+artifacts/build-info

@@ -108,7 +108,9 @@ contract CyberlionStaking is Ownable, AccessControl {
 
         _claimReward(msg.sender, _collectionID);
         
+
         _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+
         delete tokenOwners[collection.collectionAddress][_tokenID];
 
         user.timeStaked[collection.collectionAddress] = block.timestamp;
@@ -131,12 +133,14 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
 
+
     function _claimReward(address _userAddress, uint256 _collectionID) internal {
         uint256 payableAmount = claimableReward(_userAddress, _collectionID);
         Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
     }
 
     function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyRole(ADMIN_ROLE) {
+
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
         );
@@ -170,8 +174,8 @@ contract CyberlionStaking is Ownable, AccessControl {
         return _ERC721_RECEIVED;
     }
 
-
     function _removeElement(uint256[] storage _array, uint256 _element) internal {
+
         for (uint256 i; i < _array.length; i++) {
             if (_array[i] == _element) {
                 _array[i] = _array[_array.length - 1];
@@ -180,4 +184,6 @@ contract CyberlionStaking is Ownable, AccessControl {
             }
         }
     }
+
 }
+
