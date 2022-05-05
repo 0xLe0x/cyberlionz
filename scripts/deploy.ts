@@ -19,9 +19,9 @@ async function main() {
   console.log("Transaction hash: " + clStaking.deployTransaction.hash);
 
   
-  const deployedContract = await CLStaking.attach(clStaking.address)
+  // const deployedContract = await CLStaking.attach(clStaking.address)
   
-  await deployedContract.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
+  // await deployedContract.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
   
 
 }
