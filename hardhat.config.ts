@@ -2,7 +2,6 @@ import "dotenv/config";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan"
 import "solidity-coverage";
-console.log(process.env)
 
 const { 
   ALCHEMY_ROPSTEN_API_KEY,
@@ -21,16 +20,13 @@ module.exports = {
     cache: "./cache",
     artifacts: "./artifacts"
   },
+  etherscan: {
+    apiKey: ETHERSCAN_API_KEY
+  },
   // Added this network configuration to solve Metamask issue, as this article suggests (https://hardhat.org/metamask-issue.html)
   networks: {
     hardhat: {
       chainId: 1337
-    },
-    etherscan: {
-      url: "https://rinkeby.etherscan.io",
-      apiKey: {
-        rinkeby: ETHERSCAN_API_KEY
-      }
     },
     rinkeby: {
       url: 'https://rinkeby.infura.io/v3/294756524c724e35ae8e7cb59f4eca94',
