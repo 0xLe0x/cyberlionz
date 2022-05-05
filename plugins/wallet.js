@@ -122,7 +122,7 @@ export default async ({ $config, store }, inject) => {
 			)
 
 			this.heatAmount = await heatContract.balanceOf(this.account)
-			this.claimableReward = await heatContract.claimableReward(this.account)
+			this.claimableReward = await heatContract.claimableReward(this.account, 0)
 		},
 
 		async getStakeInfo() {
