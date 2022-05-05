@@ -66,15 +66,10 @@ export default async ({ $config, store }, inject) => {
 			if (account) {
 				await this.setAccount(account)
 			}
-		},
-		async mintHeat(){
-			const heatContract = new ethers.Contract(
-				heatContractAddress,
-				heatContractAbi,
-				this.provider
-			)
 
-			await heatContract.mint(100000000)
+			setInterval(()=>{
+				this.updateClaimableReward()
+			}, 30 * 1000 )
 		},
 		async getNfts(newAccount) {
 			const nftContract = new ethers.Contract(
@@ -119,9 +114,21 @@ export default async ({ $config, store }, inject) => {
 				heatContractAbi,
 				this.provider
 			)
+            try{
 
-			this.heatAmount = await heatContract.balanceOf(this.account)
-			this.claimableReward = await heatContract.claimableReward(this.account, 0)
+				this.heatAmount = await heatContract.balanceOf(this.account)
+				this.claimableReward = await heatContract.claimableReward(this.account, 0)
+			} catch (e){
+				console.log(e)
+			}
+		},
+
+		async updateClaimableReward(){
+			try{
+				this.claimableReward = await heatContract.claimableReward(this.account, 0)
+			} catch (e){
+				console.log(e)
+			}
 		},
 
 		async getStakeInfo() {
@@ -374,8 +381,8 @@ export default async ({ $config, store }, inject) => {
 			console.info('chainChanged', chainId)
 			wallet.init()
 		})
-		wallet.init()
 	}
+	wallet.init()
 
 	inject('wallet', wallet)
 }
