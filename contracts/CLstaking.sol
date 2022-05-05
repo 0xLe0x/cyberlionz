@@ -168,9 +168,8 @@ contract CyberlionStaking is Ownable, AccessControl {
     function onERC721Received(
         address,
         address,
-        uint256,
-        bytes calldata data
-    ) public returns (bytes4) {
+        uint256
+    ) public pure returns (bytes4) {
         return _ERC721_RECEIVED;
     }
 

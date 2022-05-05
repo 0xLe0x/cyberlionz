@@ -3,11 +3,13 @@ import { ethers } from "hardhat";
 
 async function main() {
 
-  const {CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS} = process.env
+  //const {CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS} = process.env
+  
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
+
 
   const HeatToken : ContractFactory = await ethers.getContractFactory("HeatToken");
   // const heatToken : Contract = await HeatToken.deploy();
@@ -27,7 +29,9 @@ async function main() {
   
   // const deployedContract = await CLStaking.attach(clStaking.address)
   
-  // await deployedContract.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
+
+  //await CLStaking.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
+
   
 
 }

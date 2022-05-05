@@ -31,7 +31,8 @@ module.exports = {
     // },
     rinkeby: {
       url: 'https://rinkeby.infura.io/v3/294756524c724e35ae8e7cb59f4eca94',
-      accounts: ["516dac8c11fefc880d316e9b7c3bd244019cea0cc8646374f760c09431417060"]
+      //accounts: ["516dac8c11fefc880d316e9b7c3bd244019cea0cc8646374f760c09431417060"]
+      accounts: [CONTRACT_OWNER_PRIVATE_KEY]
       // url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_RINKEBY_API_KEY}`,
       // accounts: ['91a0167cac5860e16de9d5d3843e1b9f65bed565a4e84b522ff5966c4fedb45e']
     },
