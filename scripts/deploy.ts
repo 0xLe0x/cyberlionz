@@ -5,14 +5,20 @@ async function main() {
 
   //const {CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS} = process.env
   
-  const HeatToken : ContractFactory = await ethers.getContractFactory("HeatToken");
-  const heatToken : Contract = await HeatToken.deploy();
-  await heatToken.deployed();
+  const [deployer] = await ethers.getSigners();
+  console.log("Deploying contracts with the account:", deployer.address);
 
-  console.log("HeatToken Contract's address: " + heatToken.address);
+  console.log("Account balance:", (await deployer.getBalance()).toString());
+
+
+  const HeatToken : ContractFactory = await ethers.getContractFactory("HeatToken");
+  // const heatToken : Contract = await HeatToken.deploy();
+  // await heatToken.deployed();
+
+  // console.log("HeatToken Contract's address: " + heatToken.address);
   
   const CLStaking = await ethers.getContractFactory('CyberlionStaking');
-  const clStaking = await CLStaking.deploy(heatToken.address)
+  const clStaking = await CLStaking.deploy("0xf0f9fc3d3180cf581e5c8d27b4a6e3cede24962d")
   await clStaking.deployed();
 
 
@@ -23,7 +29,9 @@ async function main() {
   
   // const deployedContract = await CLStaking.attach(clStaking.address)
   
+
   //await CLStaking.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
+
   
 
 }

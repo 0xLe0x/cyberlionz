@@ -1,3 +1,4 @@
+
 import "dotenv/config";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan"
@@ -14,20 +15,21 @@ const {
 
 module.exports = {
   solidity: "0.8.13",
+  etherscan: {
+    apiKey: ETHERSCAN_API_KEY
+  },
   paths: {
     sources: "./contracts",
     tests: "./test",
     cache: "./cache",
     artifacts: "./artifacts"
   },
-  etherscan: {
-    apiKey: ETHERSCAN_API_KEY
-  },
   // Added this network configuration to solve Metamask issue, as this article suggests (https://hardhat.org/metamask-issue.html)
   networks: {
     hardhat: {
       chainId: 1337
     },
+    
     rinkeby: {
       url: 'https://rinkeby.infura.io/v3/294756524c724e35ae8e7cb59f4eca94',
       // accounts: ["34db740991317f1d3ce8985302197d6d552a2853197b8f155603ab9fe53eede0"]

@@ -24,9 +24,9 @@ contract HeatToken is ERC20, AccessControl {
 		_;
 	}
 
-	constructor() ERC20('HeatToken', 'HT') {
-		_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-	}
+	constructor() ERC20("HeatToken", "HT") {
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+  }
 
 	function setMinterRole(address minter) public onlyAdmin {
 		_setupRole(_MINTER_ROLE, minter);
@@ -40,3 +40,4 @@ contract HeatToken is ERC20, AccessControl {
 		_burn(msg.sender, _amount);
 	}
 }
+

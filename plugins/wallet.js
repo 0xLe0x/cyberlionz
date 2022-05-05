@@ -28,6 +28,8 @@ export default async ({ $config, store }, inject) => {
 			total: 0,
 		},
 		heatAmount: 0,
+		claimableReward: 0,
+
 		loaded: -1,
 		staking: '',
 		Web3Modal: null,
@@ -120,6 +122,7 @@ export default async ({ $config, store }, inject) => {
 			)
 
 			this.heatAmount = await heatContract.balanceOf(this.account)
+			this.claimableReward = await heatContract.claimableReward(this.account, 0)
 		},
 
 		async getStakeInfo() {
