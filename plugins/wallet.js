@@ -244,11 +244,14 @@ export default async ({ $config, store }, inject) => {
 					clStakinABi,
 					this.provider.getSigner()
 				)
-
+			
 				const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems)
 				this.staking = 'Unstaking...'
 				await tx_unstake.wait()
 
+				unstakeItems.map(function(value, key){
+					stakeItems.splice(value,1)
+				})
 				this.nfts = []
 				this.loaded = false
 
