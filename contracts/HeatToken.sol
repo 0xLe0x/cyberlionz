@@ -5,6 +5,9 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
+
+
+
 contract HeatToken is ERC20, AccessControl {
     bytes32 private  _MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 private  _ADMIN_ROLE = keccak256("ADMIN");
@@ -17,7 +20,7 @@ contract HeatToken is ERC20, AccessControl {
     }
     
 
-    function mint(address to, uint256 amount) public {
+    function mint(address to, uint256 amount) external {
         _mint(to, amount);
 
     }
@@ -26,8 +29,8 @@ contract HeatToken is ERC20, AccessControl {
         _setApprovalForAll(owner, operator);
     }
     
-   function _burn(uint256 tokenId) external {
-       // Todo write this funcionality
+   function burn(uint256 _amount) external {
+        _burn(msg.sender, _amount);
    }
 
 

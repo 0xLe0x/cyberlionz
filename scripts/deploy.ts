@@ -1,22 +1,35 @@
+import { Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 
 async function main() {
-  const arrayLibraryAddress = '0x9acC25e86dBb789BC0e454D229dAAad095fCf651'; // TOOD: change if necessary
-  const heatTokenAddress = '0xdbF1CE189f2De6e265BBBfCca2164F556Fe9f1Be'; // TOOD: change if necessary
+  const {CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS} = process.env
+  
+  const HeatToken : ContractFactory = await ethers.getContractFactory("HeatToken");
+  const heatToken : Contract = await HeatToken.deploy();
+  await heatToken.deployed();
 
-  const CyberlionStaking = await ethers.getContractFactory("CyberlionStaking", {
-    libraries: {
-      Array: '0x9acC25e86dBb789BC0e454D229dAAad095fCf651',
-    },
-  });
-  const greeter = await CyberlionStaking.deploy(heatTokenAddress);
+  console.log("HeatToken Contract's address: " + heatToken.address);
+  
+  const CLStaking = await ethers.getContractFactory('CyberlionStaking');
+  const clStaking = await CLStaking.deploy(heatToken.address)
+  await clStaking.deployed();
 
-  await greeter.deployed();
+  
+  console.log("Staking Contract's address: " + clStaking.address);
+  console.log("Transaction hash: " + clStaking.deployTransaction.hash);
 
-  console.log("CyberlionStaking deployed to:", greeter.address);
+  
+  const deployedContract = CLStaking.attach(clStaking.address)
+  
+  await deployedContract.setCollection(CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS)
+  
+
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch(error => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
