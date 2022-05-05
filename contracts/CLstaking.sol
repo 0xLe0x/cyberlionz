@@ -3,12 +3,11 @@
 pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 
 interface Mintable {
@@ -16,7 +15,8 @@ interface Mintable {
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
 }
 
-contract CyberlionStaking is Ownable {
+contract CyberlionStaking is Ownable, AccessControl {
+    bytes32 public ADMIN_ROLE = keccak256("ADMIN");
     using SafeMath for uint256;
 
     using Address for address;
@@ -44,7 +44,12 @@ contract CyberlionStaking is Ownable {
 
     constructor(address _rewardsToken) {
         rewardsTokenAddress = _rewardsToken;
-        
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(ADMIN_ROLE, msg.sender);
+    }
+
+    function setAdminRole(address admin) public onlyRole(DEFAULT_ADMIN_ROLE){
+        _setupRole(ADMIN_ROLE, admin);
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
@@ -84,12 +89,9 @@ contract CyberlionStaking is Ownable {
         _unstake(msg.sender, _collectionID, _tokenID);
     }
 
-    function mintertest(uint256 payableAmount) public
-     {
+    function mintertest(uint256 payableAmount) public {
         Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
-
     }
-
 
     function _unstake(
         address _userAddress,
@@ -106,7 +108,7 @@ contract CyberlionStaking is Ownable {
 
         _claimReward(msg.sender, _collectionID);
         
-        removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+        _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
         delete tokenOwners[collection.collectionAddress][_tokenID];
 
         user.timeStaked[collection.collectionAddress] = block.timestamp;
@@ -119,19 +121,22 @@ contract CyberlionStaking is Ownable {
         
     }
 
-
-    function _claimReward(address _userAddress, uint256 _collectionID) internal {
+    function claimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-
         uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
-            Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
-
+        return payableAmount;
     }
 
-    function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
+
+    function _claimReward(address _userAddress, uint256 _collectionID) internal {
+        uint256 payableAmount = claimableReward(_userAddress, _collectionID);
+        Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
+    }
+
+    function setCollection(address _collectionAddress, uint256 _rewardPerDay) public onlyRole(ADMIN_ROLE) {
         collectionInfo.push(
             CollectionInfo({collectionAddress: _collectionAddress, rewardPerDay: _rewardPerDay, totalAmountStaked: 0})
         );
@@ -141,7 +146,7 @@ contract CyberlionStaking is Ownable {
         uint256 _collectionID,
         address _collectionAddress,
         uint256 _rewardPerDay
-    ) public  {
+    ) public onlyRole(ADMIN_ROLE)  {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         collection.collectionAddress = _collectionAddress;
         collection.rewardPerDay = _rewardPerDay;
@@ -166,7 +171,7 @@ contract CyberlionStaking is Ownable {
     }
 
 
-    function removeElement(uint256[] storage _array, uint256 _element) internal {
+    function _removeElement(uint256[] storage _array, uint256 _element) internal {
         for (uint256 i; i < _array.length; i++) {
             if (_array[i] == _element) {
                 _array[i] = _array[_array.length - 1];

@@ -29,10 +29,10 @@ contract HeatToken is ERC20, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender); 
 
     }
-    function _setRole(address minter) public {
-        _setupRole(_MINTER_ROLE, minter);
+
+    function setMinterRole(address minter) public onlyRole(ADMIN_ROLE){
+        _setupRole(MINTER_ROLE, minter);
     }
-    
 
     function mint(address to, uint256 amount) external onlyMinters {
         _mint(to, amount);
