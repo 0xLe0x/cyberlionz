@@ -2,6 +2,7 @@ import { Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 
 async function main() {
+
   const {CYBERLIONZ_NFT_ADDRESS, STAKING_REWARDS} = process.env
   
   const HeatToken : ContractFactory = await ethers.getContractFactory("HeatToken");
@@ -13,6 +14,7 @@ async function main() {
   const CLStaking = await ethers.getContractFactory('CyberlionStaking');
   const clStaking = await CLStaking.deploy(heatToken.address)
   await clStaking.deployed();
+
 
   
   console.log("Staking Contract's address: " + clStaking.address);
