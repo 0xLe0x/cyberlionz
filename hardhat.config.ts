@@ -1,4 +1,5 @@
-import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-waffle"
+import "@nomiclabs/hardhat-etherscan";
 // import "./tasks/accounts";
 // import "./tasks/verifyEtherScan";
 import "solidity-coverage";
@@ -14,6 +15,10 @@ const {
 
 module.exports = {
   solidity: "0.8.13",
+  etherscan: {
+    apiKey: "I6XTK3DVBUSTSN9QWG218R8D4AH84NBV7C"
+
+  },
   paths: {
     sources: "./contracts",
     tests: "./test",
@@ -25,6 +30,7 @@ module.exports = {
     hardhat: {
       chainId: 1337
     },
+    
     rinkeby: {
       url: 'https://rinkeby.infura.io/v3/294756524c724e35ae8e7cb59f4eca94',
       accounts: ["34db740991317f1d3ce8985302197d6d552a2853197b8f155603ab9fe53eede0"]
