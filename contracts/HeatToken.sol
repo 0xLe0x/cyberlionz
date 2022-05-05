@@ -11,7 +11,6 @@ contract HeatToken is ERC20, AccessControl {
   {
     return hasRole(DEFAULT_ADMIN_ROLE, account);
   }
-
   function isMinter(address account) public virtual view returns(bool)
   {
     return hasRole(_MINTER_ROLE, account);
@@ -30,8 +29,8 @@ contract HeatToken is ERC20, AccessControl {
 
     }
 
-    function setMinterRole(address minter) public onlyRole(ADMIN_ROLE){
-        _setupRole(MINTER_ROLE, minter);
+    function setMinterRole(address minter) public onlyAdmin {
+        _setupRole(_MINTER_ROLE, minter);
     }
 
     function mint(address to, uint256 amount) external onlyMinters {
