@@ -111,7 +111,7 @@
 									@toggle="onStakeCheck(item.id)"
 									:value="stakeItems.includes(item.id)"
 									color="#db2777"
-									>Stake</CheckButton
+									>Select</CheckButton
 								>
 							</div>
 						</div>
@@ -184,7 +184,7 @@
 									@toggle="onUnstakeCheck(item)"
 									:value="unstakeItems.includes(item)"
 									color="#28c074"
-									>Unstake</CheckButton
+									>Select</CheckButton
 								>
 							</div>
 						</li>
