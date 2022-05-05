@@ -20,6 +20,11 @@
 					>Heat Amount:
 					<span class="text-xl">{{ this.$wallet.heatAmount }}</span></span
 				>
+
+					<span
+					>Unclaimed Heat Amount:
+					<span class="text-xl">{{ this.$wallet.claimableReward }}</span></span
+				>
 			</div>
 			<div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
 				<connected-button />
