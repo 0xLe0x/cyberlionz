@@ -84,10 +84,8 @@ contract CyberlionStaking is Ownable {
         _unstake(msg.sender, _collectionID, _tokenID);
     }
 
-    function mintertest(uint256 payableAmount) public
-     {
+    function mintertest(uint256 payableAmount) public {
         Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
-
     }
 
 
@@ -119,16 +117,19 @@ contract CyberlionStaking is Ownable {
         
     }
 
-
-    function _claimReward(address _userAddress, uint256 _collectionID) internal {
+    function claimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-
         uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
-            Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
+        return payableAmount;
+    }
 
+
+    function _claimReward(address _userAddress, uint256 _collectionID) internal {
+        uint256 payableAmount = claimableReward(_userAddress, _collectionID);
+        Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
     }
 
     function setCollection(address _collectionAddress, uint256 _rewardPerDay) public  {
