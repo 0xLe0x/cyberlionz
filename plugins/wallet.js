@@ -29,7 +29,6 @@ export default async ({ $config, store }, inject) => {
 		},
 		heatAmount: 0,
 		claimableReward: 0,
-
 		loaded: -1,
 		staking: '',
 		Web3Modal: null,
