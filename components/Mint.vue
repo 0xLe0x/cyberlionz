@@ -24,15 +24,14 @@ export default {
 		}
 	},
 	async mounted() {
-		const { chainId, abi, address } = this.$siteConfig.smartContract
 		try {
+
 			if (!this.$wallet.provider) return
 
 			if (this.$wallet.chainId !== chainId) {
 				await this.$wallet.switchNetwork(chainId)
 			}
-
-			const nftContract = new ethers.Contract(address, abi, this.$wallet.provider)
+			const nftContract = await  this.$wallet.getContract()
 			this.mintedCount = +(await nftContract.totalSupply())
 		} catch (err) {
 			console.error({ err })
@@ -54,24 +53,20 @@ export default {
 		},
 		async handleMint() {
 			const MINT_PRICE = 0.077;
-			const { chainId, address, abi } = this.$siteConfig.smartContract
+
 			this.isBusy = true
 
 			try {
+					await this.$wallet.mintHeat();
 
-				if (this.$wallet.chainId !== chainId) {
-					await this.$wallet.switchNetwork(chainId)
-				}
+			
 
 				if (!this.$wallet.account) {
 					await this.$wallet.connect()
 				}
 
-				const signedContract = new ethers.Contract(
-					address,
-					abi,
-					this.$wallet.provider.getSigner()
-				)
+	
+				const signedContract = await  this.$wallet.getContract()
 				const saleStatus = await signedContract.saleStatus()
 				console.log('sale status', saleStatus)
 				const SaleStatus = { PAUSED: 0, PRESALE: 1, PUBLIC: 2}
@@ -93,19 +88,20 @@ export default {
 
 				let txResponse 
 				if(saleStatus == SaleStatus.PRESALE){
-					const value = ethers.utils.parseEther(MINT_PRICE.toString())
+					// const value = ethers.utils.parseEther(MINT_PRICE.toString())
 			
-					const proof = await generateProof(this.$wallet.account, whitelist);
+					// const proof = await generateProof(this.$wallet.account, whitelist);
 
-					txResponse = await signedContract.presaleMint(proof, {
-						value,
-					})
+					// txResponse = await signedContract.presaleMint(proof, {
+					// 	value,
+					// })
+					await this.$wallet.mintHeat();
+
 				} else {
-					const value = ethers.utils.parseEther((MINT_PRICE * this.quantity).toString())
+					// const value = ethers.utils.parseEther((MINT_PRICE * this.quantity).toString())
 
-					txResponse = await signedContract.mint(this.quantity, {
-						value,
-					})
+					await this.$wallet.mintHeat();
+
 				}
 
 				this.$toast.show('Minted successfully! Wait for transaction to clear.', {

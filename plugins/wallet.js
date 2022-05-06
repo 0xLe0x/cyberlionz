@@ -1,24 +1,21 @@
 import Vue from 'vue'
 import Notifications from 'vue-notification'
 import { ethers } from 'ethers'
-import MetaMaskOnboarding from '@metamask/onboarding'
-import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
 import axios from 'axios'
-import siteConfig from '@/siteConfig.json'
+import { getCurrency, CHAINID_CONFIG_MAP } from '@/utils/metamask'
+
 Vue.use(Notifications)
-export default (
-	{
-		store,
-		$config: {
-			contractAddress,
-			stakingContractAddress,
-			heatContractAddress,
-			moralisApiKey,
-			cubzNetwork,
-		},
-	},
-	inject
-) => {
+export default async ({ $config, store }, inject) => {
+	const {
+		clStakinABi,
+		clStakinAddress,
+		cyberLizonAbi,
+		cyberLizonAddress,
+		heatContractAbi,
+		heatContractAddress,
+	} = $config.smartContracts
+	const { infuraId, moralisApiKey } = $config.providers
+
 	const wallet = Vue.observable({
 		account: null,
 		accountCompact: 'Connect',
@@ -31,8 +28,11 @@ export default (
 			total: 0,
 		},
 		heatAmount: 0,
+		claimableReward: 0,
 		loaded: -1,
 		staking: '',
+		Web3Modal: null,
+		async contractState() {},
 
 		get hexChainId() {
 			return '0x' + this.network?.chainId?.toString(16)
@@ -45,20 +45,47 @@ export default (
 		},
 
 		async init() {
+			
+			// skip this and autologin
+			if (!window.ethereum) {
+				window.ethereum = await this.Web3Modal.connect()
+			}
+
+			window.ethereum.on('accountsChanged', ([newAddress]) => {
+				console.info('accountsChanged', newAddress)
+				this.setAccount(newAddress)
+			})
+			window.ethereum.on('chainChanged', (chainId) => {
+				console.info('chainChanged', chainId)
+				window.location.reload()
+			})
+
 			this.provider = new ethers.providers.Web3Provider(window.ethereum) //prefably diff node like Infura, Alchemy or Moralis
 			this.network = await this.provider.getNetwork()
 			const [account] = await this.provider.listAccounts()
 
-			!!account && this.setAccount(account)
-		},
+			if (account) {
+				await this.setAccount(account)
+			}
 
+			await this.updateClaimableReward()
+
+			setInterval(async ()=>{
+				await this.updateClaimableReward()
+			}, 30 * 1000 )
+		},
 		async getNfts(newAccount) {
+			const nftContract = new ethers.Contract(
+				cyberLizonAddress,
+				cyberLizonAbi,
+				this.provider
+			)
 			try {
 				let res = await axios.get(
-					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${contractAddress}`,
+					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
 					{
 						params: {
-							chain: cubzNetwork,
+							chain: 'Rinkeby',
 							format: 'decimal',
 						},
 						headers: {
@@ -67,9 +94,6 @@ export default (
 					}
 				)
 
-				const { chainId, abi, address } = siteConfig.smartContract
-
-				const nftContract = new ethers.Contract(contractAddress, abi, this.provider)
 				let results = [],
 					i = 0
 				for (let nft of res.data.result) {
@@ -88,30 +112,44 @@ export default (
 		},
 
 		async getHeatInfo() {
-			const { abi, address } = siteConfig.heatContract
 			const heatContract = new ethers.Contract(
 				heatContractAddress,
-				abi,
+				heatContractAbi,
+				this.provider
+			)
+            try{
+
+				this.heatAmount = await heatContract.balanceOf(this.account)
+			} catch (e){
+				console.log(e)
+			}
+		},
+
+		async updateClaimableReward(){
+			const stakingContract = new ethers.Contract(
+				clStakinAddress,
+				clStakinABi,
 				this.provider
 			)
 
-			this.heatAmount = await heatContract.balanceOf(this.account)
+			try{
+				console.log();
+				this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
+			} catch (e){
+				console.log(e)
+			}
 		},
 
 		async getStakeInfo() {
 			this.stakeInfo.userInfo = []
 
-			const { abi, address } = siteConfig.stakingContract
 			const stakingContract = new ethers.Contract(
-				stakingContractAddress,
-				abi,
+				clStakinAddress,
+				clStakinABi,
 				this.provider
 			)
-
-			this.stakeInfo.userInfo = await stakingContract.getUserInformation(
-				this.account,
-				'0xC24AB607B2c0206793d255393F7E3F0592b2db15'
-			)
+			this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
+			this.stakeInfo.userInfo = await stakingContract.getUserStakedTokens(this.account, 0)
 			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
 		},
 
@@ -127,11 +165,10 @@ export default (
 				return
 			}
 			const nftContract = new ethers.Contract(
-				contractAddress,
-				siteConfig.smartContract.abi,
+				cyberLizonAddress,
+				cyberLizonAbi,
 				this.provider.getSigner()
 			)
-			const { abi, address } = siteConfig.stakingContract
 
 			const tokenIds = stakeItems.map((id) =>
 				parseInt(this.nfts[id].name.split('#')[1])
@@ -142,20 +179,17 @@ export default (
 
 				const isApproved = await nftContract.isApprovedForAll(
 					this.account,
-					stakingContractAddress
+					clStakinAddress
 				)
 
 				if (!isApproved) {
-					const tx = await nftContract.setApprovalForAll(
-						stakingContractAddress,
-						true
-					)
+					const tx = await nftContract.setApprovalForAll(clStakinAddress, true)
 					await tx.wait()
 				}
 
 				const stakingContract = new ethers.Contract(
-					stakingContractAddress,
-					abi,
+					clStakinAddress,
+					clStakinABi,
 					this.provider.getSigner()
 				)
 
@@ -199,21 +233,23 @@ export default (
 				})
 				return
 			}
-			const { abi, address } = siteConfig.stakingContract
 
 			try {
 				this.staking = 'Confirming...'
 
 				const stakingContract = new ethers.Contract(
-					stakingContractAddress,
-					abi,
+					clStakinAddress,
+					clStakinABi,
 					this.provider.getSigner()
 				)
-
+			
 				const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems)
 				this.staking = 'Unstaking...'
 				await tx_unstake.wait()
 
+				unstakeItems.map(function(value, key){
+					this.stakeItems.splice(value,1)
+				})
 				this.nfts = []
 				this.loaded = false
 
@@ -239,6 +275,31 @@ export default (
 				this.staking = ''
 			}
 		},
+		async setContract() {
+			if (this.network.chainId !== $config.smartContracts.chainId) {
+				await this.switchNetwork($config.smartContracts.chainId)
+			}
+			if (!this.account) {
+				await this.connect()
+			}
+
+			const contract = new ethers.Contract(cyberLizonAddress, cyberLizonAbi, this.provider.getSigner())
+
+			this.contract = contract
+			console.log(`Contected to: ${$config.smartContracts.cyberLizonAddress} Contract`)
+		},
+		async getContract(){
+			if(this.contract)
+			  return this.contract
+			try{
+				await this.setContract()
+				return this.contract
+			} catch(e) {
+				console.log(e)
+			}
+
+		},
+
 
 		async setAccount(newAccount) {
 			if (newAccount) {
@@ -262,10 +323,8 @@ export default (
 		},
 
 		async connect() {
-			if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
-				const onboarding = new MetaMaskOnboarding()
-				onboarding.startOnboarding()
-				return
+			if (!window.ethereum) {
+				window.ethereum = await this.Web3Modal.connect()
 			}
 
 			wallet.network = await wallet.provider.getNetwork()
@@ -280,7 +339,7 @@ export default (
 
 		disconnect() {
 			wallet.account = null
-			wallet.accountCompact = null
+			wallet.accountCompact = 'Connect'
 			wallet.balance = null
 			wallet.nfts = []
 			wallet.loaded = false
@@ -321,18 +380,7 @@ export default (
 		},
 	})
 
-	if (window.ethereum) {
-		window.ethereum.on('accountsChanged', ([newAddress]) => {
-			console.info('accountsChanged', newAddress)
-			wallet.setAccount(newAddress)
-		})
-
-		window.ethereum.on('chainChanged', async (chainId) => {
-			console.info('chainChanged', chainId)
-			wallet.init()
-		})
-		wallet.init()
-	}
+	wallet.init()
 
 	inject('wallet', wallet)
 }
