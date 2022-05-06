@@ -24,21 +24,16 @@ contract CyberlionStaking is Ownable, AccessControl {
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10*60;
     address rewardsTokenAddress;
-
-    struct UserInfo {
-        mapping(address => uint256[]) stakedTokens;
-        mapping(address => uint256) timeStaked;
-        uint256 amountStaked;
-    }
-
+    
     struct CollectionInfo {
         address collectionAddress;
         uint256 rewardPerDay;
         uint256 totalAmountStaked;
     }
 
-    mapping(address => UserInfo) public userInfo;
-    mapping(address => mapping(uint256 => address)) public tokenOwners;
+    mapping(address => mapping(address => uint[])) addressToStakedTokens;
+    mapping(address => mapping(uint => address)) contractTokenIdToOwner;
+    mapping(address => mapping(uint => uint)) contractTokenIdToStakedTimestamp;
 
     CollectionInfo[] public collectionInfo;
 
@@ -53,89 +48,99 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
-        _stake(msg.sender, _collectionID, _tokenID);
+        _stake( _collectionID, _tokenID);
     }
 
     function _stake(
-        address _userAddress,
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
         
-        IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
+        // Track original owner of token about to be staked
+        contractTokenIdToOwner[collection.collectionAddress][_tokenID] = msg.sender;
+        // Track time token was staked
+        contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID] = block.timestamp;
+        // Add to the list of tokens staked for this particular owner and contract
+        addressToStakedTokens[collection.collectionAddress][msg.sender].push(_tokenID);
 
-        user.amountStaked += 1;
         collection.totalAmountStaked += 1;
-        user.timeStaked[collection.collectionAddress] = block.timestamp;
-        user.stakedTokens[collection.collectionAddress].push(_tokenID);
-        tokenOwners[collection.collectionAddress][_tokenID] = _userAddress;
+
+        // transfer token into the custody of the contract
+        IERC721(collection.collectionAddress).transferFrom(msg.sender, address(this), _tokenID);
     }
 
-    function batchStake(uint256 _cid, uint256[] memory _ids) external {
-        for (uint256 i = 0; i < _ids.length; ++i) {
-            _stake(msg.sender, _cid, _ids[i]);
+    function batchStake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
+        for (uint256 i = 0; i < _tokenIDs.length; ++i) {
+            _stake(_collectionID, _tokenIDs[i]);
         }
     }
 
-    function batchUnstake(uint256 _cid, uint256[] memory _ids) external {
-        for (uint256 i = 0; i < _ids.length; ++i) {
-            _unstake(msg.sender, _cid, _ids[i]);
+    function batchUnstake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
+        for (uint256 i = 0; i < _tokenIDs.length; ++i) {
+            _unstake(_collectionID, _tokenIDs[i]);
         }
     }
 
     function unstake(uint256 _collectionID, uint256 _tokenID) external {
-        _unstake(msg.sender, _collectionID, _tokenID);
+        _unstake(_collectionID, _tokenID);
     }
 
-    function mintertest(uint256 payableAmount) public {
-        Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
+    function mintTest() public onlyRole(ADMIN_ROLE) {
+        Mintable(rewardsTokenAddress).mint(msg.sender,1);
     }
 
     function _unstake(
-        address _userAddress,
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
 
-        require(
-            tokenOwners[collection.collectionAddress][_tokenID] == _userAddress,
-            "sender doesn't owns this token"
+        require(contractTokenIdToOwner[collection.collectionAddress][_tokenID] == msg.sender,
+            "token is not staked or sender does not own it"
         );
 
-        _claimReward(msg.sender, _collectionID);
-        
+        _claimReward(msg.sender, _collectionID, _tokenID);
 
-        _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+        // remove token ID from list of user's staked tokens
+        _removeElement(addressToStakedTokens[collection.collectionAddress][msg.sender], _tokenID);
+        // remove record of NFT token owner address
+        delete contractTokenIdToOwner[collection.collectionAddress][_tokenID];
+        // remove record of when the token was staked
+        delete contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
 
-        delete tokenOwners[collection.collectionAddress][_tokenID];
-
-        user.timeStaked[collection.collectionAddress] = block.timestamp;
-        user.amountStaked -= 1;
         collection.totalAmountStaked -= 1;
-        if (user.amountStaked == 0) {
-            delete userInfo[_userAddress];
-        }
-        IERC721(collection.collectionAddress).transferFrom(address(this), _userAddress, _tokenID);
+
+        IERC721(collection.collectionAddress).transferFrom(address(this), msg.sender, _tokenID);
         
     }
 
-    function claimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
-        UserInfo storage user = userInfo[_userAddress];
+    function totalClaimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
+        uint256 payableAmount = 0;
+        address collectionAddress = collectionInfo[_collectionID].collectionAddress;
+        for (uint256 i; i < addressToStakedTokens[collectionAddress][_userAddress].length; i++) {
+            uint256 _tokenId = addressToStakedTokens[collectionAddress][_userAddress][i];
+            payableAmount += claimableReward(_userAddress, _collectionID, _tokenId);
+        }
+        return payableAmount;
+    }
+
+    function claimableReward(address _userAddress, uint256 _collectionID, uint256 _tokenID) public view returns(uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
-        uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
+
+        // check to see if token is currently staked
+        if(contractTokenIdToOwner[collection.collectionAddress][_tokenID] != _userAddress)
+          return 0;
+
+        uint timeStaked = contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
+        uint256 payableAmount = (block.timestamp - timeStaked)
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
         return payableAmount;
     }
 
-
-
-    function _claimReward(address _userAddress, uint256 _collectionID) internal {
-        uint256 payableAmount = claimableReward(_userAddress, _collectionID);
+    function _claimReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) internal {
+        uint256 payableAmount = claimableReward(_userAddress, _collectionID,_tokenID);
         Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
     }
 
@@ -156,20 +161,12 @@ contract CyberlionStaking is Ownable, AccessControl {
         collection.rewardPerDay = _rewardPerDay;
     }
 
-    function getUserInformation(address _userAddress, address _collectionAddr) external view returns (uint256[] memory, uint256, uint256) {
-        return (userInfo[_userAddress].stakedTokens[_collectionAddr], userInfo[_userAddress].timeStaked[_collectionAddr], userInfo[_userAddress].amountStaked);
-    }
-
     function getTotalStakedItemsCount(uint256 _collectionID) external view returns (uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         return collection.totalAmountStaked;
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256
-    ) public pure returns (bytes4) {
+    function onERC721Received( address, address, uint256) public pure returns (bytes4) {
         return _ERC721_RECEIVED;
     }
 
@@ -185,4 +182,3 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
 }
-
