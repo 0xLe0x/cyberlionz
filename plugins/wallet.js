@@ -148,12 +148,8 @@ export default async ({ $config, store }, inject) => {
 				clStakinABi,
 				this.provider
 			)
-			this.claimableReward = await stakingContract.claimableReward(this.account, 0)
-
-			this.stakeInfo.userInfo = await stakingContract.getUserInformation(
-				this.account,
-				cyberLizonAddress
-			)
+			this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
+			this.stakeInfo.userInfo = await stakingContract.getUserStakedTokens(this.account, 0)
 			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
 		},
 

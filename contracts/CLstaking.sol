@@ -161,6 +161,11 @@ contract CyberlionStaking is Ownable, AccessControl {
         collection.rewardPerDay = _rewardPerDay;
     }
 
+    function getUserStakedTokens(address _userAddress, uint256 _collectionID) external view returns(uint256[] memory){
+        CollectionInfo storage collection = collectionInfo[_collectionID];
+        return addressToStakedTokens[collection.collectionAddress][_userAddress];
+    }
+
     function getTotalStakedItemsCount(uint256 _collectionID) external view returns (uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         return collection.totalAmountStaked;
