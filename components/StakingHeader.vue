@@ -13,7 +13,7 @@
 			">
 			<div class="flex flex-wrap justify-center">
 				<span class="mr-5"
-					>Items Staked:
+					>Global Items Staked:
 					<span class="text-xl">{{ this.$wallet.stakeInfo.total }}</span></span
 				>
 				<span class="mr-5"
