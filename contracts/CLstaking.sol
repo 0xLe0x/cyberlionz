@@ -24,14 +24,14 @@ contract CyberlionStaking is Ownable, AccessControl {
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10*60;
     address rewardsTokenAddress;
-    struct stakedToken {
-        uint id;
-        uint256 timeStaked;
-    }
-    struct UserInfo {
-        mapping(uint => stakedToken) stakedTokens;
-        uint256 amountStaked;
-    }
+    // struct stakedToken {
+    //     uint id;
+    //     uint256 timeStaked;
+    // }
+    // struct UserInfo {
+    //     mapping(uint => stakedToken) stakedTokens;
+    //     uint256 amountStaked;
+    // }
     
     struct CollectionInfo {
         address collectionAddress;
@@ -39,12 +39,18 @@ contract CyberlionStaking is Ownable, AccessControl {
         uint256 totalAmountStaked;
     }
 
-    mapping(address => UserInfo) public userInfo;
+    struct CollectionData {
+        mapping(address => uint[]) userToStakedTokenIDs;
+        mapping(uint => address) tokenIDToOwner;
+        mapping(uint => uint) tokenIDToStakedTime;
+    }
 
- mapping(address => mapping(address => uint[])) addressToStakedTokens;
+    // mapping(address => UserInfo) public userInfo;
+    mapping(address => mapping(address => uint[])) addressToStakedTokens;
     mapping(address => mapping(uint => address)) contractTokenIdToOwner;
     mapping(address => mapping(uint => uint)) contractTokenIdToStakedTimestamp;
 
+    mapping(address => CollectionData) collectionData;
 
     CollectionInfo[] public collectionInfo;
 
@@ -67,26 +73,31 @@ contract CyberlionStaking is Ownable, AccessControl {
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        UserInfo storage user = userInfo[_userAddress];
+        // UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
         
+        // Track original owner of token about to be staked
         contractTokenIdToOwner[collection.collectionAddress][_tokenID] = _userAddress;
-        // IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
+        // Track time token was staked
         contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID] = block.timestamp;
+        // Add to the list of tokens staked for this particular owner and contract
         addressToStakedTokens[collection.collectionAddress][_userAddress].push(_tokenID);
 
+        collection.totalAmountStaked += 1;
 
+        // transfer token into the custody of the contract
+        IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
     }
 
-    function batchStake(uint256 _cid, uint256[] memory _ids) external {
-        for (uint256 i = 0; i < _ids.length; ++i) {
-            _stake(msg.sender, _cid, _ids[i]);
+    function batchStake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
+        for (uint256 i = 0; i < _tokenIDs.length; ++i) {
+            _stake(msg.sender, _collectionID, _tokenIDs[i]);
         }
     }
 
-    function batchUnstake(uint256 _cid, uint256[] memory _ids) external {
-        for (uint256 i = 0; i < _ids.length; ++i) {
-            _unstake(msg.sender, _cid, _ids[i]);
+    function batchUnstake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
+        for (uint256 i = 0; i < _tokenIDs.length; ++i) {
+            _unstake(msg.sender, _collectionID, _tokenIDs[i]);
         }
     }
 
@@ -94,8 +105,8 @@ contract CyberlionStaking is Ownable, AccessControl {
         _unstake(msg.sender, _collectionID, _tokenID);
     }
 
-    function mintertest(uint256 payableAmount) public {
-        Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
+    function mintTest() public onlyRole(ADMIN_ROLE) {
+        Mintable(rewardsTokenAddress).mint(msg.sender,1);
     }
 
     function _unstake(
@@ -103,7 +114,7 @@ contract CyberlionStaking is Ownable, AccessControl {
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        UserInfo storage user = userInfo[_userAddress];
+        //UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
 
         // require(
@@ -111,35 +122,46 @@ contract CyberlionStaking is Ownable, AccessControl {
         //     "sender doesn't owns this token"
         // );
 
-            //review
+        // review
         // require(addressToStakedTokens[collection.collectionAddress][_tokenID].contains(_tokenID), "token is not staked");
 
         _claimReward(msg.sender, _collectionID, _tokenID);
 
-        // _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+        _removeElement(addressToStakedTokens[collection.collectionAddress][_userAddress], _tokenID);
         delete contractTokenIdToOwner[collection.collectionAddress][_tokenID];
         delete contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
 
         // user.timeStaked[_tokenID].timeStaked = block.timestamp; // Why
-        user.amountStaked -= 1;
+        // user.amountStaked -= 1;
         collection.totalAmountStaked -= 1;
-        if (user.amountStaked == 0) {
-            delete userInfo[_userAddress];
-        }
+        // if (user.amountStaked == 0) {
+        //     delete userInfo[_userAddress];
+        // }
         IERC721(collection.collectionAddress).transferFrom(address(this), _userAddress, _tokenID);
         
     }
 
+    function totalClaimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
+        uint payableAmount = 0;
+        address collectionAddress = collectionInfo[_collectionID].collectionAddress;
+        for (uint256 i; i < addressToStakedTokens[collectionAddress][_userAddress].length; i++) {
+            uint _tokenId = addressToStakedTokens[collectionAddress][_userAddress][i];
+            payableAmount += claimableReward(_userAddress, _collectionID, _tokenId);
+        }
+        return payableAmount;
+    }
+
     function claimableReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) public view returns(uint256) {
-        UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-        uint256 payableAmount = (block.timestamp - user.timeStaked[_tokenID].timeStaked)
+         // is there ever tokenID 0? I don't think so...
+        if(!contractTokenIdToOwner[collection.collectionAddress][_tokenID])
+          return 0;
+        uint timeStaked = contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
+        uint256 payableAmount = (block.timestamp - timeStaked)
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
         return payableAmount;
     }
-
-
 
     function _claimReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) internal {
         uint256 payableAmount = claimableReward(_userAddress, _collectionID,_tokenID);
@@ -163,9 +185,14 @@ contract CyberlionStaking is Ownable, AccessControl {
         collection.rewardPerDay = _rewardPerDay;
     }
 
-    function getUserInformation(address _userAddress, address _collectionAddr, uint256 _tokenID) external view returns (uint256[] memory, uint256, uint256) {
-        return (userInfo[_userAddress].stakedTokens[_collectionAddr], userInfo[_userAddress].timeStaked[_tokenID].timeStaked, userInfo[_userAddress].amountStaked);
-    }
+    // function getUserInformation(address _userAddress, address _collectionAddr, uint256 _tokenID) external view returns (uint256[] memory, uint256[] memory) {
+    //     uint256[] memory _tokenIDs = addressToStakedTokens[_collectionAddr][_userAddress];
+    //     uint256[] memory _timestamps;
+    //     for (uint256 i; i < _tokenIDs.length; i++) {
+    //         _timestamps[i] = contractTokenIdToStakedTimestamp[_collectionAddr][_tokenIDs[i]];
+    //     }
+    //     return (_tokenIDs, _timestamps);
+    // }
 
     function getTotalStakedItemsCount(uint256 _collectionID) external view returns (uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
