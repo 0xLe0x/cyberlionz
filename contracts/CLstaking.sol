@@ -14,7 +14,7 @@ interface Mintable {
    function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
 }
 
-contract CyberlionStaking is AccessControl {
+contract CyberLionzStaking is AccessControl {
     bytes32 public ADMIN_ROLE = keccak256("ADMIN");
     using SafeMath for uint256;
 
