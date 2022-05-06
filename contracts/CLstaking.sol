@@ -22,7 +22,7 @@ contract CyberlionStaking is Ownable, AccessControl {
     using Address for address;
 
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
-    uint256 constant SECONDS_PER_DAY = 10*60;
+    uint256 constant SECONDS_PER_DAY = 24*60*60;
     address rewardsTokenAddress;
     
     struct CollectionInfo {
