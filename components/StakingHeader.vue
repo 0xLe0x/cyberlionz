@@ -18,7 +18,7 @@
 				>
 				<span class="mr-5"
 					>$HEAT:
-					<span class="text-xl">{{ (this.$wallet.heatAmount/(10**8).toFixed(5))}}</span></span
+					<span class="text-xl">{{ this.$wallet.heatAmount}}</span></span
 				>
 
 					<span
