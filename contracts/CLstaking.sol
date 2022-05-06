@@ -41,7 +41,7 @@ contract CyberlionStaking is Ownable, AccessControl {
 
     mapping(address => UserInfo) public userInfo;
 
- mapping(address => mapping(address => uint[])) addressToStakedTokensSet;
+ mapping(address => mapping(address => uint[])) addressToStakedTokens;
     mapping(address => mapping(uint => address)) contractTokenIdToOwner;
     mapping(address => mapping(uint => uint)) contractTokenIdToStakedTimestamp;
 
@@ -70,10 +70,10 @@ contract CyberlionStaking is Ownable, AccessControl {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
         
-            contractTokenIdToOwner[collectionInfo.collectionAddress][_tokenID] = _userAddress;
+        contractTokenIdToOwner[collection.collectionAddress][_tokenID] = _userAddress;
         // IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
-            contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID] = block.timestamp;
-            addressToStakedTokensSet[collection.collectionAddress][_userAddress].push(_tokenID);
+        contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID] = block.timestamp;
+        addressToStakedTokens[collection.collectionAddress][_userAddress].push(_tokenID);
 
 
     }
@@ -106,19 +106,21 @@ contract CyberlionStaking is Ownable, AccessControl {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
 
-        require(
-            tokenOwners[collection.collectionAddress][_tokenID] == _userAddress,
-            "sender doesn't owns this token"
-        );
+        // require(
+        //     addressToStakedTokens[collection.collectionAddress][_tokenID] == _userAddress,
+        //     "sender doesn't owns this token"
+        // );
+
+            //review
+        // require(addressToStakedTokens[collection.collectionAddress][_tokenID].contains(_tokenID), "token is not staked");
 
         _claimReward(msg.sender, _collectionID, _tokenID);
-        
 
-        _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+        // _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
+        delete contractTokenIdToOwner[collection.collectionAddress][_tokenID];
+        delete contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
 
-        delete tokenOwners[collection.collectionAddress][_tokenID];
-
-        user.timeStaked[_tokenID].timeStaked = block.timestamp;
+        // user.timeStaked[_tokenID].timeStaked = block.timestamp; // Why
         user.amountStaked -= 1;
         collection.totalAmountStaked -= 1;
         if (user.amountStaked == 0) {
