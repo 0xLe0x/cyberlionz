@@ -45,6 +45,7 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async init() {
+			
 			// skip this and autologin
 			if (!window.ethereum) {
 				window.ethereum = await this.Web3Modal.connect()
@@ -130,6 +131,7 @@ export default async ({ $config, store }, inject) => {
 				clStakinABi,
 				this.provider
 			)
+
 			try{
 				console.log();
 				this.claimableReward = await stakingContract.claimableReward(this.account, 0)
@@ -250,7 +252,7 @@ export default async ({ $config, store }, inject) => {
 				await tx_unstake.wait()
 
 				unstakeItems.map(function(value, key){
-					stakeItems.splice(value,1)
+					this.stakeItems.splice(value,1)
 				})
 				this.nfts = []
 				this.loaded = false
@@ -341,7 +343,7 @@ export default async ({ $config, store }, inject) => {
 
 		disconnect() {
 			wallet.account = null
-			wallet.accountCompact = null
+			wallet.accountCompact = 'Connect'
 			wallet.balance = null
 			wallet.nfts = []
 			wallet.loaded = false

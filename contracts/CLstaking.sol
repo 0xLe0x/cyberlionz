@@ -27,7 +27,7 @@ contract CyberlionStaking is Ownable, AccessControl {
 
     struct UserInfo {
         mapping(address => uint256[]) stakedTokens;
-        mapping(address => uint256) timeStaked;
+        mapping(address => uint256[]) timeStaked;
         uint256 amountStaked;
     }
 
@@ -68,7 +68,7 @@ contract CyberlionStaking is Ownable, AccessControl {
 
         user.amountStaked += 1;
         collection.totalAmountStaked += 1;
-        user.timeStaked[collection.collectionAddress] = block.timestamp;
+        user.timeStaked[collection.collectionAddress][_tokenID] = block.timestamp;
         user.stakedTokens[collection.collectionAddress].push(_tokenID);
         tokenOwners[collection.collectionAddress][_tokenID] = _userAddress;
     }
@@ -106,14 +106,14 @@ contract CyberlionStaking is Ownable, AccessControl {
             "sender doesn't owns this token"
         );
 
-        _claimReward(msg.sender, _collectionID);
+        _claimReward(msg.sender, _collectionID, _tokenID);
         
 
         _removeElement(user.stakedTokens[collection.collectionAddress], _tokenID);
 
         delete tokenOwners[collection.collectionAddress][_tokenID];
 
-        user.timeStaked[collection.collectionAddress] = block.timestamp;
+        user.timeStaked[collection.collectionAddress][_tokenID] = block.timestamp;
         user.amountStaked -= 1;
         collection.totalAmountStaked -= 1;
         if (user.amountStaked == 0) {
@@ -123,10 +123,10 @@ contract CyberlionStaking is Ownable, AccessControl {
         
     }
 
-    function claimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
+    function claimableReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) public view returns(uint256) {
         UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
-        uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress])
+        uint256 payableAmount = (block.timestamp - user.timeStaked[collection.collectionAddress][_tokenID])
             .div(SECONDS_PER_DAY)
             .mul(collection.rewardPerDay);
         return payableAmount;
@@ -134,8 +134,8 @@ contract CyberlionStaking is Ownable, AccessControl {
 
 
 
-    function _claimReward(address _userAddress, uint256 _collectionID) internal {
-        uint256 payableAmount = claimableReward(_userAddress, _collectionID);
+    function _claimReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) internal {
+        uint256 payableAmount = claimableReward(_userAddress, _collectionID,_tokenID);
         Mintable(rewardsTokenAddress).mint(msg.sender,payableAmount);
     }
 
@@ -156,8 +156,8 @@ contract CyberlionStaking is Ownable, AccessControl {
         collection.rewardPerDay = _rewardPerDay;
     }
 
-    function getUserInformation(address _userAddress, address _collectionAddr) external view returns (uint256[] memory, uint256, uint256) {
-        return (userInfo[_userAddress].stakedTokens[_collectionAddr], userInfo[_userAddress].timeStaked[_collectionAddr], userInfo[_userAddress].amountStaked);
+    function getUserInformation(address _userAddress, address _collectionAddr, uint256 _tokenID) external view returns (uint256[] memory, uint256, uint256) {
+        return (userInfo[_userAddress].stakedTokens[_collectionAddr], userInfo[_userAddress].timeStaked[_collectionAddr][_tokenID], userInfo[_userAddress].amountStaked);
     }
 
     function getTotalStakedItemsCount(uint256 _collectionID) external view returns (uint256) {
@@ -185,4 +185,3 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
 }
-
