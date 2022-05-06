@@ -134,7 +134,7 @@ export default async ({ $config, store }, inject) => {
 
 			try{
 				console.log();
-				this.claimableReward = await stakingContract.claimableReward(this.account, 0)
+				this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
 			} catch (e){
 				console.log(e)
 			}
