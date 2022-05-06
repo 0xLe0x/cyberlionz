@@ -1,3 +1,13 @@
+
+/*
+CyberLionz Heat Reward Staking
+https://cyberlionz.io
+Twitter @CyberLionzNFT
+
+Crafted with love by
+Fueled on Bacon 
+https://fueledonbacon.com
+*/
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
