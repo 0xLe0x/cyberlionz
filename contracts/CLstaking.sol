@@ -24,14 +24,6 @@ contract CyberlionStaking is Ownable, AccessControl {
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
     uint256 constant SECONDS_PER_DAY = 10*60;
     address rewardsTokenAddress;
-    // struct stakedToken {
-    //     uint id;
-    //     uint256 timeStaked;
-    // }
-    // struct UserInfo {
-    //     mapping(uint => stakedToken) stakedTokens;
-    //     uint256 amountStaked;
-    // }
     
     struct CollectionInfo {
         address collectionAddress;
@@ -39,18 +31,9 @@ contract CyberlionStaking is Ownable, AccessControl {
         uint256 totalAmountStaked;
     }
 
-    struct CollectionData {
-        mapping(address => uint[]) userToStakedTokenIDs;
-        mapping(uint => address) tokenIDToOwner;
-        mapping(uint => uint) tokenIDToStakedTime;
-    }
-
-    // mapping(address => UserInfo) public userInfo;
     mapping(address => mapping(address => uint[])) addressToStakedTokens;
     mapping(address => mapping(uint => address)) contractTokenIdToOwner;
     mapping(address => mapping(uint => uint)) contractTokenIdToStakedTimestamp;
-
-    mapping(address => CollectionData) collectionData;
 
     CollectionInfo[] public collectionInfo;
 
@@ -73,7 +56,6 @@ contract CyberlionStaking is Ownable, AccessControl {
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        // UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
         
         // Track original owner of token about to be staked
@@ -119,7 +101,7 @@ contract CyberlionStaking is Ownable, AccessControl {
 
         // require(
         //     addressToStakedTokens[collection.collectionAddress][_tokenID] == _userAddress,
-        //     "sender doesn't owns this token"
+        //     "sender does not own this token"
         // );
 
         // review
@@ -131,12 +113,7 @@ contract CyberlionStaking is Ownable, AccessControl {
         delete contractTokenIdToOwner[collection.collectionAddress][_tokenID];
         delete contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
 
-        // user.timeStaked[_tokenID].timeStaked = block.timestamp; // Why
-        // user.amountStaked -= 1;
         collection.totalAmountStaked -= 1;
-        // if (user.amountStaked == 0) {
-        //     delete userInfo[_userAddress];
-        // }
         IERC721(collection.collectionAddress).transferFrom(address(this), _userAddress, _tokenID);
         
     }
@@ -153,9 +130,11 @@ contract CyberlionStaking is Ownable, AccessControl {
 
     function claimableReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) public view returns(uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
-         // is there ever tokenID 0? I don't think so...
-        if(!contractTokenIdToOwner[collection.collectionAddress][_tokenID])
+
+        // check to see if token is currently staked
+        if(contractTokenIdToOwner[collection.collectionAddress][_tokenID] != _userAddress)
           return 0;
+          
         uint timeStaked = contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
         uint256 payableAmount = (block.timestamp - timeStaked)
             .div(SECONDS_PER_DAY)
@@ -185,25 +164,12 @@ contract CyberlionStaking is Ownable, AccessControl {
         collection.rewardPerDay = _rewardPerDay;
     }
 
-    // function getUserInformation(address _userAddress, address _collectionAddr, uint256 _tokenID) external view returns (uint256[] memory, uint256[] memory) {
-    //     uint256[] memory _tokenIDs = addressToStakedTokens[_collectionAddr][_userAddress];
-    //     uint256[] memory _timestamps;
-    //     for (uint256 i; i < _tokenIDs.length; i++) {
-    //         _timestamps[i] = contractTokenIdToStakedTimestamp[_collectionAddr][_tokenIDs[i]];
-    //     }
-    //     return (_tokenIDs, _timestamps);
-    // }
-
     function getTotalStakedItemsCount(uint256 _collectionID) external view returns (uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         return collection.totalAmountStaked;
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256
-    ) public pure returns (bytes4) {
+    function onERC721Received( address, address, uint256) public pure returns (bytes4) {
         return _ERC721_RECEIVED;
     }
 
