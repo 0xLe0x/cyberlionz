@@ -48,43 +48,42 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
     function stake(uint256 _collectionID, uint256 _tokenID) external {
-        _stake(msg.sender, _collectionID, _tokenID);
+        _stake( _collectionID, _tokenID);
     }
 
     function _stake(
-        address _userAddress,
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
         CollectionInfo storage collection = collectionInfo[_collectionID];
         
         // Track original owner of token about to be staked
-        contractTokenIdToOwner[collection.collectionAddress][_tokenID] = _userAddress;
+        contractTokenIdToOwner[collection.collectionAddress][_tokenID] = msg.sender;
         // Track time token was staked
         contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID] = block.timestamp;
         // Add to the list of tokens staked for this particular owner and contract
-        addressToStakedTokens[collection.collectionAddress][_userAddress].push(_tokenID);
+        addressToStakedTokens[collection.collectionAddress][msg.sender].push(_tokenID);
 
         collection.totalAmountStaked += 1;
 
         // transfer token into the custody of the contract
-        IERC721(collection.collectionAddress).transferFrom(_userAddress, address(this), _tokenID);
+        IERC721(collection.collectionAddress).transferFrom(msg.sender, address(this), _tokenID);
     }
 
     function batchStake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
         for (uint256 i = 0; i < _tokenIDs.length; ++i) {
-            _stake(msg.sender, _collectionID, _tokenIDs[i]);
+            _stake(_collectionID, _tokenIDs[i]);
         }
     }
 
     function batchUnstake(uint256 _collectionID, uint256[] memory _tokenIDs) external {
         for (uint256 i = 0; i < _tokenIDs.length; ++i) {
-            _unstake(msg.sender, _collectionID, _tokenIDs[i]);
+            _unstake(_collectionID, _tokenIDs[i]);
         }
     }
 
     function unstake(uint256 _collectionID, uint256 _tokenID) external {
-        _unstake(msg.sender, _collectionID, _tokenID);
+        _unstake(_collectionID, _tokenID);
     }
 
     function mintTest() public onlyRole(ADMIN_ROLE) {
@@ -92,28 +91,26 @@ contract CyberlionStaking is Ownable, AccessControl {
     }
 
     function _unstake(
-        address _userAddress,
         uint256 _collectionID,
         uint256 _tokenID
     ) internal {
-        //UserInfo storage user = userInfo[_userAddress];
         CollectionInfo storage collection = collectionInfo[_collectionID];
 
-        // require(
-        //     addressToStakedTokens[collection.collectionAddress][_tokenID] == _userAddress,
-        //     "sender does not own this token"
-        // );
-
-        // review
-        // require(addressToStakedTokens[collection.collectionAddress][_tokenID].contains(_tokenID), "token is not staked");
+        require(contractTokenIdToOwner[collection.collectionAddress][_tokenID] == msg.sender,
+            "token is not staked or sender does not own it"
+        );
 
         _claimReward(msg.sender, _collectionID, _tokenID);
 
-        _removeElement(addressToStakedTokens[collection.collectionAddress][_userAddress], _tokenID);
+        // remove token ID from list of user's staked tokens
+        _removeElement(addressToStakedTokens[collection.collectionAddress][msg.sender], _tokenID);
+        // remove record of NFT token owner address
         delete contractTokenIdToOwner[collection.collectionAddress][_tokenID];
+        // remove record of when the token was staked
         delete contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
 
         collection.totalAmountStaked -= 1;
+
         IERC721(collection.collectionAddress).transferFrom(address(this), _userAddress, _tokenID);
         
     }
@@ -128,13 +125,13 @@ contract CyberlionStaking is Ownable, AccessControl {
         return payableAmount;
     }
 
-    function claimableReward(address _userAddress, uint256 _collectionID,uint256 _tokenID) public view returns(uint256) {
+    function claimableReward(address _userAddress, uint256 _collectionID, uint256 _tokenID) public view returns(uint256) {
         CollectionInfo storage collection = collectionInfo[_collectionID];
 
         // check to see if token is currently staked
         if(contractTokenIdToOwner[collection.collectionAddress][_tokenID] != _userAddress)
           return 0;
-          
+
         uint timeStaked = contractTokenIdToStakedTimestamp[collection.collectionAddress][_tokenID];
         uint256 payableAmount = (block.timestamp - timeStaked)
             .div(SECONDS_PER_DAY)
