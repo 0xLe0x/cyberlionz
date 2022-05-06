@@ -111,15 +111,15 @@ contract CyberlionStaking is Ownable, AccessControl {
 
         collection.totalAmountStaked -= 1;
 
-        IERC721(collection.collectionAddress).transferFrom(address(this), _userAddress, _tokenID);
+        IERC721(collection.collectionAddress).transferFrom(address(this), msg.sender, _tokenID);
         
     }
 
     function totalClaimableReward(address _userAddress, uint256 _collectionID) public view returns(uint256) {
-        uint payableAmount = 0;
+        uint256 payableAmount = 0;
         address collectionAddress = collectionInfo[_collectionID].collectionAddress;
         for (uint256 i; i < addressToStakedTokens[collectionAddress][_userAddress].length; i++) {
-            uint _tokenId = addressToStakedTokens[collectionAddress][_userAddress][i];
+            uint256 _tokenId = addressToStakedTokens[collectionAddress][_userAddress][i];
             payableAmount += claimableReward(_userAddress, _collectionID, _tokenId);
         }
         return payableAmount;
