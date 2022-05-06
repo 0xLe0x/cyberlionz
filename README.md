@@ -16,6 +16,13 @@ All image assets should be stored with param-case file names.
 
 ### Envrionment variables
 
+### Smart Contract Deployment
+1. Deploy HeatToken.sol (no arguments)
+2. Deploy CLStaking.sol (with address of HeatToken as argument)
+3. Set minter role on HeatToken contract to match CLStaking address
+4. Set first collection details for NFT collection on CLStaking contract
+5. Verify contracts
+
 ### Config
 
 Set your configuration in siteConfig.json file. It will then be available throughout the app as a plugin.
