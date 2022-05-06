@@ -1,14 +1,3 @@
-
-/*
-CyberLionz Heat Reward Staking
-https://cyberlionz.io
-Twitter @CyberLionzNFT
-
-Crafted with love by
-Fueled on Bacon
-https://fueledonbacon.com
-*/
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.11;
@@ -96,7 +85,6 @@ contract CyberlionStaking is Ownable, AccessControl {
     function unstake(uint256 _collectionID, uint256 _tokenID) external {
         _unstake(_collectionID, _tokenID);
     }
-
 
     function _unstake(
         uint256 _collectionID,

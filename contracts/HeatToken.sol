@@ -34,7 +34,7 @@ contract HeatToken is ERC20, AccessControl {
 		_;
 	}
 
-	constructor() ERC20("HeatToken", "HT") {
+	constructor() ERC20("HeatToken", "HEAT") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
