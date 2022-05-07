@@ -85,7 +85,7 @@ export default async ({ $config, store }, inject) => {
 					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
 					{
 						params: {
-							chain: 'ETH',
+							chain: 'eth',
 							format: 'decimal',
 						},
 						headers: {
