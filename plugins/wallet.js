@@ -333,7 +333,7 @@ export default async ({ $config, store }, inject) => {
 			console.info('wallet connected', { account })
 
 			if (account) {
-				// await wallet.setAccount(account)
+				await wallet.setAccount(account)
 			}
 		},
 
