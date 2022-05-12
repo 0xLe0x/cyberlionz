@@ -13,6 +13,7 @@ export default async ({ $config, store }, inject) => {
 		cyberLizonAddress,
 		heatContractAbi,
 		heatContractAddress,
+		cubzNetwork
 	} = $config.smartContracts
 	const { infuraId, moralisApiKey } = $config.providers
 
@@ -85,7 +86,7 @@ export default async ({ $config, store }, inject) => {
 					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
 					{
 						params: {
-							chain: 'eth',
+							chain: cubzNetwork,
 							format: 'decimal',
 						},
 						headers: {
