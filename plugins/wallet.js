@@ -120,11 +120,13 @@ export default async ({ $config, store }, inject) => {
 			)
             try{
 
-				this.heatAmount = await heatContract.balanceOf(this.account)
+				this.heatAmount = ethers.utils.formatEther(await heatContract.balanceOf(this.account))
 			} catch (e){
 				console.log(e)
 			}
 		},
+
+
 
 		async updateClaimableReward(){
 			const stakingContract = new ethers.Contract(
@@ -135,7 +137,7 @@ export default async ({ $config, store }, inject) => {
 
 			try{
 				console.log();
-				this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
+				this.claimableReward = ethers.utils.formatEther(await stakingContract.totalClaimableReward(this.account, 0))
 			} catch (e){
 				console.log(e)
 			}
