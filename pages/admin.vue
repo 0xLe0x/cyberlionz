@@ -37,7 +37,8 @@
 				<b>Public Sale</b> {{ isBusy ? 'loading...' : '' }}
 			</b-form-checkbox>
 			<b-form-checkbox
-				v-if="$siteConfig.smartContract.hasDelayedReveal"
+
+				v-if="$config.hasDelayedReveal"
 				v-model="revealStatus"
 				:disabled="revealStatus || isBusy"
 				switch
@@ -96,16 +97,6 @@ export default {
 	methods: {
 		async init() {
 			if (!this.$wallet.provider) return
-
-			const { chainId: targetChainId } = this.$siteConfig.smartContract
-			const isWrongNetwork = this.$wallet.chainId != targetChainId
-
-			if (isWrongNetwork) {
-				const config = CHAINID_CONFIG_MAP[targetChainId]
-				await this.$wallet.switchNetwork(config) // will trigger page reload on success
-				return
-			}
-
 			if (!this.$wallet.account) {
 				await this.$wallet.connect()
 			}
@@ -124,9 +115,9 @@ export default {
 
 				this.isBusy = true
 
-				const { address, abi } = this.$siteConfig.smartContract
-				const signer = await this.$wallet.provider.getSigner()
-				const signedContract = new ethers.Contract(address, abi, signer)
+
+
+				const signedContract = this.$wallet.getContract()
 
 				// const gasPrice = await signer.getGasPrice()
 				// console.log('gasPrice', ethers.utils.formatUnits(gasPrice))
@@ -147,8 +138,8 @@ export default {
 			}
 		},
 		async loadState() {
-			const { address, abi } = this.$siteConfig.smartContract
-			const contract = new ethers.Contract(address, abi, this.$wallet.provider)
+
+			const contract = this.$wallet.getContract()
 			this.saleStatus = await contract.saleStatus()
 			this.balance = +ethers.utils.formatUnits(
 				await this.$wallet.provider.getBalance(contract.address)

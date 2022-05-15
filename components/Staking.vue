@@ -111,7 +111,7 @@
 									@toggle="onStakeCheck(item.id)"
 									:value="stakeItems.includes(item.id)"
 									color="#db2777"
-									>Stake</CheckButton
+									>Select</CheckButton
 								>
 							</div>
 						</div>
@@ -123,7 +123,7 @@
 						class="text-[#3dff6e] text-center h-[25px] bg-[#24142c] overflow-hidden">
 						STAKED ITEMS({{
 							this.$wallet.stakeInfo.userInfo.length
-								? this.$wallet.stakeInfo.userInfo[0].length
+								? this.$wallet.stakeInfo.userInfo.length
 								: 0
 						}})
 					</li>
@@ -146,8 +146,7 @@
 					</div>
 					<div
 						v-else-if="
-							this.$wallet.stakeInfo.userInfo.length &&
-							this.$wallet.stakeInfo.userInfo[0].length == 0
+							this.$wallet.stakeInfo.userInfo.length == 0
 						"
 						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
 						<p class="text-center text-[#9ca3af]">No Staked Items</p>
@@ -163,7 +162,7 @@
 							bg-[#061f5f]
 						">
 						<li
-							v-for="item in this.$wallet.stakeInfo.userInfo[0]"
+							v-for="item in this.$wallet.stakeInfo.userInfo"
 							:key="`li-${item}`"
 							class="
 								flex flex-wrap
@@ -184,7 +183,7 @@
 									@toggle="onUnstakeCheck(item)"
 									:value="unstakeItems.includes(item)"
 									color="#28c074"
-									>Unstake</CheckButton
+									>Select</CheckButton
 								>
 							</div>
 						</li>

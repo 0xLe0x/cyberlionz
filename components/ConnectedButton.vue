@@ -11,6 +11,7 @@ export default {
 	methods: {
 		async onWalletConnect() {
 			try {
+				if(this.$wallet.account) return 
 				await this.$wallet.connect()
 			} catch (err) {
 				console.error({err})

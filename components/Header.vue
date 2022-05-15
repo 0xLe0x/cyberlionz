@@ -1,5 +1,8 @@
 <template>
+
 	<header class="w-full px-8 text-gray-700 absolute z-50">
+				<ConnectModal />
+
 		<div
 			class="
 				container
@@ -34,6 +37,18 @@
 						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>Game
 					</a>
+					<a
+						href="/stake"
+						class="
+							mr-5
+							font-medium
+							leading-6
+							text-lionz-accent
+							hover:text-gray-900
+							text-center
+						"
+						>Stake</a
+					>
 
 					<a
 						href="#roadmap-section"
@@ -52,20 +67,8 @@
 						>FAQ</a
 					>
 				</nav>
-				<!-- <nav class="md:flex items-center mb-5 text-sm md:mb-0 md:pl-10">
-					<a
-						href="/stake"
-						class="
-							mr-5
-							font-medium
-							leading-6
-							text-lionz-accent
-							hover:text-gray-900
-							text-center
-						"
-						>Stake</a
-					>
-					<a
+				<!-- <nav class="md:flex items-center mb-5 text-sm md:mb-0 md:pl-10"> -->
+				<!--	<a
 						href="/#"
 						class="
 							mr-5

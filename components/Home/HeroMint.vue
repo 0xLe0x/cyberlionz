@@ -90,23 +90,19 @@ import whitelist from '@/assets/json/whitelist.json'
 
 export default {
 	async mounted() {
-		const { chainId, address, abi } = this.$siteConfig.smartContract
+
 		this.isBusy = true
 
 		try {
-			if (this.$wallet.chainId !== chainId) {
-				await this.$wallet.switchNetwork(chainId)
-			}
+		
 
 			if (!this.$wallet.account) {
 				await this.$wallet.connect()
 			}
 
-			const signedContract = new ethers.Contract(
-				address,
-				abi,
-				this.$wallet.provider.getSigner()
-			)
+
+			const signedContract = await  this.$wallet.getContract()
+
 			this.saleStatus = await signedContract.saleStatus()
 			this.totalSupply = parseInt((await signedContract.totalSupply())?._hex)
 			if(this.saleStatus > 0 && this.totalSupply < 500){
@@ -145,23 +141,18 @@ export default {
 		},
 		async handleMint() {
 			const MINT_PRICE = 0.0771
-			const { chainId, address, abi } = this.$siteConfig.smartContract
 			this.isBusy = true
 
 			try {
-				if (this.$wallet.chainId !== chainId) {
-					await this.$wallet.switchNetwork(chainId)
-				}
+				
 
 				if (!this.$wallet.account) {
 					await this.$wallet.connect()
 				}
 
-				const signedContract = new ethers.Contract(
-					address,
-					abi,
-					this.$wallet.provider.getSigner()
-				)
+			const signedContract = await  this.$wallet.getContract()
+
+
 
 				this.saleStatus = await signedContract.saleStatus()
 
