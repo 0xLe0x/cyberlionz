@@ -1,76 +1,89 @@
 <template>
-	<section class="relative bg-lionz-light-brown px-20" id="cubzwallet-section">
-		<div
-			class="
-				relative
-				bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
-				bg-no-repeat
-				bg-[length:100%_100%]
-				h-[100px]
-				flex
-				justify-around
-				items-center
-			">
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-stake.gif')]
-					hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-evolve.gif')]
-					hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-evolve-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-			<button
-				class="
-					bg-[url('@/static/Buttons/btn-market.gif')]
-					hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
-					active:bg-[url('@/static/Buttons/btn-market-active.gif')]
-					bg-no-repeat bg-contain bg-center
-					h-[60%]
-					w-[20%]
-				"></button>
-		</div>
-		<div
-			class="
-				relative
-				bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
-				bg-no-repeat
-				bg-[length:100%_100%]
-				px-12
-				py-3
-				h-[220px]
-			">
-			<loading
-				:active="!this.$wallet.loaded"
-				:width="120"
-				:height="120"
-				color="#f59e0b"
-				loader="dots"
-				:opacity="0.6"
-				:is-full-page="false" />
+	<section
+		class="
+			bg-[url('@/static/hero-bg-baked.jpg')]
+			relative
+			w-full
+			min-h-[53vw]
+			pb-[3rem]
+			overflow-hidden
+			bg-cover
+		"
+		id="cubzwallet-section">
+		<StakingHeader />
+		<div class="px-[5%]">
 			<div
-				class="w-full h-[190px] bg-transparent absolute"
-				@drop="onDrop($event)"
-				@dragover.prevent
-				@dragenter.prevent></div>
-			<div class="ml-[18%] mt-1 text-gray-300">
-				<span class="text-xl">{{
-					$wallet.nfts === undefined ? 0 : $wallet.nfts.length
-				}}</span>
-				ITEMS
+				class="
+					relative
+					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
+					bg-no-repeat
+					bg-[length:100%_100%]
+					h-[100px]
+					flex
+					justify-around
+					items-center
+					mb-3
+				">
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-stake.gif')]
+						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-stake-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-evolve.gif')]
+						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-evolve-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
+				<button
+					class="
+						bg-[url('@/static/Buttons/btn-market.gif')]
+						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
+						active:bg-[url('@/static/Buttons/btn-market-active.gif')]
+						bg-no-repeat bg-contain bg-center
+						h-[60%]
+						w-[20%]
+					"></button>
 			</div>
-			<perfect-scrollbar :watch-options="true">
-				<div class="flex">
-					<p></p>
+			<div
+				class="
+					relative
+					bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
+					bg-no-repeat
+					bg-[length:100%_100%]
+					px-12
+					py-3
+					h-[220px]
+					mb-3
+				">
+				<loading
+					:active="this.$wallet.loaded == false"
+					:width="120"
+					:height="120"
+					color="#f59e0b"
+					background-color="#000000"
+					loader="dots"
+					:opacity="0.5"
+					:is-full-page="false" />
+				<div
+					class="w-full h-[190px] bg-transparent absolute"
+					@drop="onDrop($event)"
+					@dragover.prevent
+					@dragenter.prevent></div>
+				<div class="ml-[18%] mt-1 text-gray-300">
+					<span class="text-xl">{{
+						$wallet.nfts === undefined ? 0 : $wallet.nfts.length
+					}}</span>
+					ITEMS
+				</div>
+				<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
 					<div
 						v-for="(item, i) in this.$wallet.nfts
 							? this.$wallet.nfts.filter(
@@ -78,7 +91,7 @@
 							  )
 							: []"
 						:key="i"
-						class="flex-none p-3">
+						class="flex-none pt-3">
 						<img
 							:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
 							class="w-[140px] h-[140px] hover:cursor-pointer"
@@ -86,68 +99,95 @@
 							@dragstart="startDrag($event, item.id)" />
 					</div>
 				</div>
-			</perfect-scrollbar>
-		</div>
-		<div class="relative">
-			<img src="/Evolving/Lions-UI_Mock-Up_NoToggle.png" class="w-full" />
-			<breed-slot
-				:index="this.dropId1"
-				@dropped="onDrop_1"
-				@exchange="onExchange"
-				ref="slot1"
-				class="absolute left-[11%] top-[17.8%] w-[25.6%] h-[36%]" />
-			<trait-slot
-				:index="this.dropId1"
-				:toggleState="toggleValue"
-				class="absolute left-[13.8%] top-[58.5%] w-[18.5%] h-[38.3%]" />
-			<div>
-				<div class="absolute left-[43%] top-[12.8%] w-[14.2%] h-[19.9%]">
-					<loading
-						:active="previewImageLoading"
-						:width="100"
-						:height="100"
-						color="#f59e0b"
-						loader="dots"
-						:opacity="0.6"
-						:is-full-page="false" />
-					<img
-						:src="previewImage"
-						data-aos="fade"
-						v-if="previewImage != undefined" />
-				</div>
-				<button
-					href="#_"
-					class="absolute left-[43.8%] top-[34.7%] w-[12.8%] h-[6.1%] bg-transparent"
-					:disabled="dropId1 === undefined || dropId2 === undefined"
-					@click="onPreview"></button>
-				<div class="absolute left-[44.4%] top-[59.3%] w-[11.5%] h-[34.9%]">
-					<div
-						v-for="(val, index) in trait_type"
-						:key="`toggle-${val}`"
-						class="w-full h-[7.2%] mb-[9.5%]">
-						<div class="toggles h-full flex items-center justify-center">
-							<trait-toggle
-								v-model="toggleValue[val]"
-								:id="`t-${val}`"
-								:data-aos="index > 4 ? 'fade-left' : 'fade-right'"
-								data-aos-offset="0px" />
+			</div>
+			<div class="relative">
+				<img src="/Evolving/Lions-UI_Mock-Up_NoToggle.png" class="w-full" />
+				<breed-slot
+					:index="this.dropId1"
+					@dropped="onDrop_1"
+					@exchange="onExchange"
+					ref="slot1"
+					class="absolute left-[11%] top-[17.8%] w-[25.6%] h-[36%]" />
+				<trait-slot
+					:index="this.dropId1"
+					:toggleState="toggleValue"
+					class="absolute left-[13.8%] top-[58.5%] w-[18.5%] h-[38.3%]" />
+				<div>
+					<div class="absolute left-[43%] top-[12.8%] w-[14.2%] h-[19.9%]">
+						<loading
+							:active="previewImageLoading"
+							:width="100"
+							:height="100"
+							color="#f59e0b"
+							loader="dots"
+							:opacity="0.6"
+							:is-full-page="false" />
+						<img
+							:src="previewImage"
+							data-aos="fade"
+							v-if="previewImage != undefined" />
+					</div>
+					<button
+						href="#_"
+						class="
+							absolute
+							left-[43.8%]
+							top-[34.7%]
+							w-[12.8%]
+							h-[6.1%]
+							bg-transparent
+						"
+						:disabled="dropId1 === undefined || dropId2 === undefined"
+						@click="onPreview"></button>
+					<div class="absolute left-[44.4%] top-[59.3%] w-[11.5%] h-[34.9%]">
+						<div
+							v-for="(val, index) in trait_type"
+							:key="`toggle-${val}`"
+							class="w-full h-[7.2%] mb-[13.5%]">
+							<div class="toggles h-full flex items-center justify-center">
+								<trait-toggle
+									v-model="toggleValue[val]"
+									:id="`t-${val}`"
+									:data-aos="index > 3 ? 'fade-left' : 'fade-right'"
+									data-aos-offset="0px" />
+							</div>
 						</div>
 					</div>
 				</div>
+				<breed-slot
+					:index="this.dropId2"
+					@dropped="onDrop_2"
+					@exchange="onExchange"
+					ref="slot2"
+					class="absolute left-[63.8%] top-[17.8%] w-[25.6%] h-[36%]" />
+				<trait-slot
+					:index="this.dropId2"
+					:toggleState="toggleValueR"
+					class="absolute left-[67.6%] top-[58.5%] w-[18.5%] h-[38.3%]" />
 			</div>
-			<breed-slot
-				:index="this.dropId2"
-				@dropped="onDrop_2"
-				@exchange="onExchange"
-				ref="slot2"
-				class="absolute left-[63.8%] top-[17.8%] w-[25.6%] h-[36%]" />
-			<trait-slot
-				:index="this.dropId2"
-				:toggleState="toggleValueR"
-				class="absolute left-[67.6%] top-[58.5%] w-[18.5%] h-[38.3%]" />
 		</div>
 	</section>
 </template>
+
+<style>
+::-webkit-scrollbar {
+	width: 15px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(214, 222, 225, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d6dee1;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #a8bbbf;
+}
+</style>
 
 <script>
 import Loading from 'vue-loading-overlay'
@@ -169,7 +209,6 @@ export default {
 				'Hands',
 				'Mouth',
 				'Eyewear',
-				'Headwear',
 				'Companion',
 			],
 			toggleValue: {
@@ -180,7 +219,6 @@ export default {
 				Hands: true,
 				Mouth: true,
 				Eyewear: true,
-				Headwear: true,
 				Companion: true,
 			},
 			previewImage: undefined,

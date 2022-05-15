@@ -81,6 +81,7 @@ export default (
 					results.push(metadata.data)
 				}
 				this.loaded = true
+				console.log(results)
 				return results
 			} catch (err) {
 				console.log(err)
