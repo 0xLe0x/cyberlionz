@@ -13,7 +13,7 @@ export default async ({ $config, store }, inject) => {
 		cyberLizonAddress,
 		heatContractAbi,
 		heatContractAddress,
-		cubzNetwork
+		cubzNetwork,
 	} = $config.smartContracts
 	const { infuraId, moralisApiKey } = $config.providers
 
@@ -32,6 +32,7 @@ export default async ({ $config, store }, inject) => {
 		claimableReward: 0,
 		loaded: -1,
 		staking: '',
+		evolving: '',
 		Web3Modal: null,
 		async contractState() {},
 
@@ -46,7 +47,6 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async init() {
-			
 			// skip this and autologin
 			if (!window.ethereum) {
 				window.ethereum = await this.Web3Modal.connect()
@@ -71,10 +71,11 @@ export default async ({ $config, store }, inject) => {
 
 			await this.updateClaimableReward()
 
-			setInterval(async ()=>{
+			setInterval(async () => {
 				await this.updateClaimableReward()
-			}, 30 * 1000 )
+			}, 30 * 1000)
 		},
+
 		async getNfts(newAccount) {
 			const nftContract = new ethers.Contract(
 				cyberLizonAddress,
@@ -99,9 +100,7 @@ export default async ({ $config, store }, inject) => {
 					i = 0
 				for (let nft of res.data.result) {
 					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
-					let metadata = await axios.get(
-						'https://ipfs.io/ipfs' + token_uri.substring(6)
-					)
+					let metadata = await axios.get(token_uri)
 					metadata.data.id = i++
 					results.push(metadata.data)
 				}
@@ -119,27 +118,28 @@ export default async ({ $config, store }, inject) => {
 				heatContractAbi,
 				this.provider
 			)
-            try{
-
-				this.heatAmount = ethers.utils.formatEther(await heatContract.balanceOf(this.account))
-			} catch (e){
+			try {
+				this.heatAmount = ethers.utils.formatEther(
+					await heatContract.balanceOf(this.account)
+				)
+			} catch (e) {
 				console.log(e)
 			}
 		},
 
-
-
-		async updateClaimableReward(){
+		async updateClaimableReward() {
 			const stakingContract = new ethers.Contract(
 				clStakinAddress,
 				clStakinABi,
 				this.provider
 			)
 
-			try{
-				console.log();
-				this.claimableReward = ethers.utils.formatEther(await stakingContract.totalClaimableReward(this.account, 0))
-			} catch (e){
+			try {
+				console.log()
+				this.claimableReward = ethers.utils.formatEther(
+					await stakingContract.totalClaimableReward(this.account, 0)
+				)
+			} catch (e) {
 				console.log(e)
 			}
 		},
@@ -152,8 +152,14 @@ export default async ({ $config, store }, inject) => {
 				clStakinABi,
 				this.provider
 			)
-			this.claimableReward = await stakingContract.totalClaimableReward(this.account, 0)
-			this.stakeInfo.userInfo = await stakingContract.getUserStakedTokens(this.account, 0)
+			this.claimableReward = await stakingContract.totalClaimableReward(
+				this.account,
+				0
+			)
+			this.stakeInfo.userInfo = await stakingContract.getUserStakedTokens(
+				this.account,
+				0
+			)
 			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
 		},
 
@@ -206,7 +212,7 @@ export default async ({ $config, store }, inject) => {
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
-				await this.getNfts(this.account)
+				this.nfts = await this.getNfts(this.account)
 
 				Vue.notify({
 					group: 'foo',
@@ -246,20 +252,20 @@ export default async ({ $config, store }, inject) => {
 					clStakinABi,
 					this.provider.getSigner()
 				)
-			
+
 				const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems)
 				this.staking = 'Unstaking...'
 				await tx_unstake.wait()
 
-				unstakeItems.map(function(value, key){
-					this.stakeItems.splice(value,1)
+				unstakeItems.map(function (value, key) {
+					this.stakeItems.splice(value, 1)
 				})
 				this.nfts = []
 				this.loaded = false
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
-				await this.getNfts(this.account)
+				this.nfts = await this.getNfts(this.account)
 
 				Vue.notify({
 					group: 'foo',
@@ -279,6 +285,26 @@ export default async ({ $config, store }, inject) => {
 				this.staking = ''
 			}
 		},
+
+		async burn(tokenId) {
+			const nftContract = new ethers.Contract(
+				cyberLizonAddress,
+				cyberLizonAbi,
+				this.provider.getSigner()
+			)
+
+			const tx_burn = await nftContract.transferFrom(
+				this.account,
+				'0x000000000000000000000000000000000000dEaD',
+				tokenId,
+				{
+					gasLimit: 250000,
+				}
+			)
+
+			await tx_burn.wait()
+		},
+
 		async setContract() {
 			if (this.network.chainId !== $config.smartContracts.chainId) {
 				await this.switchNetwork($config.smartContracts.chainId)
@@ -287,23 +313,27 @@ export default async ({ $config, store }, inject) => {
 				await this.connect()
 			}
 
-			const contract = new ethers.Contract(cyberLizonAddress, cyberLizonAbi, this.provider.getSigner())
+			const contract = new ethers.Contract(
+				cyberLizonAddress,
+				cyberLizonAbi,
+				this.provider.getSigner()
+			)
 
 			this.contract = contract
-			console.log(`Contected to: ${$config.smartContracts.cyberLizonAddress} Contract`)
+			console.log(
+				`Contected to: ${$config.smartContracts.cyberLizonAddress} Contract`
+			)
 		},
-		async getContract(){
-			if(this.contract)
-			  return this.contract
-			try{
+
+		async getContract() {
+			if (this.contract) return this.contract
+			try {
 				await this.setContract()
 				return this.contract
-			} catch(e) {
+			} catch (e) {
 				console.log(e)
 			}
-
 		},
-
 
 		async setAccount(newAccount) {
 			if (newAccount) {
