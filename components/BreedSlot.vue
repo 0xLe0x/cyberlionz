@@ -1,10 +1,7 @@
 <template>
-	<div
-		@drop="onDrop($event)"
-		@dragover.prevent
-		@dragenter.prevent>
+	<div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
 		<img
-			:src="image"
+			:src="`${image}?${curTime}`"
 			data-aos="fade"
 			v-if="image != undefined"
 			@dragstart="startDrag($event)" />
@@ -17,13 +14,15 @@ export default {
 		index: {
 			type: Number,
 		},
+		curTime: {
+			type: Number,
+		},
 	},
 	computed: {
 		image() {
-			if (this.index === undefined || this.$wallet.nfts.length === 0) return ''
-			return (
-				'https://ipfs.io/ipfs' + this.$wallet.nfts[this.index].image.substring(6)
-			)
+			if (this.index === undefined || this.$wallet.nfts.length === 0)
+				return undefined
+			return this.$wallet.nfts[this.index].image
 		},
 	},
 	methods: {
