@@ -399,43 +399,54 @@ export default {
 			}
 		},
 		async onEvolve() {
-			let traits = {}
-			Object.entries(this.toggleValue).forEach(
-				([key, value], index) =>
-					(traits[key] =
-						this.$wallet.nfts[value ? this.dropId1 : this.dropId2].attributes[
-							index
-						].value)
-			)
-			traits.Headwear = 'None'
-			const new_id = this.$wallet.nfts[this.dropId1].name.split('#')[1]
-			const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
+			if (parseInt(this.$wallet.heatAmount) < parseInt(process.env.evolvingHeat)) {
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Not enough $HEAT.',
+				})
+			} else {
+				let traits = {}
+				Object.entries(this.toggleValue).forEach(
+					([key, value], index) =>
+						(traits[key] =
+							this.$wallet.nfts[value ? this.dropId1 : this.dropId2].attributes[
+								index
+							].value)
+				)
+				traits.Headwear = 'None'
+				const new_id = this.$wallet.nfts[this.dropId1].name.split('#')[1]
+				const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
 
-			this.$wallet.evolving = 'evolving...'
+				await this.$wallet.burnHeat()
 
-			await axios.get(`/.netlify/functions/evolve`, {
-				params: {
-					oldName: this.filename,
-					newName: this.$wallet.nfts[this.dropId1].name.split('#')[1],
-					traits,
-				},
-			})
+				this.$wallet.evolving = 'evolving...'
 
-			this.$wallet.evolving = 'burning...'
+				await axios.get(`/.netlify/functions/evolve`, {
+					params: {
+						oldName: this.filename,
+						newName: this.$wallet.nfts[this.dropId1].name.split('#')[1],
+						traits,
+					},
+				})
 
-			await this.$wallet.burn(parseInt(old_id))
-			;[this.dropId1, this.dropId2, this.previewImage] = [
-				undefined,
-				undefined,
-				undefined,
-			]
+				this.$wallet.evolving = 'burning...'
 
-			this.$wallet.evolving = 'reloading...'
-			setTimeout(async () => {
-				this.curTime = new Date().getTime()
-				this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
-				this.$wallet.evolving = ''
-			}, 20000)
+				await this.$wallet.burn(parseInt(old_id))
+				;[this.dropId1, this.dropId2, this.previewImage] = [
+					undefined,
+					undefined,
+					undefined,
+				]
+
+				this.$wallet.evolving = 'reloading...'
+				setTimeout(async () => {
+					this.curTime = new Date().getTime()
+					this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
+					this.$wallet.evolving = ''
+				}, 20000)
+			}
 		},
 	},
 }

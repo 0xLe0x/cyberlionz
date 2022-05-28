@@ -14,6 +14,7 @@ export default async ({ $config, store }, inject) => {
 		heatContractAbi,
 		heatContractAddress,
 		cubzNetwork,
+		evolvingHeat,
 	} = $config.smartContracts
 	const { infuraId, moralisApiKey } = $config.providers
 
@@ -92,6 +93,7 @@ export default async ({ $config, store }, inject) => {
 						},
 						headers: {
 							'x-api-key': moralisApiKey,
+							'Cache-Control': 'no-cache' 
 						},
 					}
 				)
@@ -124,6 +126,24 @@ export default async ({ $config, store }, inject) => {
 				)
 			} catch (e) {
 				console.log(e)
+			}
+		},
+
+		async burnHeat() {
+			const heatContract = new ethers.Contract(
+				heatContractAddress,
+				heatContractAbi,
+				this.provider.getSigner()
+			)
+			try {
+				this.evolving = 'Confirming your $HEAT...'
+				const tx_burn = await heatContract.burn(
+					ethers.utils.parseEther(evolvingHeat)
+				)
+				this.evolving = 'Burning your $HEAT...'
+				await tx_burn.wait()
+			} catch (err) {
+				console.log(err)
 			}
 		},
 

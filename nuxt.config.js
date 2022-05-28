@@ -16,19 +16,20 @@ export default {
 			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
 			cubzNetwork: process.env.CUBZ_NETWORK,
 			chainId: process.env.CHAIN_ID,
+			evolvingHeat: process.env.EVOLVING_HEAT,
 		},
 		hasDelayedReveal: false,
 		providers: {
 			infuraId: process.env.INFURA_SECRET,
 			moralisApiKey: process.env.MORALIS_API_KEY,
 		},
-		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
 	},
 
 	env: {
 		s3Bucket: process.env.AWS_S3_BUCKET_NAME,
 		accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+		evolvingHeat: process.env.EVOLVING_HEAT,
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
