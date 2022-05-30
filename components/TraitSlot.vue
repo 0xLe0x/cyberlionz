@@ -3,8 +3,7 @@
 		<div
 			v-for="(trait, i) in traits"
 			:key="i"
-			class="h-[12%] flex justify-center items-center"
-			v-if="trait.trait_type != 'Headwear'">
+			class="h-[10.5%] flex justify-center items-center">
 			<span
 				class="
 					flex
