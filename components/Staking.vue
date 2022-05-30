@@ -25,7 +25,7 @@
 					items-center
 					mb-3
 				">
-				<button
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-stake.gif')]
 						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
@@ -33,8 +33,9 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"></button>
-				<button
+					"
+					href="#"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-evolve.gif')]
 						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
@@ -43,8 +44,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
-				<button
+					href="/evolve"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-market.gif')]
 						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
@@ -53,7 +54,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
+					href="#"
+					@click="showModal = true"></a>
 			</div>
 			<div class="grid grid-cols-4 gap-4">
 				<div
@@ -104,7 +106,7 @@
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
-									:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
+									:src="item.image"
 									class="w-[120px] h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton
@@ -145,9 +147,7 @@
 							:is-full-page="false" />
 					</div>
 					<div
-						v-else-if="
-							this.$wallet.stakeInfo.userInfo.length == 0
-						"
+						v-else-if="this.$wallet.stakeInfo.userInfo.length == 0"
 						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
 						<p class="text-center text-[#9ca3af]">No Staked Items</p>
 					</div>
@@ -176,7 +176,7 @@
 							data-aos="fade-right"
 							data-aos-offset="0px">
 							<img
-								:src="`https://ipfs.io/ipfs/QmP6U3ED69wcZxAYL2xbNoNL2HNW7EmhBUB5LPToKzxmbv/${item}.gif`"
+								:src="`https://${process.env.s3Bucket}.s3.amazonaws.com/gifs/${item}.gif`"
 								class="w-[50px] h-[50px] rounded" />
 							<div class="flex items-center">
 								<CheckButton
