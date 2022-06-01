@@ -145,11 +145,9 @@
 							:is-full-page="false" />
 					</div>
 					<div
-						v-else-if="
-							this.$wallet.stakeInfo.userInfo.length == 0
-						"
-						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
-						<p class="text-center text-[#9ca3af]">No Staked Items</p>
+						v-else-if="this.$wallet.stakeInfo.userInfo.length == 0"
+						class="h-[187px] px-2 bg-[#061f5f] flex justify-center items-center">
+						<p class="text-[#9ca3af]">No Staked Items</p>
 					</div>
 					<div
 						v-else

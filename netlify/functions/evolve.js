@@ -1,80 +1,92 @@
-const basePath = process.cwd();
-const MD5 = require("MD5");
-const { buildSetup, startCreating } = require("../hackslips/src/main");
-var fs = require('fs');
-const mime = require('mime');
-var AWS = require('aws-sdk');
+var AWS = require('aws-sdk')
+const fs = require('fs')
+const basePath = process.cwd()
 
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } = process.env;
-AWS.config.update({ accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+	process.env
+AWS.config.update({
+	accessKeyId: AWS_ACCESS_KEY_ID,
+	secretAccessKey: AWS_SECRET_ACCESS_KEY,
+})
 
 exports.handler = async function (event, context) {
-  let DNA = '';
-  Object.entries(event.queryStringParameters).forEach(([key, value]) => DNA += value)
-  let filename = MD5(DNA);
+	var s3 = new AWS.S3()
 
-  // check if the image already uploaded
-  const headers = {
-    'Access-Control-Allow-Origin': '*'
-  }
+	var BUCKET_NAME = AWS_S3_BUCKET_NAME
+	var OLD_KEY = event.queryStringParameters.oldName
+	var NEW_KEY = event.queryStringParameters.newName
+	const traits = event.queryStringParameters.traits
 
-  var s3 = new AWS.S3;
-  try {
-    await s3.headObject({
-      Bucket: AWS_S3_BUCKET_NAME,
-      Key: `${filename}.gif`,
-    })
-    .promise();
-    console.log("File already exists!");
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        success: true,
-        data: `https://${AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${filename}.gif`
-      }),
-    };
-  } catch(err) {}
+	try {
+		// replace gif
 
-  // create the image
+		await s3
+			.deleteObject({
+				Bucket: BUCKET_NAME,
+				Key: `gifs/${NEW_KEY}.gif`,
+			})
+			.promise()
 
-  buildSetup();
-  await startCreating(event.queryStringParameters, filename);
+		await s3
+			.copyObject({
+				Bucket: BUCKET_NAME,
+				CopySource: `${BUCKET_NAME}/gifs_evolve/${OLD_KEY}.gif`,
+				Key: `gifs/${NEW_KEY}.gif`,
+			})
+			.promise()
 
-  // upload the image
+		// get and modify current metadata
 
-  filename += '.gif';
+		const data = await s3
+			.getObject({
+				Bucket: BUCKET_NAME,
+				Key: `json/${NEW_KEY}.json`,
+			})
+			.promise()
 
-  let filepath = `${basePath}/netlify/hackslips/build/gifs/${filename}`;
-  const content = fs.readFileSync(filepath);
+		let metadata = JSON.parse(data.Body)
 
-  let params = {
-    params: {
-      Bucket: AWS_S3_BUCKET_NAME,
-      Key: filename,
-      Body: content,
-      ContentType: mime.getType(filepath),
-    }
-  }
-  
-  var upload = new AWS.S3.ManagedUpload(params);
+		metadata.name = `Cyber Adultlion #${NEW_KEY}`
+		let attributes = []
+		Object.entries(JSON.parse(traits)).forEach(([key, value]) =>
+			attributes.push({
+				trait_type: key,
+				value: value,
+			})
+		)
+		metadata.attributes = attributes
 
-  try {
-    await upload.promise();
+		// remove current gif
 
-    console.log('Successfully uploaded photo.');
+		await s3
+			.deleteObject({
+				Bucket: BUCKET_NAME,
+				Key: `json/${NEW_KEY}.json`,
+			})
+			.promise()
 
+		// replace metadata
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        success: true,
-        data: `https://${AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${filename}`
-      }),
-    };
-  } catch(err) {
-    console.log(err);
-  }
-  
-};
+		let params = {
+			params: {
+				Bucket: AWS_S3_BUCKET_NAME,
+				Key: `json/${NEW_KEY}.json`,
+				Body: Buffer.from(JSON.stringify(metadata)),
+				ContentType: 'application/json',
+			},
+		}
+
+		var upload = new AWS.S3.ManagedUpload(params)
+
+		await upload.promise()
+
+		return {
+			statusCode: 200,
+			body: JSON.stringify({
+				success: true,
+			}),
+		}
+	} catch (err) {
+		console.log(err)
+	}
+}
