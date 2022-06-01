@@ -1,10 +1,10 @@
-const basePath = process.cwd()
-const { NETWORK } = require(`../constants/network.js`)
-const fs = require('fs')
-const sha1 = require(`sha1`)
-const { createCanvas, loadImage } = require(`canvas`)
-const buildDir = `${basePath}/netlify/hackslips/build`
-const layersDir = `https://cyberlions-layers-internal.s3.amazonaws.com`
+const basePath = process.cwd();
+const { NETWORK } = require(`../constants/network.js`);
+const fs = require("fs");
+const sha1 = require(`sha1`);
+const { createCanvas, loadImage } = require(`canvas`);
+const buildDir = `${basePath}/netlify/hackslips/build`;
+const layersDir = `${basePath}/netlify/hackslips/layers`;
 const {
   format,
   baseUri,
@@ -33,15 +33,6 @@ const DNA_DELIMITER = "-";
 const HashlipsGiffer = require(`../modules/HashlipsGiffer.js`);
 
 let hashlipsGiffer = null;
-
-var AWS = require('aws-sdk')
-
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
-	process.env
-AWS.config.update({
-	accessKeyId: AWS_ACCESS_KEY_ID,
-	secretAccessKey: AWS_SECRET_ACCESS_KEY,
-})
 
 const buildSetup = () => {
   if (fs.existsSync(buildDir)) {
@@ -79,72 +70,47 @@ const cleanName = (_str) => {
   return nameWithoutWeight;
 };
 
-const getElements = async (path) => {
-	var s3 = new AWS.S3()
-	
-	var params = {
-		Bucket: 'cyberlions-layers-internal',
-		Delimiter: '/',
-		Prefix: path  // Can be your folder name
-	};
-	try {
-		const data = await s3.listObjects(params).promise();
-		
-		const contents = data.Contents.map((i, index) => {
-			if (i.Key.includes('-')) {
-				throw new Error(`layer name can not contain dashes, please fix: ${i.Key}`)
-			}
-			return {
-				id: index,
-				name: cleanName(i.Key.split('/')[1]),
-				filename: i.Key.split('/')[1],
-				path: `${layersDir}/${i.Key}`,
-				weight: 0,
-			}
-		})
-		const prefixes = data.CommonPrefixes.map((i, index) => {
-			if (i.Prefix.includes('-')) {
-				throw new Error(`layer name can not contain dashes, please fix: ${i.Prefix}`)
-			}
-			return {
-				id: index + contents.length,
-				name: cleanName(i.Prefix.split('/')[1]),
-				filename: i.Prefix.split('/')[1],
-				path: `${layersDir}/${i.Prefix}`,
-				weight: 0,
-			}
-		})
-		const result = contents.concat(prefixes)
+const getElements = (path) => {
+  return fs
+    .readdirSync(path)
+    .filter((item) => !/(^|\/)\.[^\/\.]/g.test(item))
+    .map((i, index) => {
+      if (i.includes("-")) {
+        throw new Error(`layer name can not contain dashes, please fix: ${i}`);
+      }
+      return {
+        id: index,
+        name: cleanName(i),
+        filename: i,
+        path: `${path}${i}`,
+        weight: getRarityWeight(i),
+      };
+    });
+};
 
-		return result
-	} catch(err) {
-		console.log(err)
-	}
-}
-
-const layersSetup = async (layersOrder) => {
-	const layers = await Promise.all(layersOrder.map(async (layerObj, index) => ({
-		id: index,
-		elements: await getElements(`${layerObj.name}/`),
-		name:
-			layerObj.options?.['displayName'] != undefined
-				? layerObj.options?.['displayName']
-				: layerObj.name,
-		blend:
-			layerObj.options?.['blend'] != undefined
-				? layerObj.options?.['blend']
-				: 'source-over',
-		opacity:
-			layerObj.options?.['opacity'] != undefined
-				? layerObj.options?.['opacity']
-				: 1,
-		bypassDNA:
-			layerObj.options?.['bypassDNA'] !== undefined
-				? layerObj.options?.['bypassDNA']
-				: false,
-	})))
-	return layers
-}
+const layersSetup = (layersOrder) => {
+  const layers = layersOrder.map((layerObj, index) => ({
+    id: index,
+    elements: getElements(`${layersDir}/${layerObj.name}/`),
+    name:
+      layerObj.options?.["displayName"] != undefined
+        ? layerObj.options?.["displayName"]
+        : layerObj.name,
+    blend:
+      layerObj.options?.["blend"] != undefined
+        ? layerObj.options?.["blend"]
+        : "source-over",
+    opacity:
+      layerObj.options?.["opacity"] != undefined
+        ? layerObj.options?.["opacity"]
+        : 1,
+    bypassDNA:
+      layerObj.options?.["bypassDNA"] !== undefined
+        ? layerObj.options?.["bypassDNA"]
+        : false,
+  }));
+  return layers;
+};
 
 const saveImage = (_editionCount) => {
   fs.writeFileSync(
@@ -216,32 +182,34 @@ const addAttributes = (_element) => {
 };
 
 const loadLayerImg = async (_layer) => {
-	try {
-		return new Promise(async (resolve) => {
-			const isDir = !_layer.selectedElement.filename.includes('.png')
-			let image = null,
-				images = []
-			if (isDir) {
-				for (let i = 1; i <= 8; i++) {
-					let temp = await loadImage(
-						`${_layer.selectedElement.path}${i}.png`
-					)
-					images.push(temp)
-				}
-			} else {
-				image = await loadImage(_layer.selectedElement.path)
-			}
-			resolve({
-				layer: _layer,
-				loadedImage: image,
-				images,
-				iterate: images.length > 0,
-			})
-		})
-	} catch (error) {
-		console.error('Error loading image:', error)
-	}
-}
+  try {
+    return new Promise(async (resolve) => {
+      const isDir = fs
+        .lstatSync(path.resolve(_layer.selectedElement.path))
+        .isDirectory();
+      let image = null,
+        images = [];
+      if (isDir) {
+        for (let i = 1; i <= 8; i++) {
+          let temp = await loadImage(
+            path.resolve(_layer.selectedElement.path, `${i}.png`)
+          );
+          images.push(temp);
+        }
+      } else {
+        image = await loadImage(path.resolve(_layer.selectedElement.path));
+      }
+      resolve({
+        layer: _layer,
+        loadedImage: image,
+        images,
+        iterate: images.length > 0,
+      });
+    });
+  } catch (error) {
+    console.error("Error loading image:", error);
+  }
+};
 
 const addText = (_sig, x, y, size) => {
   ctx.fillStyle = text.color;
@@ -410,30 +378,34 @@ function shuffle(array) {
 }
 
 const startCreating = async (query, filename) => {
-	let layerConfigIndex = 0
-	let editionCount = 1
-	let failedCount = 0
-	let abstractedIndexes = []
-	for (
-		let i = network == NETWORK.sol ? 0 : 1;
-		i <= layerConfigurations[layerConfigurations.length - 1].growEditionSizeTo;
-		i++
-	) {
-		abstractedIndexes.push(i)
-	}
-	if (shuffleLayerConfigurations) {
-		abstractedIndexes = shuffle(abstractedIndexes)
-	}
-	debugLogs ? console.log('Editions left to create: ', abstractedIndexes) : null
-	while (layerConfigIndex < layerConfigurations.length) {
-		const layers = await layersSetup(layerConfigurations[layerConfigIndex].layersOrder)
-		while (
-			editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
-		) {
-			let newDna = createDna(layers, query)
-			//      if (isDnaUnique(dnaList, newDna)) {
-			let results = constructLayerToDna(newDna, layers)
-			let loadedElements = []
+  let layerConfigIndex = 0;
+  let editionCount = 1;
+  let failedCount = 0;
+  let abstractedIndexes = [];
+  for (
+    let i = network == NETWORK.sol ? 0 : 1;
+    i <= layerConfigurations[layerConfigurations.length - 1].growEditionSizeTo;
+    i++
+  ) {
+    abstractedIndexes.push(i);
+  }
+  if (shuffleLayerConfigurations) {
+    abstractedIndexes = shuffle(abstractedIndexes);
+  }
+  debugLogs
+    ? console.log("Editions left to create: ", abstractedIndexes)
+    : null;
+  while (layerConfigIndex < layerConfigurations.length) {
+    const layers = layersSetup(
+      layerConfigurations[layerConfigIndex].layersOrder
+    );
+    while (
+      editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
+    ) {
+      let newDna = createDna(layers, query);
+      //      if (isDnaUnique(dnaList, newDna)) {
+      let results = constructLayerToDna(newDna, layers);
+      let loadedElements = [];
 
       results.forEach((layer) => {
         loadedElements.push(loadLayerImg(layer));

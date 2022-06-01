@@ -51,19 +51,6 @@
 					>
 
 					<a
-						href="/evolve"
-						class="
-							mr-5
-							font-medium
-							leading-6
-							text-lionz-accent
-							hover:text-gray-900
-							text-center
-						"
-						>Evolve</a
-					>
-
-					<a
 						href="#roadmap-section"
 						class="mr-5 font-medium leading-6 text-lionz-accent hover:text-gray-900"
 						>Roadmap</a
