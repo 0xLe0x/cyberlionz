@@ -128,4 +128,15 @@ export default {
 	build: {
 		transpile: ['web3modal-vue'],
 	},
+
+	// axios: {
+	// 	proxy: true,
+	// },
+
+	// proxy: {
+	// 	'/.netlify/functions/': {
+	// 		target: 'http://localhost:9999/.netlify/functions/',
+	// 		pathRewrite: { '^/.netlify/functions/': '' },
+	// 	},
+	// },
 }

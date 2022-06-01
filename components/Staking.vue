@@ -25,7 +25,7 @@
 					items-center
 					mb-3
 				">
-				<a
+				<button
 					class="
 						bg-[url('@/static/Buttons/btn-stake.gif')]
 						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
@@ -33,9 +33,8 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"
-					href="#"></a>
-				<a
+					"></button>
+				<button
 					class="
 						bg-[url('@/static/Buttons/btn-evolve.gif')]
 						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
@@ -44,8 +43,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					href="/evolve"></a>
-				<a
+					@click="showModal = true"></button>
+				<button
 					class="
 						bg-[url('@/static/Buttons/btn-market.gif')]
 						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
@@ -54,8 +53,7 @@
 						h-[60%]
 						w-[20%]
 					"
-					href="#"
-					@click="showModal = true"></a>
+					@click="showModal = true"></button>
 			</div>
 			<div class="grid grid-cols-4 gap-4">
 				<div
@@ -106,7 +104,7 @@
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
-									:src="item.image"
+									:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
 									class="w-[120px] h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton
@@ -148,8 +146,8 @@
 					</div>
 					<div
 						v-else-if="this.$wallet.stakeInfo.userInfo.length == 0"
-						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
-						<p class="text-center text-[#9ca3af]">No Staked Items</p>
+						class="h-[187px] px-2 bg-[#061f5f] flex justify-center items-center">
+						<p class="text-[#9ca3af]">No Staked Items</p>
 					</div>
 					<div
 						v-else
@@ -176,7 +174,7 @@
 							data-aos="fade-right"
 							data-aos-offset="0px">
 							<img
-								:src="`https://${process.env.s3Bucket}.s3.amazonaws.com/gifs/${item}.gif`"
+								:src="`https://ipfs.io/ipfs/QmP6U3ED69wcZxAYL2xbNoNL2HNW7EmhBUB5LPToKzxmbv/${item}.gif`"
 								class="w-[50px] h-[50px] rounded" />
 							<div class="flex items-center">
 								<CheckButton
