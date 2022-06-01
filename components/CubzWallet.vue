@@ -165,8 +165,10 @@
 							left-[43.8%]
 							top-[42%]
 							w-[12.8%]
-							h-[6.1%]
+							h-[10%]
 							bg-[url('@/static/Evolving/Lions-UI_Evolve_Glowing.gif')]
+							hover:bg-[url('@/static/Evolving/Lions-UI_Evolve_Hover_Glowing.gif')]
+							active:bg-[url('@/static/Evolving/Lions-UI_Evolve_Active_Glowing.gif')]
 							bg-no-repeat bg-contain bg-center
 						"
 						@click="onEvolve"></button>
