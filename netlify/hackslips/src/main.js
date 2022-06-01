@@ -4,7 +4,7 @@ const fs = require('fs')
 const sha1 = require(`sha1`)
 const { createCanvas, loadImage } = require(`canvas`)
 const buildDir = `${basePath}/netlify/hackslips/build`
-const layersDir = `${basePath}/netlify/hackslips/layers`
+const layersDir = `https://cyberlions-layers-internal.s3.amazonaws.com`
 const {
 	format,
 	baseUri,
@@ -33,6 +33,15 @@ const DNA_DELIMITER = '-'
 const HashlipsGiffer = require(`../modules/HashlipsGiffer.js`)
 
 let hashlipsGiffer = null
+
+var AWS = require('aws-sdk')
+
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+	process.env
+AWS.config.update({
+	accessKeyId: AWS_ACCESS_KEY_ID,
+	secretAccessKey: AWS_SECRET_ACCESS_KEY,
+})
 
 const buildSetup = () => {
 	if (fs.existsSync(buildDir)) {
@@ -70,28 +79,53 @@ const cleanName = (_str) => {
 	return nameWithoutWeight
 }
 
-const getElements = (path) => {
-	return fs
-		.readdirSync(path)
-		.filter((item) => !/(^|\/)\.[^\/\.]/g.test(item))
-		.map((i, index) => {
-			if (i.includes('-')) {
-				throw new Error(`layer name can not contain dashes, please fix: ${i}`)
+const getElements = async (path) => {
+	var s3 = new AWS.S3()
+	
+	var params = {
+		Bucket: 'cyberlions-layers-internal',
+		Delimiter: '/',
+		Prefix: path  // Can be your folder name
+	};
+	try {
+		const data = await s3.listObjects(params).promise();
+		
+		const contents = data.Contents.map((i, index) => {
+			if (i.Key.includes('-')) {
+				throw new Error(`layer name can not contain dashes, please fix: ${i.Key}`)
 			}
 			return {
 				id: index,
-				name: cleanName(i),
-				filename: i,
-				path: `${path}${i}`,
-				weight: getRarityWeight(i),
+				name: cleanName(i.Key.split('/')[1]),
+				filename: i.Key.split('/')[1],
+				path: `${layersDir}/${i.Key}`,
+				weight: 0,
 			}
 		})
+		const prefixes = data.CommonPrefixes.map((i, index) => {
+			if (i.Prefix.includes('-')) {
+				throw new Error(`layer name can not contain dashes, please fix: ${i.Prefix}`)
+			}
+			return {
+				id: index + contents.length,
+				name: cleanName(i.Prefix.split('/')[1]),
+				filename: i.Prefix.split('/')[1],
+				path: `${layersDir}/${i.Prefix}`,
+				weight: 0,
+			}
+		})
+		const result = contents.concat(prefixes)
+
+		return result
+	} catch(err) {
+		console.log(err)
+	}
 }
 
-const layersSetup = (layersOrder) => {
-	const layers = layersOrder.map((layerObj, index) => ({
+const layersSetup = async (layersOrder) => {
+	const layers = await Promise.all(layersOrder.map(async (layerObj, index) => ({
 		id: index,
-		elements: getElements(`${layersDir}/${layerObj.name}/`),
+		elements: await getElements(`${layerObj.name}/`),
 		name:
 			layerObj.options?.['displayName'] != undefined
 				? layerObj.options?.['displayName']
@@ -108,7 +142,7 @@ const layersSetup = (layersOrder) => {
 			layerObj.options?.['bypassDNA'] !== undefined
 				? layerObj.options?.['bypassDNA']
 				: false,
-	}))
+	})))
 	return layers
 }
 
@@ -184,20 +218,18 @@ const addAttributes = (_element) => {
 const loadLayerImg = async (_layer) => {
 	try {
 		return new Promise(async (resolve) => {
-			const isDir = fs
-				.lstatSync(path.resolve(_layer.selectedElement.path))
-				.isDirectory()
+			const isDir = !_layer.selectedElement.filename.includes('.png')
 			let image = null,
 				images = []
 			if (isDir) {
 				for (let i = 1; i <= 8; i++) {
 					let temp = await loadImage(
-						path.resolve(_layer.selectedElement.path, `${i}.png`)
+						`${_layer.selectedElement.path}${i}.png`
 					)
 					images.push(temp)
 				}
 			} else {
-				image = await loadImage(path.resolve(_layer.selectedElement.path))
+				image = await loadImage(_layer.selectedElement.path)
 			}
 			resolve({
 				layer: _layer,
@@ -388,7 +420,7 @@ const startCreating = async (query, filename) => {
 	}
 	debugLogs ? console.log('Editions left to create: ', abstractedIndexes) : null
 	while (layerConfigIndex < layerConfigurations.length) {
-		const layers = layersSetup(layerConfigurations[layerConfigIndex].layersOrder)
+		const layers = await layersSetup(layerConfigurations[layerConfigIndex].layersOrder)
 		while (
 			editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
 		) {
