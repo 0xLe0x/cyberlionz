@@ -81,8 +81,8 @@
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[18%] mt-1 text-gray-300">
-					<span class="text-xl">{{
+				<div class="ml-[5%] md:ml-[18%] mt-1 text-gray-300 text-xs md:text-lg">
+					<span>{{
 						$wallet.nfts !== undefined && $wallet.nfts.length
 					}}</span>
 					ITEMS
@@ -345,6 +345,13 @@ export default {
 					title: '',
 					text: 'Already evolved.',
 				})
+			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Legendary Cubz cannot be evolved.',
+				})
 			else this.dropId1 = index
 		},
 		onDrop_2(index) {
@@ -354,6 +361,13 @@ export default {
 					type: 'error',
 					title: '',
 					text: 'Already evolved.',
+				})
+			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Legendary Cubz cannot be evolved.',
 				})
 			else this.dropId2 = index
 		},
@@ -407,7 +421,7 @@ export default {
 					group: 'foo',
 					type: 'error',
 					title: '',
-					text: 'Not enough $HEAT.',
+					text: `Not enough $HEAT(${process.env.evolvingHeat}).`,
 				})
 			} else {
 				let traits = {}
@@ -422,7 +436,15 @@ export default {
 				const new_id = this.$wallet.nfts[this.dropId1].name.split('#')[1]
 				const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
 
-				await this.$wallet.burnHeat()
+				this.$wallet.evolving = 'Confirming your $HEAT...'
+
+				if(!await this.$wallet.burnHeat())
+					return
+
+				this.$wallet.evolving = 'confirming Cub to burn...'
+
+				if(!await this.$wallet.burn(parseInt(old_id)))
+					return
 
 				this.$wallet.evolving = 'evolving...'
 
@@ -434,9 +456,6 @@ export default {
 					},
 				})
 
-				this.$wallet.evolving = 'burning...'
-
-				await this.$wallet.burn(parseInt(old_id))
 				;[this.dropId1, this.dropId2, this.previewImage] = [
 					undefined,
 					undefined,
@@ -448,7 +467,7 @@ export default {
 					this.curTime = new Date().getTime()
 					this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
 					this.$wallet.evolving = ''
-				}, 20000)
+				}, 10000)
 			}
 		},
 	},

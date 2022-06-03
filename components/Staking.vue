@@ -104,7 +104,7 @@
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
-									:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
+									:src="item.image.substring(6)"
 									class="w-[120px] h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton
@@ -174,7 +174,7 @@
 							data-aos="fade-right"
 							data-aos-offset="0px">
 							<img
-								:src="`https://ipfs.io/ipfs/QmP6U3ED69wcZxAYL2xbNoNL2HNW7EmhBUB5LPToKzxmbv/${item}.gif`"
+								:src="`https://${process.env.s3Bucket}.s3.amazonaws.com/gif/${item}.gif`"
 								class="w-[50px] h-[50px] rounded" />
 							<div class="flex items-center">
 								<CheckButton
