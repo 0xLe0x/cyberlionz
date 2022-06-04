@@ -441,17 +441,12 @@ export default {
 				if(!await this.$wallet.burnHeat())
 					return
 
-				this.$wallet.evolving = 'confirming Cub to burn...'
-
-				if(!await this.$wallet.burn(parseInt(old_id)))
-					return
-
 				this.$wallet.evolving = 'evolving...'
 
 				await axios.get(`/.netlify/functions/evolve`, {
 					params: {
 						oldName: this.filename,
-						newName: this.$wallet.nfts[this.dropId1].name.split('#')[1],
+						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
 						traits,
 					},
 				})
