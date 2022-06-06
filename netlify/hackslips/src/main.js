@@ -36,11 +36,11 @@ let hashlipsGiffer = null;
 
 var AWS = require('aws-sdk')
 
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+const { AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
 	process.env
 AWS.config.update({
-	accessKeyId: AWS_ACCESS_KEY_ID,
-	secretAccessKey: AWS_SECRET_ACCESS_KEY,
+	accessKeyId: AWS_S3_ACCESS_KEY_ID,
+	secretAccessKey: AWS_S3_SECRET_ACCESS_KEY,
 })
 
 const buildSetup = () => {

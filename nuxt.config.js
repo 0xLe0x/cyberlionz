@@ -1,5 +1,5 @@
 import { abi as cyberLizonAbi } from './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
-import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberlionStaking.json'
+import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberlionzStaking.json'
 import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatToken.json'
 
 export default {
@@ -27,8 +27,8 @@ export default {
 
 	env: {
 		s3Bucket: process.env.AWS_S3_BUCKET_NAME,
-		accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+		accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+		secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
 		evolvingHeat: process.env.EVOLVING_HEAT,
 	},
 

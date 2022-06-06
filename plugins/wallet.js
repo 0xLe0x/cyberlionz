@@ -93,7 +93,6 @@ export default async ({ $config, store }, inject) => {
 						},
 						headers: {
 							'x-api-key': moralisApiKey,
-							'Cache-Control': 'no-cache' 
 						},
 					}
 				)
@@ -102,12 +101,12 @@ export default async ({ $config, store }, inject) => {
 					i = 0
 				for (let nft of res.data.result) {
 					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
-					let metadata = await axios.get(token_uri)
+					let metadata = await axios.get(`${token_uri}?${new Date().getTime()}`)
 					metadata.data.id = i++
 					results.push(metadata.data)
 				}
+
 				this.loaded = true
-				console.log(results)
 				return results
 			} catch (err) {
 				console.log(err)
@@ -120,6 +119,7 @@ export default async ({ $config, store }, inject) => {
 				heatContractAbi,
 				this.provider
 			)
+			
 			try {
 				this.heatAmount = ethers.utils.formatEther(
 					await heatContract.balanceOf(this.account)
@@ -136,14 +136,16 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 			try {
-				this.evolving = 'Confirming your $HEAT...'
 				const tx_burn = await heatContract.burn(
 					ethers.utils.parseEther(evolvingHeat)
 				)
 				this.evolving = 'Burning your $HEAT...'
 				await tx_burn.wait()
+				return true
 			} catch (err) {
 				console.log(err)
+				this.evolving = ''
+				return false
 			}
 		},
 
@@ -312,17 +314,23 @@ export default async ({ $config, store }, inject) => {
 				cyberLizonAbi,
 				this.provider.getSigner()
 			)
-
-			const tx_burn = await nftContract.transferFrom(
-				this.account,
-				'0x000000000000000000000000000000000000dEaD',
-				tokenId,
-				{
-					gasLimit: 250000,
-				}
-			)
-
-			await tx_burn.wait()
+			try {
+				const tx_burn = await nftContract.transferFrom(
+					this.account,
+					'0x000000000000000000000000000000000000dEaD',
+					tokenId,
+					{
+						gasLimit: 250000,
+					}
+				)
+				this.evolving = 'burning...'
+				await tx_burn.wait()
+				return true
+			} catch (err) {
+				console.log(err)
+				this.evolving = ''
+				return false
+			}
 		},
 
 		async setContract() {
