@@ -4,7 +4,8 @@ const fs = require('fs')
 const sha1 = require(`sha1`)
 const { createCanvas, loadImage } = require(`canvas`)
 const buildDir = `${basePath}/netlify/hackslips/build`
-const layersDir = `https://cyberlions-layers-internal.s3.amazonaws.com`
+const LAYERS_BUCKET_NAME = 'cyberlions-layers-internal'
+const layersDir = `https://${LAYERS_BUCKET_NAME}.s3.amazonaws.com`
 const {
   format,
   baseUri,
@@ -36,11 +37,11 @@ let hashlipsGiffer = null;
 
 var AWS = require('aws-sdk')
 
-const { AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+const { CL_S3_ACCESS_KEY_ID, CL_S3_SECRET_ACCESS_KEY, CL_S3_BUCKET_NAME } =
 	process.env
 AWS.config.update({
-	accessKeyId: AWS_S3_ACCESS_KEY_ID,
-	secretAccessKey: AWS_S3_SECRET_ACCESS_KEY,
+	accessKeyId: CL_S3_ACCESS_KEY_ID,
+	secretAccessKey: CL_S3_SECRET_ACCESS_KEY,
 })
 
 const buildSetup = () => {
@@ -83,7 +84,7 @@ const getElements = async (path) => {
 	var s3 = new AWS.S3()
 	
 	var params = {
-		Bucket: 'cyberlions-layers-internal',
+		Bucket: LAYERS_BUCKET_NAME,
 		Delimiter: '/',
 		Prefix: path  // Can be your folder name
 	};
@@ -98,7 +99,7 @@ const getElements = async (path) => {
 				id: index,
 				name: cleanName(i.Key.split('/')[1]),
 				filename: i.Key.split('/')[1],
-				path: `${layersDir}/${i.Key}`,
+				path: `${i.Key}`,
 				weight: 0,
 			}
 		})
@@ -110,7 +111,7 @@ const getElements = async (path) => {
 				id: index + contents.length,
 				name: cleanName(i.Prefix.split('/')[1]),
 				filename: i.Prefix.split('/')[1],
-				path: `${layersDir}/${i.Prefix}`,
+				path: `${i.Prefix}`,
 				weight: 0,
 			}
 		})
@@ -216,6 +217,8 @@ const addAttributes = (_element) => {
 };
 
 const loadLayerImg = async (_layer) => {
+	var s3 = new AWS.S3()
+
 	try {
 		return new Promise(async (resolve) => {
 			const isDir = !_layer.selectedElement.filename.includes('.png')
@@ -223,13 +226,24 @@ const loadLayerImg = async (_layer) => {
 				images = []
 			if (isDir) {
 				for (let i = 1; i <= 8; i++) {
-					let temp = await loadImage(
-						`${_layer.selectedElement.path}${i}.png`
-					)
+          console.log(`${_layer.selectedElement.path}${i}.png`)
+          const data = await s3
+            .getObject({
+              Bucket: LAYERS_BUCKET_NAME,
+              Key: `${_layer.selectedElement.path}${i}.png`,
+            })
+            .promise()
+					let temp = await loadImage(data.Body)
 					images.push(temp)
 				}
 			} else {
-				image = await loadImage(_layer.selectedElement.path)
+        const data = await s3
+            .getObject({
+              Bucket: LAYERS_BUCKET_NAME,
+              Key: `${_layer.selectedElement.path}`,
+            })
+            .promise()
+				image = await loadImage(data.Body)
 			}
 			resolve({
 				layer: _layer,

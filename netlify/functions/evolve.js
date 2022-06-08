@@ -2,17 +2,17 @@ var AWS = require('aws-sdk')
 const fs = require('fs')
 const basePath = process.cwd()
 
-const { AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+const { CL_S3_ACCESS_KEY_ID, CL_S3_SECRET_ACCESS_KEY, CL_S3_BUCKET_NAME } =
 	process.env
 AWS.config.update({
-	accessKeyId: AWS_S3_ACCESS_KEY_ID,
-	secretAccessKey: AWS_S3_SECRET_ACCESS_KEY,
+	accessKeyId: CL_S3_ACCESS_KEY_ID,
+	secretAccessKey: CL_S3_SECRET_ACCESS_KEY,
 })
 
 exports.handler = async function (event, context) {
 	var s3 = new AWS.S3()
 
-	var BUCKET_NAME = AWS_S3_BUCKET_NAME
+	var BUCKET_NAME = CL_S3_BUCKET_NAME
 	var OLD_KEY = event.queryStringParameters.oldName
 	var NEW_KEY = event.queryStringParameters.newName
 	const traits = event.queryStringParameters.traits
@@ -69,7 +69,7 @@ exports.handler = async function (event, context) {
 
 		let params = {
 			params: {
-				Bucket: AWS_S3_BUCKET_NAME,
+				Bucket: CL_S3_BUCKET_NAME,
 				Key: `json/${NEW_KEY}.json`,
 				Body: Buffer.from(JSON.stringify(metadata)),
 				ContentType: 'application/json',
