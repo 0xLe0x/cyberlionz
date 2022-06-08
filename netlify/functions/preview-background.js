@@ -4,11 +4,11 @@ var fs = require('fs')
 const mime = require('mime')
 var AWS = require('aws-sdk')
 
-const { AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME } =
+const { CL_S3_ACCESS_KEY_ID, CL_S3_SECRET_ACCESS_KEY, CL_S3_BUCKET_NAME } =
 	process.env
 AWS.config.update({
-	accessKeyId: AWS_S3_ACCESS_KEY_ID,
-	secretAccessKey: AWS_S3_SECRET_ACCESS_KEY,
+	accessKeyId: CL_S3_ACCESS_KEY_ID,
+	secretAccessKey: CL_S3_SECRET_ACCESS_KEY,
 })
 
 exports.handler = async function (event, context) {
@@ -31,7 +31,7 @@ exports.handler = async function (event, context) {
 
 	let gif_params = {
 		params: {
-			Bucket: AWS_S3_BUCKET_NAME,
+			Bucket: CL_S3_BUCKET_NAME,
 			Key: `gifs_evolve/${gif_filename}`,
 			Body: gif_content,
 			ContentType: mime.getType(gif_filepath),
