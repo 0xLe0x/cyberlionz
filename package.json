@@ -9,7 +9,8 @@
 		"start": "nuxt start",
 		"generate": "nuxt generate --fail-on-error",
 		"deploy:cl": "npx hardhat run scripts/deploy-cl-staking.ts",
-		"netlify-generate": "nuxt generate --fail-on-error && yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/"
+		"canvas:fix": "yum install gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib-devel libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/",
+		"netlify-build": "npm run canvas:fix && npm run build"
 	},
 	"dependencies": {
 		"@metamask/onboarding": "^1.0.1",
