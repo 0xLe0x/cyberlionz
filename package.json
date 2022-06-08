@@ -9,7 +9,7 @@
 		"start": "nuxt start",
 		"generate": "nuxt generate --fail-on-error",
 		"deploy:cl": "npx hardhat run scripts/deploy-cl-staking.ts",
-		"canvas-rebuild": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/"
+		"netlify-generate": "nuxt generate --fail-on-error && yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/"
 	},
 	"dependencies": {
 		"@metamask/onboarding": "^1.0.1",
