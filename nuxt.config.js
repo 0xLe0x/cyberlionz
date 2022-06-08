@@ -1,5 +1,5 @@
 import { abi as cyberLizonAbi } from './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
-import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberlionzStaking.json'
+import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberLionzStaking.json'
 import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatToken.json'
 
 export default {
