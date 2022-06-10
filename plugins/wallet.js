@@ -119,7 +119,7 @@ export default async ({ $config, store }, inject) => {
 				heatContractAbi,
 				this.provider
 			)
-			
+
 			try {
 				this.heatAmount = ethers.utils.formatEther(
 					await heatContract.balanceOf(this.account)
@@ -136,11 +136,7 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 			try {
-				const tx_burn = await heatContract.burn(
-					ethers.utils.parseEther(evolvingHeat)
-				)
-				this.evolving = 'Burning your $HEAT...'
-				await tx_burn.wait()
+				await heatContract.burn(ethers.utils.parseEther(evolvingHeat))
 				return true
 			} catch (err) {
 				console.log(err)

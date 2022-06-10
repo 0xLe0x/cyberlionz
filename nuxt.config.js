@@ -41,6 +41,7 @@ export default {
 		accessKeyId: process.env.CL_S3_ACCESS_KEY_ID,
 		secretAccessKey: process.env.CL_S3_SECRET_ACCESS_KEY,
 		evolvingHeat: process.env.EVOLVING_HEAT,
+		hackslipsServer: process.env.HACKSLIPS_SERVER,
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
@@ -140,14 +141,14 @@ export default {
 		transpile: ['web3modal-vue'],
 	},
 
-	axios: {
-		proxy: true,
-	},
+	// axios: {
+	// 	proxy: true,
+	// },
 
-	proxy: {
-		'/.netlify/functions/': {
-			target: 'http://localhost:9999/.netlify/functions/',
-			pathRewrite: { '^/.netlify/functions/': '' },
-		},
-	},
+	// proxy: {
+	// 	'/.netlify/functions/': {
+	// 		target: 'http://localhost:9999/.netlify/functions/',
+	// 		pathRewrite: { '^/.netlify/functions/': '' },
+	// 	},
+	// },
 }
