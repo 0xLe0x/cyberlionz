@@ -140,14 +140,14 @@ export default {
 		transpile: ['web3modal-vue'],
 	},
 
-	// axios: {
-	// 	proxy: true,
-	// },
+	axios: {
+		proxy: true,
+	},
 
-	// proxy: {
-	// 	'/.netlify/functions/': {
-	// 		target: 'http://localhost:9999/.netlify/functions/',
-	// 		pathRewrite: { '^/.netlify/functions/': '' },
-	// 	},
-	// },
+	proxy: {
+		'/.netlify/functions/': {
+			target: 'http://localhost:9999/.netlify/functions/',
+			pathRewrite: { '^/.netlify/functions/': '' },
+		},
+	},
 }

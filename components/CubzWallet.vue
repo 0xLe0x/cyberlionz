@@ -82,9 +82,7 @@
 					@dragover.prevent
 					@dragenter.prevent></div>
 				<div class="ml-[5%] md:ml-[18%] mt-1 text-gray-300 text-xs md:text-lg">
-					<span>{{
-						$wallet.nfts !== undefined && $wallet.nfts.length
-					}}</span>
+					<span>{{ $wallet.nfts !== undefined && $wallet.nfts.length }}</span>
 					ITEMS
 				</div>
 				<div
@@ -102,7 +100,8 @@
 					class="flex justify-center items-center h-[170px]">
 					<p class="text-[#d1d5db]">Please connect your wallet</p>
 				</div>
-				<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+				<div
+					class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
 					<div
 						v-for="(item, i) in this.$wallet.nfts
 							? this.$wallet.nfts.filter(
@@ -120,7 +119,7 @@
 				</div>
 			</div>
 			<div class="relative">
-				<img src="/Evolving/Lions-UI_Mock-Up_NoToggle.png" class="w-full" />
+				<img src="/Evolving/Lions-UI_Boxes_New_9x.png" class="w-full" />
 				<breed-slot
 					:index="this.dropId1"
 					@dropped="onDrop_1"
@@ -151,22 +150,38 @@
 					<button
 						class="
 							absolute
-							left-[43.8%]
-							top-[34.7%]
-							w-[12.8%]
-							h-[6.1%]
+							left-[38.8%]
+							top-[35.2%]
+							w-[22.8%]
+							h-[5.3%]
+							bg-[url('@/static/Evolving/Lions-UI_Preview_Button_New_Hover_Active.gif')]
+							bg-no-repeat bg-left
+							hover:bg-center
+							active:bg-right
+							bg-[length:300%_100%]
 							bg-transparent
 						"
 						:disabled="dropId1 === undefined || dropId2 === undefined"
 						@click="onPreview"></button>
+					<div
+						class="
+							absolute
+							left-[38.8%]
+							top-[35.2%]
+							bg-[url('@/static/Evolving/Lions-UI_Select_Cubz.gif')]
+							w-[22.8%]
+							h-[5.3%]
+						">
+						<img src="/Evolving/Lions-UI_Select_Cubz.gif" />
+					</div>
 					<button
 						class="
 							absolute
-							left-[45.2%]
-							top-[42%]
-							w-[10%]
-							h-[6%]
-							bg-[url('@/static/Evolving/Lions-UI_Evolve_Glowing_Hover_Active.gif')]
+							left-[38.8%]
+							top-[35.2%]
+							w-[22.8%]
+							h-[5.3%]
+							bg-[url('@/static/Evolving/Lions-UI_Evolve_Button_New_Hover_Active.gif')]
 							bg-no-repeat bg-left
 							hover:bg-center
 							active:bg-right
@@ -303,6 +318,7 @@ export default {
 			filename: '',
 			curTime: new Date().getTime(),
 			showModal: false,
+			curState: 'SELECT_CUBZ',
 		}
 	},
 	components: {
@@ -335,6 +351,7 @@ export default {
 				} else if (this.dropId2 == id) {
 					this.dropId2 = undefined
 				}
+				this.curState = 'SELECT_CUBZ'
 			}
 		},
 		onDrop_1(index) {
@@ -345,14 +362,17 @@ export default {
 					title: '',
 					text: 'Already evolved.',
 				})
-			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			else if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else this.dropId1 = index
+			else {
+				this.dropId1 = index
+				if (this.dropId2 != -1) this.curState = 'PREVIEW'
+			}
 		},
 		onDrop_2(index) {
 			if (this.$wallet.nfts[index].name.includes('Adultlion'))
@@ -362,14 +382,17 @@ export default {
 					title: '',
 					text: 'Already evolved.',
 				})
-			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			else if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else this.dropId2 = index
+			else {
+				this.dropId2 = index
+				if (this.dropId1 != -1) this.curState = 'PREVIEW'
+			}
 		},
 		onExchange() {
 			;[this.dropId1, this.dropId2] = [this.dropId2, this.dropId1]
@@ -408,15 +431,18 @@ export default {
 							this.previewImageLoading = false
 							this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 							this.curTime = new Date().getTime()
+							this.curState = 'EVOLVE'
 						}
 					}, 5000)
 				}
 			} catch (err) {
-				console.log(err)
+				// console.log(err)
 			}
 		},
 		async onEvolve() {
-			if (parseInt(this.$wallet.heatAmount) < parseInt(process.env.evolvingHeat)) {
+			if (
+				parseInt(this.$wallet.heatAmount) < parseInt(process.env.evolvingHeat)
+			) {
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -438,8 +464,7 @@ export default {
 
 				this.$wallet.evolving = 'Confirming your $HEAT...'
 
-				if(!await this.$wallet.burnHeat())
-					return
+				if (!(await this.$wallet.burnHeat())) return
 
 				this.$wallet.evolving = 'evolving...'
 
@@ -450,7 +475,6 @@ export default {
 						traits,
 					},
 				})
-
 				;[this.dropId1, this.dropId2, this.previewImage] = [
 					undefined,
 					undefined,
