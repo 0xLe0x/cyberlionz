@@ -39,7 +39,7 @@ export default {
 	env: {
 		evolvingHeat: process.env.EVOLVING_HEAT,
 		hackslipsServer: process.env.HACKSLIPS_SERVER,
-		s3Bucket: process.env.CL_S3_BUCKET,
+		s3Bucket: process.env.CL_S3_BUCKET_NAME,
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
