@@ -426,17 +426,17 @@ export default {
 			try {
 				this.previewImageLoading = true
 				const response = await fetch(
-					`https://${process.env.CL_S3_BUCKET_NAME}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
+					`https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				)
 				if (response.status == 200) {
 					this.previewImageLoading = false
-					this.previewImage = `https://${process.env.CL_S3_BUCKET_NAME}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
+					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				} else {
-					await axios.get(`http://${process.env.HACKSLIPS_SERVER}/api/preview`, {
+					await axios.get(`http://${process.env.hackslipsServer}/api/preview`, {
 						params,
 					})
 					this.previewImageLoading = false
-					this.previewImage = `https://${process.env.CL_S3_BUCKET_NAME}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
+					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 					this.curTime = new Date().getTime()
 				}
 				this.curState = 'EVOLVE'
@@ -450,7 +450,7 @@ export default {
 					group: 'foo',
 					type: 'error',
 					title: '',
-					text: `Not enough $HEAT(${process.env.EVOLVING_HEAT}).`,
+					text: `Not enough $HEAT(${process.env.evolvingHeat}).`,
 				})
 			} else {
 				let traits = {}
@@ -471,7 +471,7 @@ export default {
 
 				this.$wallet.evolving = 'evolving...'
 
-				await axios.get(`http://${process.env.HACKSLIPS_SERVER}/api/evolve`, {
+				await axios.get(`http://${process.env.hackslipsServer}/api/evolve`, {
 					params: {
 						oldName: this.filename,
 						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
