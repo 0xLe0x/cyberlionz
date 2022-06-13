@@ -176,7 +176,7 @@
 							data-aos="fade-right"
 							data-aos-offset="0px">
 							<img
-								:src="`https://${process.env.s3Bucket}.s3.amazonaws.com/gif/${item}.gif`"
+								:src="`https://${process.env.CL_S3_BUCKET_NAME}.s3.amazonaws.com/gif/${item}.gif`"
 								class="w-[50px] h-[50px] rounded" />
 							<div class="flex items-center">
 								<CheckButton
