@@ -370,7 +370,14 @@ export default {
 			}
 		},
 		onDrop_1(index) {
-			if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			if (this.$wallet.nfts[index].name.includes('Adultlion'))
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Already evolved.',
+				})
+			else if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -383,14 +390,14 @@ export default {
 			}
 		},
 		onDrop_2(index) {
-			// if (this.$wallet.nfts[index].name.includes('Adultlion'))
-			// 	Vue.notify({
-			// 		group: 'foo',
-			// 		type: 'error',
-			// 		title: '',
-			// 		text: 'Already evolved.',
-			// 	})
-			if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			if (this.$wallet.nfts[index].name.includes('Adultlion'))
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Already evolved.',
+				})
+			else if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -432,9 +439,12 @@ export default {
 					this.previewImageLoading = false
 					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				} else {
-					await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
-						params,
-					})
+					await axios.get(
+						`https://${process.env.hackslipsServer}/api/preview`,
+						{
+							params,
+						}
+					)
 					this.previewImageLoading = false
 					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 					this.curTime = new Date().getTime()
