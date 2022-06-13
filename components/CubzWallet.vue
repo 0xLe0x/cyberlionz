@@ -432,7 +432,7 @@ export default {
 					this.previewImageLoading = false
 					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				} else {
-					await axios.get(`http://${process.env.hackslipsServer}/api/preview`, {
+					await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
 						params,
 					})
 					this.previewImageLoading = false
@@ -471,7 +471,7 @@ export default {
 
 				this.$wallet.evolving = 'evolving...'
 
-				await axios.get(`http://${process.env.hackslipsServer}/api/evolve`, {
+				await axios.get(`https://${process.env.hackslipsServer}/api/evolve`, {
 					params: {
 						oldName: this.filename,
 						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
