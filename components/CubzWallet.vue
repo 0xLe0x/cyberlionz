@@ -432,7 +432,7 @@ export default {
 					this.previewImageLoading = false
 					this.previewImage = `https://${process.env.CL_S3_BUCKET_NAME}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				} else {
-					await axios.get(`http://${process.env.hackslipsServer}/api/preview`, {
+					await axios.get(`http://${process.env.HACKSLIPS_SERVER}/api/preview`, {
 						params,
 					})
 					this.previewImageLoading = false
@@ -450,7 +450,7 @@ export default {
 					group: 'foo',
 					type: 'error',
 					title: '',
-					text: `Not enough $HEAT(${process.env.evolvingHeat}).`,
+					text: `Not enough $HEAT(${process.env.EVOLVING_HEAT}).`,
 				})
 			} else {
 				let traits = {}
@@ -471,7 +471,7 @@ export default {
 
 				this.$wallet.evolving = 'evolving...'
 
-				await axios.get(`http://${process.env.hackslipsServer}/api/evolve`, {
+				await axios.get(`http://${process.env.HACKSLIPS_SERVER}/api/evolve`, {
 					params: {
 						oldName: this.filename,
 						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
