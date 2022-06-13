@@ -25,7 +25,7 @@
 					items-center
 					mb-3
 				">
-				<button
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-stake.gif')]
 						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
@@ -33,8 +33,9 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"></button>
-				<button
+					"
+					href="#"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-evolve.gif')]
 						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
@@ -43,8 +44,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
-				<button
+					href="/evolve"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-market.gif')]
 						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
@@ -53,7 +54,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
+					href="#"
+					@click="showModal = true"></a>
 			</div>
 			<div class="grid grid-cols-4 gap-4">
 				<div

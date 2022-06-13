@@ -18,7 +18,8 @@
 					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
 					bg-no-repeat
 					bg-[length:100%_100%]
-					h-[100px]
+					h-[50px]
+					md:h-[100px]
 					flex
 					justify-around
 					items-center
@@ -62,7 +63,7 @@
 					bg-[url('@/static/Evolving/Lions-UI_Inventory.png')]
 					bg-no-repeat
 					bg-[length:100%_100%]
-					px-12
+					px-[5%]
 					py-3
 					h-[220px]
 					mb-3
@@ -81,8 +82,8 @@
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[5%] md:ml-[18%] mt-1 text-gray-300 text-xs md:text-lg">
-					<span>{{
+				<div class="ml-[18%] mt-1 text-gray-300">
+					<span class="text-xl">{{
 						$wallet.nfts !== undefined && $wallet.nfts.length
 					}}</span>
 					ITEMS
@@ -102,7 +103,8 @@
 					class="flex justify-center items-center h-[170px]">
 					<p class="text-[#d1d5db]">Please connect your wallet</p>
 				</div>
-				<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+				<div
+					class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
 					<div
 						v-for="(item, i) in this.$wallet.nfts
 							? this.$wallet.nfts.filter(
@@ -120,7 +122,7 @@
 				</div>
 			</div>
 			<div class="relative">
-				<img src="/Evolving/Lions-UI_Mock-Up_NoToggle.png" class="w-full" />
+				<img src="/Evolving/Lions-UI_Boxes_New_9x.png" class="w-full" />
 				<breed-slot
 					:index="this.dropId1"
 					@dropped="onDrop_1"
@@ -144,35 +146,62 @@
 							:opacity="0.7"
 							:is-full-page="false" />
 						<img
+							src="/Evolving/Lions-UI_Opening_Middle_Door.gif"
+							v-if="previewImage === undefined" />
+						<img
 							:src="`${this.previewImage}?${curTime}`"
 							data-aos="fade"
 							v-if="this.previewImage != undefined" />
 					</div>
+					<div class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%]">
+						<img
+							v-if="curState === 'SELECT_CUBZ'"
+							src="/Evolving/Lions-UI_Select_Cubz.gif" />
+					</div>
 					<button
 						class="
 							absolute
-							left-[43.8%]
-							top-[34.7%]
-							w-[12.8%]
-							h-[6.1%]
-							bg-transparent
+							left-[38.8%]
+							top-[35.2%]
+							w-[22.8%]
+							h-[5.3%]
+							overflow-hidden
 						"
+						v-if="curState === 'PREVIEW'"
 						:disabled="dropId1 === undefined || dropId2 === undefined"
-						@click="onPreview"></button>
+						@click="onPreview">
+						<img
+							class="
+								w-[300%]
+								max-w-none
+								hover:-translate-x-1/3
+								active:-translate-x-2/3
+							"
+							src="/Evolving/Lions-UI_Preview_Button_New_Hover_Active.gif"
+							rel="preload" />
+					</button>
 					<button
 						class="
 							absolute
-							left-[45.2%]
-							top-[42%]
-							w-[10%]
-							h-[6%]
-							bg-[url('@/static/Evolving/Lions-UI_Evolve_Glowing_Hover_Active.gif')]
-							bg-no-repeat bg-left
-							hover:bg-center
-							active:bg-right
-							bg-[length:300%_100%]
+							left-[38.6%]
+							top-[32.7%]
+							w-[23.2%]
+							h-[8.1%]
+							overflow-hidden
 						"
-						@click="onEvolve"></button>
+						v-if="curState === 'EVOLVE'"
+						:disabled="dropId1 === undefined || dropId2 === undefined"
+						@click="onEvolve">
+						<img
+							class="
+								w-[300%]
+								max-w-none
+								hover:-translate-x-1/3
+								active:-translate-x-2/3
+							"
+							src="/Evolving/Lions-UI_Evolve_Button_New_Hover_Active.gif"
+							rel="preload" />
+					</button>
 					<div class="absolute left-[44.4%] top-[59.3%] w-[11.5%] h-[34.9%]">
 						<div
 							v-for="(val, index) in trait_type"
@@ -181,6 +210,7 @@
 							<div class="toggles h-full flex items-center justify-center">
 								<trait-toggle
 									v-model="toggleValue[val]"
+									@input="onTraitToggle"
 									:id="`t-${val}`"
 									:data-aos="index > 3 ? 'fade-left' : 'fade-right'"
 									data-aos-offset="0px" />
@@ -303,6 +333,7 @@ export default {
 			filename: '',
 			curTime: new Date().getTime(),
 			showModal: false,
+			curState: 'SELECT_CUBZ',
 		}
 	},
 	components: {
@@ -335,44 +366,49 @@ export default {
 				} else if (this.dropId2 == id) {
 					this.dropId2 = undefined
 				}
+				this.curState = 'SELECT_CUBZ'
 			}
 		},
 		onDrop_1(index) {
-			if (this.$wallet.nfts[index].name.includes('Adultlion'))
-				Vue.notify({
-					group: 'foo',
-					type: 'error',
-					title: '',
-					text: 'Already evolved.',
-				})
-			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else this.dropId1 = index
+			else {
+				this.dropId1 = index
+				if (this.dropId2 !== undefined) this.curState = 'PREVIEW'
+			}
 		},
 		onDrop_2(index) {
-			if (this.$wallet.nfts[index].name.includes('Adultlion'))
-				Vue.notify({
-					group: 'foo',
-					type: 'error',
-					title: '',
-					text: 'Already evolved.',
-				})
-			else if(this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
+			// if (this.$wallet.nfts[index].name.includes('Adultlion'))
+			// 	Vue.notify({
+			// 		group: 'foo',
+			// 		type: 'error',
+			// 		title: '',
+			// 		text: 'Already evolved.',
+			// 	})
+			if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else this.dropId2 = index
+			else {
+				this.dropId2 = index
+				if (this.dropId1 !== undefined) this.curState = 'PREVIEW'
+			}
 		},
 		onExchange() {
 			;[this.dropId1, this.dropId2] = [this.dropId2, this.dropId1]
+		},
+		onTraitToggle() {
+			if (this.curState == 'EVOLVE') {
+				this.curState = 'PREVIEW'
+			}
 		},
 		async onPreview() {
 			let params = {}
@@ -396,27 +432,20 @@ export default {
 					this.previewImageLoading = false
 					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
 				} else {
-					await axios.get(`/.netlify/functions/preview-background`, {
+					await axios.get(`http://${process.env.hackslipsServer}/api/preview`, {
 						params,
 					})
-					const intervalId = setInterval(async () => {
-						const response = await fetch(
-							`https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
-						)
-						if (response.status == 200) {
-							clearInterval(intervalId)
-							this.previewImageLoading = false
-							this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
-							this.curTime = new Date().getTime()
-						}
-					}, 5000)
+					this.previewImageLoading = false
+					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
+					this.curTime = new Date().getTime()
 				}
-			} catch (err) {
-				console.log(err)
-			}
+				this.curState = 'EVOLVE'
+			} catch (err) {}
 		},
 		async onEvolve() {
-			if (parseInt(this.$wallet.heatAmount) < parseInt(process.env.evolvingHeat)) {
+			if (
+				parseInt(this.$wallet.heatAmount) < parseInt(process.env.evolvingHeat)
+			) {
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -438,24 +467,23 @@ export default {
 
 				this.$wallet.evolving = 'Confirming your $HEAT...'
 
-				if(!await this.$wallet.burnHeat())
-					return
+				if (!(await this.$wallet.burnHeat())) return
 
 				this.$wallet.evolving = 'evolving...'
 
-				await axios.get(`/.netlify/functions/evolve`, {
+				await axios.get(`http://${process.env.hackslipsServer}/api/evolve`, {
 					params: {
 						oldName: this.filename,
 						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
 						traits,
 					},
 				})
-
 				;[this.dropId1, this.dropId2, this.previewImage] = [
 					undefined,
 					undefined,
 					undefined,
 				]
+				this.curState = 'SELECT_CUBZ'
 
 				this.$wallet.evolving = 'reloading...'
 				setTimeout(async () => {

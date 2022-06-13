@@ -1,5 +1,5 @@
 <template>
-	<footer class="text-gray-700 bg-lionz-light-brown body-font">
+	<footer class="text-gray-700 bg-lionz-light-brown body-font hidden md:block">
 		<div
 			class="
 				container
@@ -22,8 +22,7 @@
 			<p
 				class="
 					mt-4
-					text-sm
-					text-lionz-accent
+					text-sm text-lionz-accent
 					sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-700 sm:mt-0
 				">
 				© 2021 - 🦁 Cyber Lionz <a href="https://fueledonbacon.com">🥓</a>
@@ -36,7 +35,6 @@
 					space-x-5
 					sm:ml-auto sm:mt-0 sm:justify-start
 				">
-
 				<!--
 				<a href="#" class="text-gray-600 hover:text-gray-800">
 					<span class="sr-only">Facebook</span>
@@ -68,20 +66,26 @@
 
 				-->
 
-				<a href="https://opensea.io/collection/cyberlionzofficial" class="text-lionz-accent hover:text-gray-800">
+				<a
+					href="https://opensea.io/collection/cyberlionzofficial"
+					class="text-lionz-accent hover:text-gray-800">
 					<span class="sr-only">OpenSea</span>
-					<svg 
+					<svg
 						class="w-6 h-6"
 						fill="currentColor"
 						viewBox="0 0 56 56"
 						aria-hidden="true"
 						preserveAspectRatio="xMidYMid meet">
-					<path fill-rule="evenodd" d="M27.91,0A27.91,27.91,0,1,0,55.82,27.91,27.92,27.92,0,0,0,27.91,0ZM21.28,16.94c.29.66.53,1.23.56,1.3a18.21,18.21,0,0,1,1.53,5.84,7.24,7.24,0,0,1-1.15,4.07c-.37.58-.77,1.14-.77,1.14H13.38S19.15,20.28,21.28,16.94ZM46.07,33l-.65.31a2.39,2.39,0,0,1-.48.25,6.22,6.22,0,0,0-3,2.68,28.71,28.71,0,0,1-2.64,3.93,4.8,4.8,0,0,1-3.79,2H20.08c-4.52,0-8.35-4.34-8.46-8.86v-.82h8.63v.7a3.18,3.18,0,0,0,.11.64,2.78,2.78,0,0,0,2.87,2.1H27V32.56H23c-.06-.13,0-.34.21-.63.66-1,1.28-2.11,1.89-3.19,1.48-2.61,1.32-5.33.57-8.1a34,34,0,0,0-3-7.18s2.18.47,4.35,1.06V12.85a1.68,1.68,0,0,1,3.35,0v2.78l.43.21A29.15,29.15,0,0,1,35,19.76,18.37,18.37,0,0,1,36.5,22a6,6,0,0,1-.2,6.66,22.36,22.36,0,0,1-3.11,3.68,1.24,1.24,0,0,1-.22.18h-2.6v3.31h2.94a3.78,3.78,0,0,0,2.41-1.14c.38-.41,1.32-1.64,1.32-1.64l9-2.45Z" clip-rule="evenodd"></path>
+						<path
+							fill-rule="evenodd"
+							d="M27.91,0A27.91,27.91,0,1,0,55.82,27.91,27.92,27.92,0,0,0,27.91,0ZM21.28,16.94c.29.66.53,1.23.56,1.3a18.21,18.21,0,0,1,1.53,5.84,7.24,7.24,0,0,1-1.15,4.07c-.37.58-.77,1.14-.77,1.14H13.38S19.15,20.28,21.28,16.94ZM46.07,33l-.65.31a2.39,2.39,0,0,1-.48.25,6.22,6.22,0,0,0-3,2.68,28.71,28.71,0,0,1-2.64,3.93,4.8,4.8,0,0,1-3.79,2H20.08c-4.52,0-8.35-4.34-8.46-8.86v-.82h8.63v.7a3.18,3.18,0,0,0,.11.64,2.78,2.78,0,0,0,2.87,2.1H27V32.56H23c-.06-.13,0-.34.21-.63.66-1,1.28-2.11,1.89-3.19,1.48-2.61,1.32-5.33.57-8.1a34,34,0,0,0-3-7.18s2.18.47,4.35,1.06V12.85a1.68,1.68,0,0,1,3.35,0v2.78l.43.21A29.15,29.15,0,0,1,35,19.76,18.37,18.37,0,0,1,36.5,22a6,6,0,0,1-.2,6.66,22.36,22.36,0,0,1-3.11,3.68,1.24,1.24,0,0,1-.22.18h-2.6v3.31h2.94a3.78,3.78,0,0,0,2.41-1.14c.38-.41,1.32-1.64,1.32-1.64l9-2.45Z"
+							clip-rule="evenodd"></path>
 					</svg>
 				</a>
 
-
-				<a href="https://twitter.com/CyberLionzNFT" class="text-lionz-accent hover:text-gray-800">
+				<a
+					href="https://twitter.com/CyberLionzNFT"
+					class="text-lionz-accent hover:text-gray-800">
 					<span class="sr-only">Twitter</span>
 					<svg
 						class="w-6 h-6"

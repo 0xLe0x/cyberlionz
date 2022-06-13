@@ -37,10 +37,8 @@ export default {
 	},
 
 	env: {
-		s3Bucket: process.env.CL_S3_BUCKET_NAME,
-		accessKeyId: process.env.CL_S3_ACCESS_KEY_ID,
-		secretAccessKey: process.env.CL_S3_SECRET_ACCESS_KEY,
 		evolvingHeat: process.env.EVOLVING_HEAT,
+		hackslipsServer: process.env.HACKSLIPS_SERVER,
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
