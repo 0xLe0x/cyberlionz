@@ -114,7 +114,7 @@
 						:key="i"
 						class="flex-none pt-3">
 						<img
-							:src="`${item.image}?${curTime}`"
+							:src="`${item.image}?${timeStamp}`"
 							class="w-[140px] h-[140px] hover:cursor-pointer"
 							data-aos="fade-right"
 							@dragstart="startDrag($event, item.id)" />
@@ -122,14 +122,17 @@
 				</div>
 			</div>
 			<div class="relative">
-				<img src="/Evolving/Lions-UI_Boxes_New_9x.png" class="w-full" />
+				<img
+					src="/Evolving/Lions-UI_Boxes_New_9x.png"
+					class="w-full"
+					rel="preload" />
 				<breed-slot
 					:index="this.dropId1"
 					@dropped="onDrop_1"
 					@exchange="onExchange"
 					ref="slot1"
 					class="absolute left-[11%] top-[17.8%] w-[25.6%] h-[36%]"
-					:curTime="curTime" />
+					:timeStamp="timeStamp" />
 				<trait-slot
 					:index="this.dropId1"
 					:toggleState="toggleValue"
@@ -146,17 +149,24 @@
 							:opacity="0.7"
 							:is-full-page="false" />
 						<img
-							src="/Evolving/Lions-UI_Opening_Middle_Door.gif"
-							v-if="previewImage === undefined" />
-						<img
-							:src="`${this.previewImage}?${curTime}`"
+							:src="`${this.previewImage}?${timeStamp}`"
 							data-aos="fade"
 							v-if="this.previewImage != undefined" />
-					</div>
-					<div class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%]">
 						<img
-							v-if="curState === 'SELECT_CUBZ'"
-							src="/Evolving/Lions-UI_Select_Cubz.gif" />
+							:src="`/Evolving/Lions-UI_Opening_Middle_Door-Close.gif?${timeStamp}`"
+							class="absolute left-0 top-0"
+							:class="doorImage ? { hidden: true } : { hidden: false }" />
+						<img
+							:src="doorOpen"
+							class="absolute left-0 top-0"
+							:class="doorImage ? { hidden: false } : { hidden: true }" />
+					</div>
+					<div
+						class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%]"
+						:class="
+							curState === 'SELECT_CUBZ' ? { hidden: false } : { hidden: true }
+						">
+						<img src="/Evolving/Lions-UI_Select_Cubz.gif" />
 					</div>
 					<button
 						class="
@@ -167,7 +177,9 @@
 							h-[5.3%]
 							overflow-hidden
 						"
-						v-if="curState === 'PREVIEW'"
+						:class="
+							curState === 'PREVIEW' ? { hidden: false } : { hidden: true }
+						"
 						:disabled="dropId1 === undefined || dropId2 === undefined"
 						@click="onPreview">
 						<img
@@ -189,7 +201,9 @@
 							h-[8.1%]
 							overflow-hidden
 						"
-						v-if="curState === 'EVOLVE'"
+						:class="
+							curState === 'EVOLVE' ? { hidden: false } : { hidden: true }
+						"
 						:disabled="dropId1 === undefined || dropId2 === undefined"
 						@click="onEvolve">
 						<img
@@ -213,7 +227,8 @@
 									@input="onTraitToggle"
 									:id="`t-${val}`"
 									:data-aos="index > 3 ? 'fade-left' : 'fade-right'"
-									data-aos-offset="0px" />
+									data-aos-offset="0px"
+									:class="isMounted ? { hidden: false } : { hidden: true }" />
 							</div>
 						</div>
 					</div>
@@ -224,7 +239,7 @@
 					@exchange="onExchange"
 					ref="slot2"
 					class="absolute left-[63.8%] top-[17.8%] w-[25.6%] h-[36%]"
-					:curTime="curTime" />
+					:timeStamp="timeStamp" />
 				<trait-slot
 					:index="this.dropId2"
 					:toggleState="toggleValueR"
@@ -330,16 +345,22 @@ export default {
 			},
 			previewImage: undefined,
 			previewImageLoading: false,
+			doorImage: false,
+			doorOpen: undefined,
 			filename: '',
-			curTime: new Date().getTime(),
+			timeStamp: new Date().getTime(),
 			showModal: false,
 			curState: 'SELECT_CUBZ',
+			isMounted: false,
 		}
 	},
 	components: {
 		Loading,
 		PerfectScrollbar,
 		VueFinalModal,
+	},
+	mounted() {
+		this.isMounted = true
 	},
 	computed: {
 		toggleValueR() {
@@ -367,6 +388,7 @@ export default {
 					this.dropId2 = undefined
 				}
 				this.curState = 'SELECT_CUBZ'
+				if (this.doorImage) this.doorImage = false
 			}
 		},
 		onDrop_1(index) {
@@ -379,17 +401,13 @@ export default {
 				})
 			else {
 				this.dropId1 = index
-				if (this.dropId2 !== undefined) this.curState = 'PREVIEW'
+				if (this.dropId2 !== undefined) {
+					this.curState = 'PREVIEW'
+					this.doorImage = false
+				}
 			}
 		},
 		onDrop_2(index) {
-			// if (this.$wallet.nfts[index].name.includes('Adultlion'))
-			// 	Vue.notify({
-			// 		group: 'foo',
-			// 		type: 'error',
-			// 		title: '',
-			// 		text: 'Already evolved.',
-			// 	})
 			if (this.$wallet.nfts[index].attributes[0].trait_type == 'Legendary')
 				Vue.notify({
 					group: 'foo',
@@ -399,15 +417,21 @@ export default {
 				})
 			else {
 				this.dropId2 = index
-				if (this.dropId1 !== undefined) this.curState = 'PREVIEW'
+				if (this.dropId1 !== undefined) {
+					this.curState = 'PREVIEW'
+					this.doorImage = false
+				}
 			}
 		},
 		onExchange() {
 			;[this.dropId1, this.dropId2] = [this.dropId2, this.dropId1]
+			if (this.curState == 'EVOLVE') {
+				;[this.curState, this.doorImage] = ['PREVIEW', false]
+			}
 		},
 		onTraitToggle() {
 			if (this.curState == 'EVOLVE') {
-				this.curState = 'PREVIEW'
+				;[this.curState, this.doorImage] = ['PREVIEW', false]
 			}
 		},
 		async onPreview() {
@@ -425,22 +449,21 @@ export default {
 			this.filename = fn
 			try {
 				this.previewImageLoading = true
-				const response = await fetch(
-					`https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
-				)
-				if (response.status == 200) {
-					this.previewImageLoading = false
-					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
-				} else {
-					await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
-						params,
-					})
-					this.previewImageLoading = false
-					this.previewImage = `https://${process.env.s3Bucket}.s3.amazonaws.com/gifs_evolve/${this.filename}.gif`
-					this.curTime = new Date().getTime()
-				}
+				this.doorOpen =
+					require('@/static/Evolving/Lions-UI_Opening_Middle_Door-Open.gif') +
+					'?' +
+					this.timeStamp
+				await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
+					params,
+				})
+				this.doorImage = true
 				this.curState = 'EVOLVE'
-			} catch (err) {}
+				this.previewImageLoading = false
+				this.previewImage = res.data.fileUri
+				this.timeStamp = new Date().getTime()
+			} catch (err) {
+				console.log(err)
+			}
 		},
 		async onEvolve() {
 			if (
@@ -465,29 +488,61 @@ export default {
 				const new_id = this.$wallet.nfts[this.dropId1].name.split('#')[1]
 				const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
 
-				this.$wallet.evolving = 'Confirming your $HEAT...'
+				// this.$wallet.evolving = 'Confirming your $HEAT...'
 
-				if (!(await this.$wallet.burnHeat())) return
+				// if (!(await this.$wallet.burnHeat())) return
+
+				// this.$wallet.evolving = 'burning...'
+
+				// await this.$wallet.burn(parseInt(old_id))
 
 				this.$wallet.evolving = 'evolving...'
 
-				await axios.get(`https://${process.env.hackslipsServer}/api/evolve`, {
+				const res = await axios.get(`https://${process.env.hackslipsServer}/api/evolve`, {
 					params: {
-						oldName: this.filename,
-						newName: this.$wallet.nfts[this.dropId2].name.split('#')[1],
+						DNA: this.filename,
 						traits,
 					},
 				})
+
+				if (res.data.success === false) {
+					this.$toast.show('This Lion is already minted.', {
+						title: 'Mint',
+						variant: 'error',
+						// you can pass a single action as below
+						action: {
+							text: 'Close',
+							onClick: (e, toastObject) => {
+								toastObject.goAway(0)
+								this.$wallet.evolving = ''
+							},
+						},
+					})
+					return
+				}
+
+				this.doorImage = false
 				;[this.dropId1, this.dropId2, this.previewImage] = [
 					undefined,
 					undefined,
 					undefined,
 				]
+				this.toggleValue = {
+					Background: true,
+					Body: true,
+					Clothing: true,
+					Shoes: true,
+					Hands: true,
+					Mouth: true,
+					Eyewear: true,
+					Headwear: true,
+					Companion: true,
+				}
 				this.curState = 'SELECT_CUBZ'
 
 				this.$wallet.evolving = 'reloading...'
 				setTimeout(async () => {
-					this.curTime = new Date().getTime()
+					this.timeStamp = new Date().getTime()
 					this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
 					this.$wallet.evolving = ''
 				}, 10000)
