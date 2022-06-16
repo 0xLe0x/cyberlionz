@@ -453,7 +453,7 @@ export default {
 					require('@/static/Evolving/Lions-UI_Opening_Middle_Door-Open.gif') +
 					'?' +
 					this.timeStamp
-				await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
+				const res = await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
 					params,
 				})
 				this.doorImage = true
