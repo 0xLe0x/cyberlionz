@@ -1,7 +1,7 @@
 <template>
 	<div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
 		<img
-			:src="`${image}?${curTime}`"
+			:src="`${image}?${timeStamp}`"
 			data-aos="fade"
 			v-if="image != undefined"
 			@dragstart="startDrag($event)" />
@@ -14,7 +14,7 @@ export default {
 		index: {
 			type: Number,
 		},
-		curTime: {
+		timeStamp: {
 			type: Number,
 		},
 	},

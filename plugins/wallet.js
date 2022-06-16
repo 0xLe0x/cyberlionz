@@ -311,14 +311,13 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 			try {
-				const tx_burn = await nftContract.transferFrom(
-					this.account,
-					'0x000000000000000000000000000000000000dEaD',
-					tokenId,
-					{
-						gasLimit: 250000,
-					}
+				const value = ethers.utils.parseEther(
+					(MINT_PRICE * this.mintQuantity).toString()
 				)
+
+				txResponse = await signedContract.mint(this.mintQuantity, {
+					value,
+				})
 				this.evolving = 'burning...'
 				await tx_burn.wait()
 				return true
@@ -357,6 +356,22 @@ export default async ({ $config, store }, inject) => {
 			} catch (e) {
 				console.log(e)
 			}
+		},
+
+		async mint() {
+			// const contract = new ethers.Contract(
+			// 	cyberLizonAddress,
+			// 	cyberLizonAbi,
+			// 	this.provider.getSigner()
+			// )
+
+			// const value = ethers.utils.parseEther(
+			// 	(MINT_PRICE * this.mintQuantity).toString()
+			// )
+
+			// txResponse = await signedContract.mint(this.mintQuantity, {
+			// 	value,
+			// })
 		},
 
 		async setAccount(newAccount) {
