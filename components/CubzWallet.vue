@@ -162,7 +162,7 @@
 							:class="doorImage ? { hidden: false } : { hidden: true }" />
 					</div>
 					<div
-						class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%]"
+						class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%] flex justify-center"
 						:class="
 							curState === 'SELECT_CUBZ' ? { hidden: false } : { hidden: true }
 						">
@@ -449,6 +449,7 @@ export default {
 			this.filename = fn
 			try {
 				this.previewImageLoading = true
+				this.previewImage = undefined
 				this.doorOpen =
 					require('@/static/Evolving/Lions-UI_Opening_Middle_Door-Open.gif') +
 					'?' +
@@ -456,11 +457,13 @@ export default {
 				const res = await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
 					params,
 				})
-				this.doorImage = true
-				this.curState = 'EVOLVE'
-				this.previewImageLoading = false
 				this.previewImage = res.data.fileUri
-				this.timeStamp = new Date().getTime()
+				setTimeout(() => {
+					this.doorImage = true
+					this.curState = 'EVOLVE'
+					this.previewImageLoading = false
+					this.timeStamp = new Date().getTime()
+				}, 5000)
 			} catch (err) {
 				console.log(err)
 			}
