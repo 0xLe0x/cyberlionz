@@ -20,6 +20,7 @@ contract CyberLionzAdults is ERC721, Ownable {
 
     Counters.Counter private _tokenIds;
     address private immutable _revenueRecipient;
+    address private immutable _cyberlionzMerger;
     bytes32 public presaleMerkleRoot;
 
     uint public constant PUBLIC_MINT_LIMIT = 6;
@@ -35,10 +36,16 @@ contract CyberLionzAdults is ERC721, Ownable {
     mapping(address => uint) private _mintedCountMap;
     mapping(address => bool) private _presaleMap;
 
-    constructor(string memory baseUri, bytes32 merkleRoot, address revenueRecipient) ERC721("CyberLionzAdults", "CLA") {
+    constructor(
+        string memory baseUri, 
+        bytes32 merkleRoot, 
+        address revenueRecipient,
+        address cyberlionzMerger
+    ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
         presaleMerkleRoot = merkleRoot;
         _revenueRecipient = revenueRecipient;
+        _cyberlionzMerger = cyberlionzMerger;
     }
 
     function setPresaleMerkleRoot(bytes32 merkleRoot) onlyOwner external {
@@ -135,5 +142,10 @@ contract CyberLionzAdults is ERC721, Ownable {
 
     function setCollectionSize(uint256 newSize) external onlyOwner {
         COLLECTION_SIZE = newSize;
+    }
+
+    function mintFromMerger(address to) external {
+        require(_msgSender() == _cyberlionzMerger, "Sender is not merger");
+        _mintTokens(to, 1);
     }
 }
