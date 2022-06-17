@@ -11,10 +11,11 @@
 					justify-center
 					text-center
 					items-center
-					lg:text-xs
-					md:text-[9px]
-					sm:text-[7px]
 					text-[5px]
+					sm:text-[7px]
+					md:text-[9px]
+					lg:text-xs
+					2xl:text-base
 				"
 				data-aos="fade-right"
 				data-aos-offset="0px">

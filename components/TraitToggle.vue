@@ -17,11 +17,11 @@
         ease-in-out
       "
       :class="backgroundStyles">
-      <div class="bg-[#24142c] absolute left-[0] top-[0] w-[3px] h-[3px]"></div>
-      <div class="bg-[#24142c] absolute left-[0] bottom-[0] w-[3px] h-[3px]"></div>
-      <div class="bg-[#24142c] absolute right-[0] top-[0] w-[3px] h-[3px]"></div>
+      <div class="bg-[#24142c] absolute left-[0] top-[0] w-[1px] h-[1px] md:w-[2px] md:h-[2px] lg:w-[3px] lg:h-[3px] 2xl:w-[5px] 2xl:h-[5px]"></div>
+      <div class="bg-[#24142c] absolute left-[0] bottom-[0] w-[1px] h-[1px] md:w-[2px] md:h-[2px] lg:w-[3px] lg:h-[3px] 2xl:w-[5px] 2xl:h-[5px]"></div>
+      <div class="bg-[#24142c] absolute right-[0] top-[0] w-[1px] h-[1px] md:w-[2px] md:h-[2px] lg:w-[3px] lg:h-[3px] 2xl:w-[5px] 2xl:h-[5px]"></div>
       <div
-        class="bg-[#24142c] absolute right-[0] bottom-[0] w-[3px] h-[3px]"></div>
+        class="bg-[#24142c] absolute right-[0] bottom-[0] w-[1px] h-[1px] md:w-[2px] md:h-[2px] lg:w-[3px] lg:h-[3px] 2xl:w-[5px] 2xl:h-[5px]"></div>
     </span>
     <span
       class="
