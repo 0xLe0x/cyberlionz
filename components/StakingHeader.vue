@@ -1,5 +1,5 @@
 <template>
-	<header class="w-full px-8 text-gray-700 z-50">
+	<header class="w-full px-[5%] text-gray-700 z-50">
 		<div
 			class="
 				container
@@ -7,26 +7,40 @@
 				items-center
 				justify-between
 				py-5
-				mx-auto
-				md:flex-row
+				gap-y-3
+				lg:flex-row
 				max-w-7xl
+				text-sm
+				sm:text-base
 			">
-			<div class="flex flex-wrap justify-center">
-				<span class="mr-5"
+			<div class="flex flex-wrap gap-x-5 justify-center">
+				<span class="text-[11px] leading-[14px] sm:text-base"
 					>Global Items Staked:
-					<span class="text-xl">{{ this.$wallet.stakeInfo.total }}</span></span
+					<span class="text-base sm:text-xl">{{
+						this.$wallet.stakeInfo.total
+					}}</span></span
 				>
-				<span class="mr-5"
+				<span
 					>$HEAT:
-					<span class="text-xl">{{ parseInt(this.$wallet.heatAmount)}}</span></span>
-
-
-					<span
+					<span class="text-base sm:text-xl">{{
+						parseInt(this.$wallet.heatAmount)
+					}}</span></span
+				>
+				<span
 					>Unclaimed $HEAT:
-					<span class="text-xl">{{ parseInt(this.$wallet.claimableReward)}}</span></span>
-
+					<span class="text-base sm:text-xl">{{
+						parseInt(this.$wallet.claimableReward)
+					}}</span></span
+				>
 			</div>
-			<div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
+			<div
+				class="
+					inline-flex
+					items-center
+					space-x-6
+					justify-center
+					lg:justify-end
+				">
 				<connected-button />
 			</div>
 		</div>

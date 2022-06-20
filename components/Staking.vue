@@ -18,7 +18,7 @@
 					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
 					bg-no-repeat
 					bg-[length:100%_100%]
-					h-[50px]
+					h-[40px]
 					md:h-[100px]
 					flex
 					justify-around
@@ -57,7 +57,7 @@
 					href="#"
 					@click="showModal = true"></a>
 			</div>
-			<div class="grid grid-cols-4 gap-4">
+			<div class="md:grid md:grid-cols-4 md:gap-4">
 				<div
 					class="
 						relative
@@ -66,8 +66,9 @@
 						bg-[length:100%_100%]
 						px-[5%]
 						py-3
-						h-[220px]
-						col-span-3
+						h-[160px]
+						sm:h-[220px]
+						md:col-span-3
 					">
 					<loading
 						:active="this.$wallet.loaded == false"
@@ -78,10 +79,8 @@
 						loader="dots"
 						:opacity="0.5"
 						:is-full-page="false" />
-					<div class="ml-[18%] mt-1 text-gray-300">
-						<span class="text-xl">{{
-							$wallet.nfts !== undefined && $wallet.nfts.length
-						}}</span>
+					<div class="ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+						{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
 						ITEMS
 					</div>
 					<div
@@ -91,15 +90,23 @@
 							$wallet.nfts.length == 0 &&
 							$wallet.loaded != -1
 						"
-						class="flex justify-center items-center h-[170px]">
-						<p class="text-[#d1d5db]">Inventory is empty</p>
+						class="flex justify-center items-center h-[110px] sm:h-[170px]">
+						<p class="text-[#d1d5db] text-center">Inventory is empty</p>
 					</div>
 					<div
 						v-if="$wallet.loaded == -1"
-						class="flex justify-center items-center h-[170px]">
-						<p class="text-[#d1d5db]">Please connect your wallet</p>
+						class="flex justify-center items-center h-[110px] sm:h-[170px]">
+						<p class="text-[#d1d5db] text-center">Please connect your wallet</p>
 					</div>
-					<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+					<div
+						class="
+							flex
+							gap-3
+							sm:gap-6
+							overflow-x-auto
+							hover:scroll-auto
+							custom-scrollbar
+						">
 						<div
 							v-for="(item, i) in this.$wallet.nfts"
 							:key="i"
@@ -107,7 +114,7 @@
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
 									:src="item.image.substring(6)"
-									class="w-[120px] h-[120px]"
+									class="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton
 									@toggle="onStakeCheck(item.id)"
@@ -120,9 +127,15 @@
 					</div>
 				</div>
 
-				<ul class="bg-opacity-30 border-4 rounded border-[#24142c]">
+				<ul
+					class="mt-3 sm:mt-0 bg-opacity-30 border-4 rounded border-[#24142c]">
 					<li
-						class="text-[#3dff6e] text-center h-[25px] bg-[#24142c] overflow-hidden">
+						class="
+							text-[#3dff6e] text-center
+							h-[25px]
+							bg-[#24142c]
+							overflow-hidden
+						">
 						STAKED ITEMS({{
 							this.$wallet.stakeInfo.userInfo.length
 								? this.$wallet.stakeInfo.userInfo.length
@@ -131,12 +144,14 @@
 					</li>
 					<div
 						v-if="
-							this.$wallet.loaded == false && !this.$wallet.stakeInfo.userInfo.length
+							this.$wallet.loaded == false &&
+							!this.$wallet.stakeInfo.userInfo.length
 						"
-						class="h-[187px] bg-[#061f5f] relative">
+						class="h-[135px] sm:h-[187px] bg-[#061f5f] relative">
 						<loading
 							:active="
-								this.$wallet.loaded != -1 && !this.$wallet.stakeInfo.userInfo.length
+								this.$wallet.loaded != -1 &&
+								!this.$wallet.stakeInfo.userInfo.length
 							"
 							:width="80"
 							:height="80"
@@ -148,13 +163,22 @@
 					</div>
 					<div
 						v-else-if="this.$wallet.stakeInfo.userInfo.length == 0"
-						class="h-[187px] px-2 bg-[#061f5f] flex justify-center items-center">
-						<p class="text-[#9ca3af]">No Staked Items</p>
+						class="
+							h-[135px]
+							sm:h-[187px]
+							px-2
+							bg-[#061f5f]
+							flex
+							justify-center
+							items-center
+						">
+						<p class="text-[#9ca3af] text-center">No Staked Items</p>
 					</div>
 					<div
 						v-else
 						class="
-							h-[187px]
+							h-[135px]
+							sm:h-[187px]
 							overflow-y-auto overflow-x-hidden
 							hover:scroll-auto
 							custom-scrollbar
@@ -192,7 +216,7 @@
 			</div>
 		</div>
 
-		<div class="h-[100px] flex justify-center items-center gap-4">
+		<div class="h-[50px] sm:h-[100px] flex justify-center items-center gap-4 sm:gap-10">
 			<button
 				class="
 					bg-[url('@/static/Buttons/Lions-Blue_Stake_Button.png')]
@@ -200,7 +224,8 @@
 					active:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
-					w-[20%]
+					w-[35%]
+					sm:w-[20%]
 				"
 				@click="onStake"
 				data-aos="fade-right"
@@ -212,7 +237,8 @@
 					active:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
-					w-[20%]
+					w-[35%]
+					sm:w-[20%]
 				"
 				@click="onUnstake"
 				data-aos="fade-left"
