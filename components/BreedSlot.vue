@@ -1,10 +1,27 @@
 <template>
-	<div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+	<div
+		@drop="onDrop($event)"
+		@dragover.prevent
+		@dragenter.prevent
+		@click="onClick">
 		<img
 			:src="`${image}?${timeStamp}`"
 			data-aos="fade"
+			data-aos-offset="0px"
 			v-if="image != undefined"
 			@dragstart="startDrag($event)" />
+		<div
+			class="
+				absolute
+				bg-[black]
+				opacity-70
+				left-0
+				top-0
+				w-full
+				h-full
+				hover:cursor-pointer
+			"
+			v-if="itemid !== undefined" />
 	</div>
 </template>
 
@@ -15,6 +32,9 @@ export default {
 			type: Number,
 		},
 		timeStamp: {
+			type: Number,
+		},
+		itemid: {
 			type: Number,
 		},
 	},
@@ -41,6 +61,9 @@ export default {
 			} else if (from === 'slot' && id != this.index) {
 				this.$emit('exchange')
 			}
+		},
+		onClick() {
+			this.$emit('click')
 		},
 	},
 }

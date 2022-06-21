@@ -18,7 +18,7 @@
 					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
 					bg-no-repeat
 					bg-[length:100%_100%]
-					h-[50px]
+					h-[40px]
 					md:h-[100px]
 					flex
 					justify-around
@@ -65,7 +65,8 @@
 					bg-[length:100%_100%]
 					px-[5%]
 					py-3
-					h-[220px]
+					h-[150px]
+					sm:h-[220px]
 					mb-3
 				">
 				<loading
@@ -78,14 +79,20 @@
 					:opacity="0.5"
 					:is-full-page="false" />
 				<div
-					class="w-full h-[190px] bg-transparent absolute"
+					class="
+						w-full
+						top-[40px]
+						sm:top-[50px]
+						h-[100px]
+						sm:h-[150px]
+						bg-transparent
+						absolute
+					"
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[18%] mt-1 text-gray-300">
-					<span class="text-xl">{{
-						$wallet.nfts !== undefined && $wallet.nfts.length
-					}}</span>
+				<div class="ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+					{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
 					ITEMS
 				</div>
 				<div
@@ -95,16 +102,16 @@
 						$wallet.nfts.length == 0 &&
 						$wallet.loaded != -1
 					"
-					class="flex justify-center items-center h-[170px]">
-					<p class="text-[#d1d5db]">Inventory is empty</p>
+					class="flex justify-center items-center h-[105px] sm:h-[170px]">
+					<p class="text-[#d1d5db] text-center">Inventory is empty</p>
 				</div>
 				<div
 					v-if="$wallet.loaded == -1"
-					class="flex justify-center items-center h-[170px]">
-					<p class="text-[#d1d5db]">Please connect your wallet</p>
+					class="flex justify-center items-center h-[105px] sm:h-[170px]">
+					<p class="text-[#d1d5db] text-center">Please connect your wallet</p>
 				</div>
 				<div
-					class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+					class="flex gap-3 sm:gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
 					<div
 						v-for="(item, i) in this.$wallet.nfts
 							? this.$wallet.nfts.filter(
@@ -113,11 +120,32 @@
 							: []"
 						:key="i"
 						class="flex-none pt-3">
-						<img
-							:src="`${item.image}?${timeStamp}`"
-							class="w-[140px] h-[140px] hover:cursor-pointer"
-							data-aos="fade-right"
-							@dragstart="startDrag($event, item.id)" />
+						<div class="relative">
+							<img
+								:src="`${item.image}?${timeStamp}`"
+								class="
+									w-[90px]
+									h-[90px]
+									sm:w-[140px] sm:h-[140px]
+									hover:cursor-pointer
+								"
+								data-aos="fade-right"
+								@dragstart="startDrag($event, item.id)"
+								@click="onTouchItem(item.id)" />
+							<div
+								class="
+									absolute
+									bg-[black]
+									opacity-80
+									left-0
+									top-0
+									w-[90px]
+									h-[90px]
+									sm:w-[140px] sm:h-[140px]
+									hover:cursor-pointer
+								"
+								v-if="item.id === itemId" />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -130,9 +158,11 @@
 					:index="this.dropId1"
 					@dropped="onDrop_1"
 					@exchange="onExchange"
+					@click="onTouchSlot_1"
 					ref="slot1"
 					class="absolute left-[11%] top-[17.8%] w-[25.6%] h-[36%]"
-					:timeStamp="timeStamp" />
+					:timeStamp="timeStamp"
+					:itemid="itemId" />
 				<trait-slot
 					:index="this.dropId1"
 					:toggleState="toggleValue"
@@ -151,6 +181,7 @@
 						<img
 							:src="`${this.previewImage}?${timeStamp}`"
 							data-aos="fade"
+							data-aos-offset="0px"
 							v-if="this.previewImage != undefined" />
 						<img
 							:src="`/Evolving/Lions-UI_Opening_Middle_Door-Close.gif?${timeStamp}`"
@@ -162,7 +193,15 @@
 							:class="doorImage ? { hidden: false } : { hidden: true }" />
 					</div>
 					<div
-						class="absolute left-[38.8%] top-[35.2%] w-[22.8%] h-[5.3%] flex justify-center"
+						class="
+							absolute
+							left-[38.8%]
+							top-[35.2%]
+							w-[22.8%]
+							h-[5.3%]
+							flex
+							justify-center
+						"
 						:class="
 							curState === 'SELECT_CUBZ' ? { hidden: false } : { hidden: true }
 						">
@@ -237,9 +276,11 @@
 					:index="this.dropId2"
 					@dropped="onDrop_2"
 					@exchange="onExchange"
+					@click="onTouchSlot_2"
 					ref="slot2"
 					class="absolute left-[63.8%] top-[17.8%] w-[25.6%] h-[36%]"
-					:timeStamp="timeStamp" />
+					:timeStamp="timeStamp"
+					:itemid="itemId" />
 				<trait-slot
 					:index="this.dropId2"
 					:toggleState="toggleValueR"
@@ -352,6 +393,7 @@ export default {
 			showModal: false,
 			curState: 'SELECT_CUBZ',
 			isMounted: false,
+			itemId: undefined,
 		}
 	},
 	components: {
@@ -377,6 +419,9 @@ export default {
 			evt.dataTransfer.effectAllowed = 'copyMove'
 			evt.dataTransfer.setData('metadata', index)
 			evt.dataTransfer.setData('from', 'list')
+		},
+		onTouchItem(index) {
+			this.itemId = index
 		},
 		onDrop(evt) {
 			const id = parseInt(evt.dataTransfer.getData('metadata'))
@@ -404,6 +449,7 @@ export default {
 				if (this.dropId2 !== undefined) {
 					this.curState = 'PREVIEW'
 					this.doorImage = false
+					this.isItemTouched = false
 				}
 			}
 		},
@@ -420,7 +466,20 @@ export default {
 				if (this.dropId1 !== undefined) {
 					this.curState = 'PREVIEW'
 					this.doorImage = false
+					this.isItemTouched = false
 				}
+			}
+		},
+		onTouchSlot_1() {
+			if (this.itemId !== undefined) {
+				this.onDrop_1(this.itemId)
+				this.itemId = undefined
+			}
+		},
+		onTouchSlot_2() {
+			if (this.itemId !== undefined) {
+				this.onDrop_2(this.itemId)
+				this.itemId = undefined
 			}
 		},
 		onExchange() {
@@ -454,9 +513,12 @@ export default {
 					require('@/static/Evolving/Lions-UI_Opening_Middle_Door-Open.gif') +
 					'?' +
 					this.timeStamp
-				const res = await axios.get(`https://${process.env.hackslipsServer}/api/preview`, {
-					params,
-				})
+				const res = await axios.get(
+					`https://${process.env.hackslipsServer}/api/preview`,
+					{
+						params,
+					}
+				)
 				this.previewImage = res.data.fileUri
 				setTimeout(() => {
 					this.doorImage = true
@@ -501,12 +563,15 @@ export default {
 
 				this.$wallet.evolving = 'evolving...'
 
-				const res = await axios.get(`https://${process.env.hackslipsServer}/api/evolve`, {
-					params: {
-						DNA: this.filename,
-						traits,
-					},
-				})
+				const res = await axios.get(
+					`https://${process.env.hackslipsServer}/api/evolve`,
+					{
+						params: {
+							DNA: this.filename,
+							traits,
+						},
+					}
+				)
 
 				if (res.data.success === false) {
 					this.$toast.show('This Lion is already minted.', {
