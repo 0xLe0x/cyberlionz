@@ -563,13 +563,32 @@ export default {
 				try {
 					this.$wallet.evolving = 'Generating Lion...'
 
-					await axios.get(`https://${process.env.hackslipsServer}/api/evolve`, {
-						params: {
-							DNA: this.filename,
-							traits,
-						},
-					})
+					const res = await axios.get(
+						`https://${process.env.hackslipsServer}/api/evolve`,
+						{
+							params: {
+								DNA: this.filename,
+								traits,
+							},
+						}
+					)
 
+					if (res.data.success === false) {
+						this.$toast.show('This Lion is already minted.', {
+							title: 'Mint',
+							variant: 'error',
+							// you can pass a single action as below
+							action: {
+								text: 'Close',
+								onClick: (e, toastObject) => {
+									toastObject.goAway(0)
+									this.$wallet.evolving = ''
+								},
+							},
+						})
+						return
+					}
+					
 					await this.$wallet.evolve(parseInt(new_id), parseInt(old_id))
 
 					this.doorImage = false
