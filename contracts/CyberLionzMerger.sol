@@ -49,6 +49,7 @@ contract CyberLionzMerger is Context, Ownable {
         ERC20(_heatToken).transferFrom(sender, address(this), mergePrice);
         _lockedLionz.push(cub1);
         CyberLionzAdults(_cyberLionzAdult).mintFromMerger(sender);
+        
     }
 
     function withdrawFunds(address to) external onlyOwner {

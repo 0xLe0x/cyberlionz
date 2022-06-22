@@ -14,6 +14,9 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract CyberLionzAdults is ERC721, Ownable {
+
+    event Mint(address to, uint tokenId);
+
     using Counters for Counters.Counter;
     using Strings for uint;
     enum SaleStatus{ PAUSED, PRESALE, PUBLIC }
@@ -137,6 +140,7 @@ contract CyberLionzAdults is ERC721, Ownable {
             uint id = _tokenIds.current();
 
             _safeMint(to, id);
+             emit Mint(to, id);
         }
     }
 
@@ -147,5 +151,6 @@ contract CyberLionzAdults is ERC721, Ownable {
     function mintFromMerger(address to) external {
         require(_msgSender() == _cyberlionzMerger, "Sender is not merger");
         _mintTokens(to, 1);
+        
     }
 }
