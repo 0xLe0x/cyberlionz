@@ -1,6 +1,7 @@
 import { abi as cyberLizonAbi } from './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
 import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberLionzStaking.json'
 import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatToken.json'
+import { abi as cyberLionzMergerAbi } from './artifacts/contracts/CyberLionzMerger.sol/CyberLionzMerger.json'
 
 // if (
 // 	process.env.LD_LIBRARY_PATH == null ||
@@ -25,6 +26,8 @@ export default {
 			cyberLizonAddress: process.env.CONTRACT_ADDRESS,
 			heatContractAbi: heatContractAbi,
 			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
+			cyberLionzMergerAbi: cyberLionzMergerAbi,
+			cyberLionzMergerAddress: process.env.MERGER_CONTRACT_ADDRESS,
 			cubzNetwork: process.env.CUBZ_NETWORK,
 			chainId: process.env.CHAIN_ID,
 			evolvingHeat: process.env.EVOLVING_HEAT,

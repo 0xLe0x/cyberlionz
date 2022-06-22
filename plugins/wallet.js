@@ -13,6 +13,8 @@ export default async ({ $config, store }, inject) => {
 		cyberLizonAddress,
 		heatContractAbi,
 		heatContractAddress,
+		cyberLionzMergerAbi,
+		cyberLionzMergerAddress,
 		cubzNetwork,
 		evolvingHeat,
 	} = $config.smartContracts
@@ -136,7 +138,20 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 			try {
-				await heatContract.burn(ethers.utils.parseEther(evolvingHeat))
+				const isApproved = await heatContract.allowance(
+					this.account,
+					cyberLionzMergerAddress,
+				)
+
+				if (!isApproved) {
+					const tx = await heatContract.approve(cyberLionzMergerAddress, type(uint256).max)
+					await tx.wait()
+				}
+
+				const tx_heat = await heatContract.transferFrom(this.account, cyberLionzMergerAddress, evolvingHeat)
+				this.evolving = 'Burning $HEAT...'
+				await tx_heat.wait()
+
 				return true
 			} catch (err) {
 				console.log(err)
@@ -304,22 +319,50 @@ export default async ({ $config, store }, inject) => {
 			}
 		},
 
-		async burn(tokenId) {
-			const nftContract = new ethers.Contract(
+		async evolve(cub1, cub2) {
+			const heatContract = new ethers.Contract(
+				heatContractAddress,
+				heatContractAbi,
+				this.provider.getSigner()
+			)
+			const cubzContract = new ethers.Contract(
 				cyberLizonAddress,
 				cyberLizonAbi,
 				this.provider.getSigner()
 			)
 			try {
-				const value = ethers.utils.parseEther(
-					(MINT_PRICE * this.mintQuantity).toString()
+				this.evolving = "Confirming $HEAT..."
+				const isHeatApproved = await heatContract.allowance(
+					this.account,
+					cyberLionzMergerAddress,
 				)
 
-				txResponse = await signedContract.mint(this.mintQuantity, {
-					value,
-				})
-				this.evolving = 'burning...'
-				await tx_burn.wait()
+				if (!isHeatApproved) {
+					const tx = await heatContract.approve(cyberLionzMergerAddress, type(uint256).max)
+					await tx.wait()
+				}
+
+				this.evolving = "Confirming Cubz..."
+				const isCubzApproved = await heatContract.isApprovedForAll(
+					this.account,
+					cyberLionzMergerAddress,
+				)
+
+				if (!isCubzApproved) {
+					const tx = await cubzContract.setApprovalForAll(cyberLionzMergerAddress,true)
+					await tx.wait()
+				}
+
+				const mergerContract = new ethers.Contract(
+					cyberLionzMergerAddress,
+					cyberLionzMergerAbi,
+					this.provider.getSigner()
+				)
+
+				const tx_merge = mergerContract.mergeCubz(cub1, cub2)
+				
+				this.evolving = 'Evolving...'
+				await tx_merge.wait()
 				return true
 			} catch (err) {
 				console.log(err)
