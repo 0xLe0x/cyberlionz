@@ -27,7 +27,6 @@ contract CyberLionzMerger is Context, Ownable {
 
     mapping(uint256 => uint8) public cubTimesUsed;
 
-
     uint256[] private _lockedLionz;
 
     constructor(
@@ -63,9 +62,19 @@ contract CyberLionzMerger is Context, Ownable {
         _cyberLionzAdult = cyberLionzAdult;
     }
 
+    function setMergePrice(uint256 mergePrice_) external onlyOwner {
+        require(mergePrice_ > 0, "Merge price canno be 0");
+        mergePrice = mergePrice_;
+    }
+
+    function setCubMaxTimesAllowedToUse(uint8 cubMaxTimesAllowedToUse_) external onlyOwner {
+        require(cubMaxTimesAllowedToUse_ >= 1, "cubMaxTimesAllowedToUse value must be more than 0");
+        cubMaxTimesAllowedToUse = cubMaxTimesAllowedToUse_;
+    }
+
     function getLockedLionz() external view returns(uint256[] memory) {
         return _lockedLionz;
-    }   
+    }  
 
     
 }

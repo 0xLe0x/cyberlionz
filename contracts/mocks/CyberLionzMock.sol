@@ -118,7 +118,6 @@ contract CyberLionzCubzMock is ERC721, Ownable {
 
     function mint(uint count) external {
         require(_tokenIds.current() + count <= COLLECTION_SIZE, "Minting this many tokens would exceed the total collection size");
-        require(_mintedCountMap[msg.sender] + count <= PUBLIC_MINT_LIMIT, "Each address may only mint 6 tokens");
 
         _mintedCountMap[msg.sender] += count;
         _mintTokens(msg.sender, count);

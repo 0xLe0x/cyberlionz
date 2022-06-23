@@ -11,7 +11,7 @@ async function main() {
   } = process.env
 
   // Deploy CyberLionzCubz
-  const CyberLionzCubz = await ethers.getContractFactory("CyberLionzCubz");
+  const CyberLionzCubz = await ethers.getContractFactory("CyberLionzCubzMock");
   const cyberLionzCubz = await CyberLionzCubz.deploy(
       "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/", 
       WHITELIST
@@ -50,6 +50,16 @@ async function main() {
   // set CyberLionzAdults address in CyberLionzMerger
   await cyberLionzMerger.setCyberLionzAdults(cyberLionzAdults.address);
   console.log("CyberLionzAdults address set on CyberLionzMerger");
+
+  const ClStaking = await ethers.getContractFactory("CyberLionzStaking");
+  const clStaking = await ClStaking.deploy(
+    heatToken.address
+  )
+  await clStaking.deployed();
+  console.log("ClStaking deployed at address:", clStaking.address);
+
+  //Set Collection
+  await clStaking.setCollection(cyberLionzCubz.address, ethers.utils.parseEther("5"))
 
 }
   

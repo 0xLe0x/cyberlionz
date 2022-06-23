@@ -1,11 +1,10 @@
 const { ethers } = require('hardhat');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const args = require("./cyberlionz");
+require('dotenv').config({path:__dirname+'/.env'});
 
 const path = "./scripts/cyberlionz.js";
-const args = require("./cyberlionz");
-
-require('dotenv').config({path:__dirname+'/.env'});
 
 async function main() {
 
@@ -26,8 +25,8 @@ async function main() {
 async function verify(address, network, path) {
     try {
       const { stdout, stderr } = await exec(`npx hardhat verify ${address} --network ${network} --constructor-args ${path} `);
+      if(stderr) return console.log('stderr:', stderr);
       console.log('stdout:', stdout);
-      console.log('stderr:', stderr);
     } catch (e) {
       console.error(e); // should contain code (exit code) and signal (that caused the termination).
     }
