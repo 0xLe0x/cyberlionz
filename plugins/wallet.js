@@ -343,7 +343,7 @@ export default async ({ $config, store }, inject) => {
 				}
 
 				this.evolving = "Confirming Cubz..."
-				const isCubzApproved = await heatContract.isApprovedForAll(
+				const isCubzApproved = await cubzContract.isApprovedForAll(
 					this.account,
 					cyberLionzMergerAddress,
 				)
