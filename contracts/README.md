@@ -9,8 +9,8 @@ npx hardhat verify 0xa5fc4E89534985949c16639C96495b49E7EE19Cc --network rinkeby 
 
 
 ## Rinkeby
-CyberLionzCuz deployed to address: 0xC0467EDd079e42970f9C8FEC2084e38ddB0F322E
-HeatToken deployed at address: 0x4Acfca6680537cFAC77381a54fB0B11d32C9acaC
-CyberLionzMerger deployed at address: 0x91eE3E58cE10D5cD0533DE36AC6231d115e113d6
-CyberLionzAdults deployed at address: 0x6681Cb639223A7cE8E922427273f2820ee517f55
-ClStaking deployed at address: 0xa5fc4E89534985949c16639C96495b49E7EE19Cc
+CyberLionzCuz deployed to address: 0x4a5803706dD92dE4b56A19D4c120123ab356B8C3
+HeatToken deployed at address: 0xB43A8939439BCAa3C356e7a87761757079781792
+CyberLionzMerger deployed at address: 0xfAA547c280AE63471d2EbBDe70EcF2957e867FE2
+CyberLionzAdults deployed at address: 0x722Cac99AdAe6d451e775601348Cd0C7ed4E47BA
+ClStaking deployed at address: 0x6D3e7eA2913c3586FD8c612CEe2bE527c4595f4c
