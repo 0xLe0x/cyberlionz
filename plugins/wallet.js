@@ -339,6 +339,7 @@ export default async ({ $config, store }, inject) => {
 
 				if (!isHeatApproved) {
 					const tx = await heatContract.approve(cyberLionzMergerAddress, type(uint256).max)
+					this.evolving = 'Approving $HEAT...'
 					await tx.wait()
 				}
 
@@ -350,6 +351,7 @@ export default async ({ $config, store }, inject) => {
 
 				if (!isCubzApproved) {
 					const tx = await cubzContract.setApprovalForAll(cyberLionzMergerAddress,true)
+					this.evolving = 'Approving Cubz...'
 					await tx.wait()
 				}
 
