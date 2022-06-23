@@ -111,7 +111,14 @@
 					<p class="text-[#d1d5db] text-center">Please connect your wallet</p>
 				</div>
 				<div
-					class="flex gap-3 sm:gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+					class="
+						flex
+						gap-3
+						sm:gap-6
+						overflow-x-auto
+						hover:scroll-auto
+						custom-scrollbar
+					">
 					<div
 						v-for="(item, i) in this.$wallet.nfts
 							? this.$wallet.nfts.filter(
@@ -553,28 +560,64 @@ export default {
 				const new_id = this.$wallet.nfts[this.dropId1].name.split('#')[1]
 				const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
 
-				// this.$wallet.evolving = 'Confirming your $HEAT...'
+				try {
+					this.$wallet.evolving = 'Generating Lion...'
 
-				// if (!(await this.$wallet.burnHeat())) return
+					const res = await axios.get(
+						`https://${process.env.hackslipsServer}/api/evolve`,
+						{
+							params: {
+								DNA: this.filename,
+								traits,
+							},
+						}
+					)
 
-				// this.$wallet.evolving = 'burning...'
-
-				// await this.$wallet.burn(parseInt(old_id))
-
-				this.$wallet.evolving = 'evolving...'
-
-				const res = await axios.get(
-					`https://${process.env.hackslipsServer}/api/evolve`,
-					{
-						params: {
-							DNA: this.filename,
-							traits,
-						},
+					if (res.data.success === false) {
+						this.$toast.show('This Lion is already minted.', {
+							title: 'Mint',
+							variant: 'error',
+							// you can pass a single action as below
+							action: {
+								text: 'Close',
+								onClick: (e, toastObject) => {
+									toastObject.goAway(0)
+									this.$wallet.evolving = ''
+								},
+							},
+						})
+						return
 					}
-				)
+					
+					await this.$wallet.evolve(parseInt(new_id), parseInt(old_id))
 
-				if (res.data.success === false) {
-					this.$toast.show('This Lion is already minted.', {
+					this.doorImage = false
+					;[this.dropId1, this.dropId2, this.previewImage] = [
+						undefined,
+						undefined,
+						undefined,
+					]
+					this.toggleValue = {
+						Background: true,
+						Body: true,
+						Clothing: true,
+						Shoes: true,
+						Hands: true,
+						Mouth: true,
+						Eyewear: true,
+						Headwear: true,
+						Companion: true,
+					}
+					this.curState = 'SELECT_CUBZ'
+
+					this.$wallet.evolving = 'reloading...'
+					setTimeout(async () => {
+						this.timeStamp = new Date().getTime()
+						this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
+						this.$wallet.evolving = ''
+					}, 10000)
+				} catch (err) {
+					this.$toast.show(err, {
 						title: 'Mint',
 						variant: 'error',
 						// you can pass a single action as below
@@ -586,34 +629,7 @@ export default {
 							},
 						},
 					})
-					return
 				}
-
-				this.doorImage = false
-				;[this.dropId1, this.dropId2, this.previewImage] = [
-					undefined,
-					undefined,
-					undefined,
-				]
-				this.toggleValue = {
-					Background: true,
-					Body: true,
-					Clothing: true,
-					Shoes: true,
-					Hands: true,
-					Mouth: true,
-					Eyewear: true,
-					Headwear: true,
-					Companion: true,
-				}
-				this.curState = 'SELECT_CUBZ'
-
-				this.$wallet.evolving = 'reloading...'
-				setTimeout(async () => {
-					this.timeStamp = new Date().getTime()
-					this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
-					this.$wallet.evolving = ''
-				}, 10000)
 			}
 		},
 	},
