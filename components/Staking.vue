@@ -80,15 +80,26 @@
 						:opacity="0.5"
 						:is-full-page="false" />
 					<div class="ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
-						{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
+						{{
+							$wallet.nfts !== undefined
+								? $wallet.nfts.length +
+								  ($wallet.nftsLionz !== undefined
+										? $wallet.nftsLionz.length
+										: 0)
+								: $wallet.nftsLionz !== undefined
+								? $wallet.nftsLionz.length
+								: 0
+						}}
 						ITEMS
 					</div>
 					<div
 						v-if="
 							$wallet.nfts !== undefined &&
 							$wallet.loaded &&
-							$wallet.nfts.length == 0 &&
-							$wallet.loaded != -1
+							$wallet.nfts.length === 0 &&
+							$wallet.nftsLionz !== undefined &&
+							$wallet.nftsLionz.length === 0 &&
+							$wallet.loaded !== -1
 						"
 						class="flex justify-center items-center h-[110px] sm:h-[170px]">
 						<p class="text-[#d1d5db] text-center">Inventory is empty</p>
@@ -108,8 +119,25 @@
 							custom-scrollbar
 						">
 						<div
+							v-for="(item, i) in this.$wallet.nftsLionz"
+							:key="`Lion-${i}`"
+							class="flex-none pt-3">
+							<div class="flex flex-col justify-center gap-y-1">
+								<img
+									:src="item.image.substring(6)"
+									class="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]"
+									data-aos="fade-right" />
+								<CheckButton
+									@toggle="onStakeCheck(item.id)"
+									:value="stakeItems.includes(item.id)"
+									color="#db2777"
+									>Select</CheckButton
+								>
+							</div>
+						</div>
+						<div
 							v-for="(item, i) in this.$wallet.nfts"
-							:key="i"
+							:key="`Cub-${i}`"
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
@@ -216,7 +244,16 @@
 			</div>
 		</div>
 
-		<div class="h-[50px] sm:h-[100px] flex justify-center items-center gap-4 sm:gap-10">
+		<div
+			class="
+				h-[50px]
+				sm:h-[100px]
+				flex
+				justify-center
+				items-center
+				gap-4
+				sm:gap-10
+			">
 			<button
 				class="
 					bg-[url('@/static/Buttons/Lions-Blue_Stake_Button.png')]

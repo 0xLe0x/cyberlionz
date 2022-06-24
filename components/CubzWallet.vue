@@ -451,6 +451,14 @@ export default {
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
+			else if(!this.$wallet.isEvolved[index]) {
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Cub already used.',
+				})
+			}
 			else {
 				this.dropId1 = index
 				if (this.dropId2 !== undefined) {

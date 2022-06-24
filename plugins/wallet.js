@@ -13,6 +13,10 @@ export default async ({ $config, store }, inject) => {
 		cyberLizonAddress,
 		heatContractAbi,
 		heatContractAddress,
+		cyberLionzAdultsAbi,
+		cyberLionzAdultsAddress,
+		clAdultsStakingAbi,
+		clAdultsStakingAddress,
 		cyberLionzMergerAbi,
 		cyberLionzMergerAddress,
 		cubzNetwork,
@@ -27,6 +31,7 @@ export default async ({ $config, store }, inject) => {
 		balance: null,
 		provider: null,
 		nfts: [],
+		nftsLionz: [],
 		stakeInfo: {
 			userInfo: [],
 			total: 0,
@@ -37,6 +42,8 @@ export default async ({ $config, store }, inject) => {
 		staking: '',
 		evolving: '',
 		Web3Modal: null,
+		isEvolved: [],
+
 		async contractState() {},
 
 		get hexChainId() {
@@ -85,6 +92,16 @@ export default async ({ $config, store }, inject) => {
 				cyberLizonAbi,
 				this.provider
 			)
+			const nftAdultsContract = new ethers.Contract(
+				cyberLionzAdultsAddress,
+				cyberLionzAdultsAbi,
+				this.provider
+			)
+			const mergerContract = new ethers.Contract(
+				cyberLionzMergerAddress,
+				cyberLionzMergerAbi,
+				this.provider.getSigner()
+			)
 			try {
 				let res = await axios.get(
 					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLizonAddress}`,
@@ -99,17 +116,47 @@ export default async ({ $config, store }, inject) => {
 					}
 				)
 
-				let results = [],
+				let cubz = [],
+					evolved = [],
 					i = 0
+				let evolveLimit = await mergerContract.cubMaxTimesAllowedToUse()
 				for (let nft of res.data.result) {
 					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
 					let metadata = await axios.get(`${token_uri}?${new Date().getTime()}`)
+					let arr = token_uri.split('/')
+					const usedCount = await mergerContract.cubTimesUsed(
+						parseInt(arr[arr.length - 1].split('.')[0])
+					)
+					evolved.push(usedCount < evolveLimit)
 					metadata.data.id = i++
-					results.push(metadata.data)
+					cubz.push(metadata.data)
+				}
+				this.isEvolved = evolved
+
+				res = await axios.get(
+					`https://deep-index.moralis.io/api/v2/${newAccount}/nft/${cyberLionzAdultsAddress}`,
+					{
+						params: {
+							chain: cubzNetwork,
+							format: 'decimal',
+						},
+						headers: {
+							'x-api-key': moralisApiKey,
+						},
+					}
+				)
+
+				let lionz = []
+				i = 0
+				for (let nft of res.data.result) {
+					const token_uri = await nftAdultsContract.tokenURI(parseInt(nft.token_id))
+					let metadata = await axios.get(`${token_uri}?${new Date().getTime()}`)
+					metadata.data.id = i++
+					lionz.push(metadata.data)
 				}
 
 				this.loaded = true
-				return results
+				return { cubz, lionz }
 			} catch (err) {
 				console.log(err)
 			}
@@ -248,11 +295,14 @@ export default async ({ $config, store }, inject) => {
 				await tx_stake.wait()
 
 				this.nfts = []
+				this.nftsLionz = []
 				this.loaded = false
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
-				this.nfts = await this.getNfts(this.account)
+				const res = await this.getNfts(this.account)
+				this.nfts = res.cubz
+				this.nftsLionz = res.lionz
 
 				Vue.notify({
 					group: 'foo',
@@ -301,11 +351,14 @@ export default async ({ $config, store }, inject) => {
 					this.stakeItems.splice(value, 1)
 				})
 				this.nfts = []
+				this.nftsLionz = []
 				this.loaded = false
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
-				this.nfts = await this.getNfts(this.account)
+				const res = await this.getNfts(this.account)
+				this.nfts = res.cubz
+				this.nftsLionz = res.lionz
 
 				Vue.notify({
 					group: 'foo',
@@ -374,7 +427,7 @@ export default async ({ $config, store }, inject) => {
 
 				this.evolving = 'Evolving...'
 
-				const tx_merge = await mergerContract.mergeCubz(cub1, cub2, {
+				const tx_merge = await mergerContract.mergeCubz(cub2, cub1, {
 					gasLimit: 250000,
 				})
 
@@ -430,7 +483,9 @@ export default async ({ $config, store }, inject) => {
 				this.balance = `${(+ethers.utils.formatEther(balance)).toFixed(
 					3
 				)} ${getCurrency(this.network.chainId)}`
-				this.nfts = await this.getNfts(newAccount)
+				const res = await this.getNfts(this.account)
+				this.nfts = res.cubz
+				this.nftsLionz = res.lionz
 				this.getStakeInfo()
 				this.getHeatInfo()
 			} else {
@@ -458,6 +513,7 @@ export default async ({ $config, store }, inject) => {
 			wallet.accountCompact = 'Connect'
 			wallet.balance = null
 			wallet.nfts = []
+			wallet.nftsLionz = []
 			wallet.loaded = false
 		},
 
