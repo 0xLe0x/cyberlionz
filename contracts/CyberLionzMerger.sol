@@ -21,7 +21,7 @@ contract CyberLionzMerger is Context, Ownable {
     address private immutable _heatToken;
     address private _cyberLionzAdult;
 
-    uint8 public cubMaxTimesAllowedToUse = 1;
+    uint8 public cubMaxTimesAllowedToUse = 2**8-1;
 
     uint256 public mergePrice;
 
