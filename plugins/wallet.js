@@ -140,15 +140,22 @@ export default async ({ $config, store }, inject) => {
 			try {
 				const isApproved = await heatContract.allowance(
 					this.account,
-					cyberLionzMergerAddress,
+					cyberLionzMergerAddress
 				)
 
 				if (!isApproved) {
-					const tx = await heatContract.approve(cyberLionzMergerAddress, type(uint256).max)
+					const tx = await heatContract.approve(
+						cyberLionzMergerAddress,
+						type(uint256).max
+					)
 					await tx.wait()
 				}
 
-				const tx_heat = await heatContract.transferFrom(this.account, cyberLionzMergerAddress, evolvingHeat)
+				const tx_heat = await heatContract.transferFrom(
+					this.account,
+					cyberLionzMergerAddress,
+					evolvingHeat
+				)
 				this.evolving = 'Burning $HEAT...'
 				await tx_heat.wait()
 
@@ -331,26 +338,30 @@ export default async ({ $config, store }, inject) => {
 				this.provider.getSigner()
 			)
 			try {
-				this.evolving = "Confirming $HEAT..."
+				this.evolving = 'Confirming $HEAT...'
 				const isHeatApproved = await heatContract.allowance(
 					this.account,
-					cyberLionzMergerAddress,
+					cyberLionzMergerAddress
 				)
-
-				if (!isHeatApproved) {
-					const tx = await heatContract.approve(cyberLionzMergerAddress, type(uint256).max)
+				console.log(isHeatApproved._hex)
+				if (isHeatApproved._hex == '0x000000000000000000000000') {
+					const amount = ethers.utils.parseEther('1000000000')
+					const tx = await heatContract.approve(cyberLionzMergerAddress, amount)
 					this.evolving = 'Approving $HEAT...'
 					await tx.wait()
 				}
 
-				this.evolving = "Confirming Cubz..."
+				this.evolving = 'Confirming Cubz...'
 				const isCubzApproved = await cubzContract.isApprovedForAll(
 					this.account,
-					cyberLionzMergerAddress,
+					cyberLionzMergerAddress
 				)
 
 				if (!isCubzApproved) {
-					const tx = await cubzContract.setApprovalForAll(cyberLionzMergerAddress,true)
+					const tx = await cubzContract.setApprovalForAll(
+						cyberLionzMergerAddress,
+						true
+					)
 					this.evolving = 'Approving Cubz...'
 					await tx.wait()
 				}
@@ -361,9 +372,12 @@ export default async ({ $config, store }, inject) => {
 					this.provider.getSigner()
 				)
 
-				const tx_merge = mergerContract.mergeCubz(cub1, cub2)
-				
 				this.evolving = 'Evolving...'
+
+				const tx_merge = await mergerContract.mergeCubz(cub1, cub2, {
+					gasLimit: 250000,
+				})
+
 				await tx_merge.wait()
 				return true
 			} catch (err) {
@@ -401,22 +415,6 @@ export default async ({ $config, store }, inject) => {
 			} catch (e) {
 				console.log(e)
 			}
-		},
-
-		async mint() {
-			// const contract = new ethers.Contract(
-			// 	cyberLizonAddress,
-			// 	cyberLizonAbi,
-			// 	this.provider.getSigner()
-			// )
-
-			// const value = ethers.utils.parseEther(
-			// 	(MINT_PRICE * this.mintQuantity).toString()
-			// )
-
-			// txResponse = await signedContract.mint(this.mintQuantity, {
-			// 	value,
-			// })
 		},
 
 		async setAccount(newAccount) {
