@@ -40,15 +40,16 @@ contract CyberLionzMerger is Context, Ownable {
     }   
 
     /// @notice cub1 will be the one that will be locked forever
+    /// @param cub1 the one that will be locked
+    /// @param cub2 the keep slot
     function mergeCubz(uint256 cub1, uint256 cub2) external {
+        require(cubTimesUsed[cub2] + 1 <= cubMaxTimesAllowedToUse, "Cub reached max");
         cubTimesUsed[cub2] += 1;
-        require(cubTimesUsed[cub2] <= cubMaxTimesAllowedToUse, "Cub reached max");
         address sender = _msgSender();
         ERC721(_cyberLionz).transferFrom(sender, address(this), cub1);
         ERC20(_heatToken).transferFrom(sender, address(this), mergePrice);
         _lockedLionz.push(cub1);
         CyberLionzAdults(_cyberLionzAdult).mintFromMerger(sender);
-        
     }
 
     function withdrawFunds(address to) external onlyOwner {
