@@ -344,7 +344,7 @@ export default async ({ $config, store }, inject) => {
 					cyberLionzMergerAddress
 				)
 				console.log(isHeatApproved._hex)
-				if (isHeatApproved._hex == '0x000000000000000000000000') {
+				if (isHeatApproved._hex == '0x00') {
 					const amount = ethers.utils.parseEther('1000000000')
 					const tx = await heatContract.approve(cyberLionzMergerAddress, amount)
 					this.evolving = 'Approving $HEAT...'
