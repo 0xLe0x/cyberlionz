@@ -91,7 +91,15 @@
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[15%] sm:ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+				<div
+					class="
+						ml-[15%]
+						sm:ml-[18%]
+						mt-0
+						sm:mt-1
+						text-gray-300 text-xs
+						sm:text-xl
+					">
 					{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
 					ITEMS
 				</div>
@@ -455,15 +463,14 @@ export default {
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else if(!this.$wallet.isEvolved[index]) {
+			else if (!this.$wallet.isEvolved[index]) {
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
 					title: '',
 					text: 'Cub already used.',
 				})
-			}
-			else {
+			} else {
 				this.dropId1 = index
 				if (this.dropId2 !== undefined) {
 					this.curState = 'PREVIEW'
@@ -599,18 +606,22 @@ export default {
 						})
 						return
 					}
-					
-					await this.$wallet.evolve(parseInt(new_id), parseInt(old_id))
 
-					await axios.get(
-						`https://${process.env.hackslipsServer}/api/evolve`,
-						{
-							params: {
-								DNA: this.filename,
-								traits,
-							},
-						}
+					const success = await this.$wallet.evolve(
+						parseInt(new_id),
+						parseInt(old_id)
 					)
+					if (success) {
+						await axios.get(
+							`https://${process.env.hackslipsServer}/api/evolve`,
+							{
+								params: {
+									DNA: this.filename,
+									traits,
+								},
+							}
+						)
+					}
 
 					this.doorImage = false
 					;[this.dropId1, this.dropId2, this.previewImage] = [

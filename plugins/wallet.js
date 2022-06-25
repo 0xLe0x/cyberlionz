@@ -126,7 +126,7 @@ export default async ({ $config, store }, inject) => {
 					let metadata = await axios.get(`${token_uri}?${new Date().getTime()}`)
 					let arr = token_uri.split('/')
 					const usedCount = await mergerContract.cubTimesUsed(
-						parseInt(arr[arr.length - 1].split('.')[0])
+						nft.token_id
 					)
 					evolved.push(usedCount < evolveLimit)
 					metadata.data.id = i++
@@ -256,7 +256,8 @@ export default async ({ $config, store }, inject) => {
 			)
 			const cubzStakedCount = await stakingContract.getTotalStakedItemsCount(0)
 			const lionzStakedCount = await stakingContract.getTotalStakedItemsCount(1)
-			this.stakeInfo.total = cubzStakedCount.toNumber() + lionzStakedCount.toNumber()
+			this.stakeInfo.total =
+				cubzStakedCount.toNumber() + lionzStakedCount.toNumber()
 		},
 
 		async stake(stakeItems) {
@@ -462,7 +463,7 @@ export default async ({ $config, store }, inject) => {
 					this.account,
 					cyberLionzMergerAddress
 				)
-				console.log(isHeatApproved._hex)
+
 				if (isHeatApproved._hex == '0x00') {
 					const amount = ethers.utils.parseEther('1000000000')
 					const tx = await heatContract.approve(cyberLionzMergerAddress, amount)
@@ -500,7 +501,12 @@ export default async ({ $config, store }, inject) => {
 				await tx_merge.wait()
 				return true
 			} catch (err) {
-				console.log(err)
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: err,
+				})
 				this.evolving = ''
 				return false
 			}
