@@ -125,9 +125,7 @@ export default async ({ $config, store }, inject) => {
 					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
 					let metadata = await axios.get(`${token_uri}?${new Date().getTime()}`)
 					let arr = token_uri.split('/')
-					const usedCount = await mergerContract.cubTimesUsed(
-						nft.token_id
-					)
+					const usedCount = await mergerContract.cubTimesUsed(nft.token_id)
 					evolved.push(usedCount < evolveLimit)
 					metadata.data.id = i++
 					cubz.push(metadata.data)
@@ -484,6 +482,19 @@ export default async ({ $config, store }, inject) => {
 					)
 					this.evolving = 'Approving Cubz...'
 					await tx.wait()
+				}
+
+				if (
+					(await cubzContract.ownerOf(cub1)) !== this.account ||
+					(await cubzContract.ownerOf(cub2)) !== this.account
+				) {
+					Vue.notify({
+						group: 'foo',
+						type: 'error',
+						title: '',
+						text: 'You are using an already burnt cub.',
+					})
+					return false
 				}
 
 				const mergerContract = new ethers.Contract(
