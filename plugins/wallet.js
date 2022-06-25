@@ -15,8 +15,6 @@ export default async ({ $config, store }, inject) => {
 		heatContractAddress,
 		cyberLionzAdultsAbi,
 		cyberLionzAdultsAddress,
-		clAdultsStakingAbi,
-		clAdultsStakingAddress,
 		cyberLionzMergerAbi,
 		cyberLionzMergerAddress,
 		cubzNetwork,
@@ -33,7 +31,10 @@ export default async ({ $config, store }, inject) => {
 		nfts: [],
 		nftsLionz: [],
 		stakeInfo: {
-			userInfo: [],
+			userInfo: {
+				lionz: [],
+				cubz: [],
+			},
 			total: 0,
 		},
 		heatAmount: 0,
@@ -232,27 +233,36 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async getStakeInfo() {
-			this.stakeInfo.userInfo = []
+			this.stakeInfo.userInfo = {
+				lionz: [],
+				cubz: [],
+			}
 
 			const stakingContract = new ethers.Contract(
 				clStakinAddress,
 				clStakinABi,
 				this.provider
 			)
-			this.claimableReward = await stakingContract.totalClaimableReward(
+			this.claimableReward =
+				(await stakingContract.totalClaimableReward(this.account, 0)) +
+				(await stakingContract.totalClaimableReward(this.account, 1))
+			this.stakeInfo.userInfo.lionz = await stakingContract.getUserStakedTokens(
+				this.account,
+				1
+			)
+			this.stakeInfo.userInfo.cubz = await stakingContract.getUserStakedTokens(
 				this.account,
 				0
 			)
-			this.stakeInfo.userInfo = await stakingContract.getUserStakedTokens(
-				this.account,
-				0
-			)
-			this.stakeInfo.total = await stakingContract.getTotalStakedItemsCount(0)
+			const cubzStakedCount = await stakingContract.getTotalStakedItemsCount(0)
+			const lionzStakedCount = await stakingContract.getTotalStakedItemsCount(1)
+			this.stakeInfo.total = cubzStakedCount.toNumber() + lionzStakedCount.toNumber()
 		},
 
 		async stake(stakeItems) {
-			const stakeCount = stakeItems.length
-			if (!stakeCount) {
+			const lionzStakeCount = stakeItems.lionz.length
+			const cubzStakeCount = stakeItems.cubz.length
+			if (!lionzStakeCount && !cubzStakeCount) {
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -266,22 +276,51 @@ export default async ({ $config, store }, inject) => {
 				cyberLizonAbi,
 				this.provider.getSigner()
 			)
+			const nftAdultsContract = new ethers.Contract(
+				cyberLionzAdultsAddress,
+				cyberLionzAdultsAbi,
+				this.provider.getSigner()
+			)
 
-			const tokenIds = stakeItems.map((id) =>
+			const lionzTokenIds = stakeItems.lionz.map((id) =>
+				parseInt(this.nftsLionz[id].name.split('#')[1])
+			)
+			const cubzTokenIds = stakeItems.cubz.map((id) =>
 				parseInt(this.nfts[id].name.split('#')[1])
 			)
 
 			try {
-				this.staking = 'Confirming...'
+				if (lionzStakeCount) {
+					this.staking = 'Confirming Lionz...'
 
-				const isApproved = await nftContract.isApprovedForAll(
-					this.account,
-					clStakinAddress
-				)
+					const isApproved = await nftAdultsContract.isApprovedForAll(
+						this.account,
+						clStakinAddress
+					)
 
-				if (!isApproved) {
-					const tx = await nftContract.setApprovalForAll(clStakinAddress, true)
-					await tx.wait()
+					if (!isApproved) {
+						const tx = await nftAdultsContract.setApprovalForAll(
+							clStakinAddress,
+							true
+						)
+						this.staking = 'Approving Lionz...'
+						await tx.wait()
+					}
+				}
+
+				if (cubzStakeCount) {
+					this.staking = 'Confirming Cubz...'
+
+					const isApproved = await nftContract.isApprovedForAll(
+						this.account,
+						clStakinAddress
+					)
+
+					if (!isApproved) {
+						const tx = await nftContract.setApprovalForAll(clStakinAddress, true)
+						this.staking = 'Approving Cubz...'
+						await tx.wait()
+					}
 				}
 
 				const stakingContract = new ethers.Contract(
@@ -290,13 +329,25 @@ export default async ({ $config, store }, inject) => {
 					this.provider.getSigner()
 				)
 
-				const tx_stake = await stakingContract.batchStake(0, tokenIds)
-				this.staking = 'Staking...'
-				await tx_stake.wait()
+				if (lionzStakeCount) {
+					this.staking = 'Confirming...'
+					const tx_stake = await stakingContract.batchStake(1, lionzTokenIds)
+					this.staking = 'Staking Lionz...'
+					await tx_stake.wait()
+				}
+
+				if (cubzStakeCount) {
+					this.staking = 'Confirming...'
+					const tx_stake = await stakingContract.batchStake(0, cubzTokenIds)
+					this.staking = 'Staking Cubz...'
+					await tx_stake.wait()
+				}
 
 				this.nfts = []
 				this.nftsLionz = []
 				this.loaded = false
+
+				this.staking = 'Reloading...'
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
@@ -307,7 +358,9 @@ export default async ({ $config, store }, inject) => {
 				Vue.notify({
 					group: 'foo',
 					type: 'success',
-					text: `Successfully Staked <b>${stakeCount} Item(s).</b>`,
+					text: `Successfully Staked <b>${
+						lionzUnstakeCount + cubzUnstakeCount
+					} Item(s).</b>`,
 				})
 				Vue.notify({
 					group: 'foo',
@@ -324,8 +377,9 @@ export default async ({ $config, store }, inject) => {
 		},
 
 		async unstake(unstakeItems) {
-			const unstakeCount = unstakeItems.length
-			if (!unstakeCount) {
+			const lionzUnstakeCount = unstakeItems.lionz.length
+			const cubzUnstakeCount = unstakeItems.cubz.length
+			if (!lionzUnstakeCount && !cubzUnstakeCount) {
 				Vue.notify({
 					group: 'foo',
 					type: 'error',
@@ -335,24 +389,34 @@ export default async ({ $config, store }, inject) => {
 			}
 
 			try {
-				this.staking = 'Confirming...'
-
 				const stakingContract = new ethers.Contract(
 					clStakinAddress,
 					clStakinABi,
 					this.provider.getSigner()
 				)
 
-				const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems)
-				this.staking = 'Unstaking...'
-				await tx_unstake.wait()
+				if (lionzUnstakeCount) {
+					this.staking = 'Confirming Lionz...'
+					const tx_unstake = await stakingContract.batchUnstake(
+						1,
+						unstakeItems.lionz
+					)
+					this.staking = 'Unstaking Lionz...'
+					await tx_unstake.wait()
+				}
 
-				unstakeItems.map(function (value, key) {
-					this.stakeItems.splice(value, 1)
-				})
+				if (cubzUnstakeCount) {
+					this.staking = 'Confirming Cubz...'
+					const tx_unstake = await stakingContract.batchUnstake(0, unstakeItems.cubz)
+					this.staking = 'Unstaking Cubz...'
+					await tx_unstake.wait()
+				}
+
 				this.nfts = []
 				this.nftsLionz = []
 				this.loaded = false
+
+				this.staking = 'Reloading...'
 
 				await this.getStakeInfo()
 				await this.getHeatInfo()
@@ -363,7 +427,9 @@ export default async ({ $config, store }, inject) => {
 				Vue.notify({
 					group: 'foo',
 					type: 'success',
-					text: `Successfully Unstaked <b>${unstakeCount} Item(s)</b>.`,
+					text: `Successfully Unstaked <b>${
+						lionzUnstakeCount + cubzUnstakeCount
+					} Item(s)</b>.`,
 				})
 				Vue.notify({
 					group: 'foo',

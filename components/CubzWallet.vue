@@ -91,7 +91,7 @@
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+				<div class="ml-[15%] sm:ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
 					{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
 					ITEMS
 				</div>
@@ -151,7 +151,8 @@
 									sm:w-[140px] sm:h-[140px]
 									hover:cursor-pointer
 								"
-								v-if="item.id === itemId" />
+								v-if="item.id === itemId"
+								@click="onRetouchItem(item.id)" />
 						</div>
 					</div>
 				</div>
@@ -429,6 +430,9 @@ export default {
 		},
 		onTouchItem(index) {
 			this.itemId = index
+		},
+		onRetouchItem(index) {
+			this.itemId = undefined
 		},
 		onDrop(evt) {
 			const id = parseInt(evt.dataTransfer.getData('metadata'))
