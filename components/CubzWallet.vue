@@ -91,7 +91,15 @@
 					@drop="onDrop($event)"
 					@dragover.prevent
 					@dragenter.prevent></div>
-				<div class="ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+				<div
+					class="
+						ml-[15%]
+						sm:ml-[18%]
+						mt-0
+						sm:mt-1
+						text-gray-300 text-xs
+						sm:text-xl
+					">
 					{{ $wallet.nfts !== undefined ? $wallet.nfts.length : 0 }}
 					ITEMS
 				</div>
@@ -151,7 +159,8 @@
 									sm:w-[140px] sm:h-[140px]
 									hover:cursor-pointer
 								"
-								v-if="item.id === itemId" />
+								v-if="item.id === itemId"
+								@click="onRetouchItem(item.id)" />
 						</div>
 					</div>
 				</div>
@@ -430,6 +439,9 @@ export default {
 		onTouchItem(index) {
 			this.itemId = index
 		},
+		onRetouchItem(index) {
+			this.itemId = undefined
+		},
 		onDrop(evt) {
 			const id = parseInt(evt.dataTransfer.getData('metadata'))
 			const from = evt.dataTransfer.getData('from')
@@ -451,7 +463,14 @@ export default {
 					title: '',
 					text: 'Legendary Cubz cannot be evolved.',
 				})
-			else {
+			else if (!this.$wallet.isEvolved[index]) {
+				Vue.notify({
+					group: 'foo',
+					type: 'error',
+					title: '',
+					text: 'Cub already used.',
+				})
+			} else {
 				this.dropId1 = index
 				if (this.dropId2 !== undefined) {
 					this.curState = 'PREVIEW'
@@ -561,19 +580,18 @@ export default {
 				const old_id = this.$wallet.nfts[this.dropId2].name.split('#')[1]
 
 				try {
-					this.$wallet.evolving = 'Generating Lion...'
+					this.$wallet.evolving = 'Checking if already evolved...'
 
 					const res = await axios.get(
-						`https://${process.env.hackslipsServer}/api/evolve`,
+						`https://${process.env.hackslipsServer}/api/is-evolved`,
 						{
 							params: {
 								DNA: this.filename,
-								traits,
 							},
 						}
 					)
 
-					if (res.data.success === false) {
+					if (res.data.success) {
 						this.$toast.show('This Lion is already minted.', {
 							title: 'Mint',
 							variant: 'error',
@@ -588,8 +606,22 @@ export default {
 						})
 						return
 					}
-					
-					await this.$wallet.evolve(parseInt(new_id), parseInt(old_id))
+
+					const success = await this.$wallet.evolve(
+						parseInt(new_id),
+						parseInt(old_id)
+					)
+					if (success) {
+						await axios.get(
+							`https://${process.env.hackslipsServer}/api/evolve`,
+							{
+								params: {
+									DNA: this.filename,
+									traits,
+								},
+							}
+						)
+					}
 
 					this.doorImage = false
 					;[this.dropId1, this.dropId2, this.previewImage] = [
@@ -609,13 +641,7 @@ export default {
 						Companion: true,
 					}
 					this.curState = 'SELECT_CUBZ'
-
-					this.$wallet.evolving = 'reloading...'
-					setTimeout(async () => {
-						this.timeStamp = new Date().getTime()
-						this.$wallet.nfts = await this.$wallet.getNfts(this.$wallet.account)
-						this.$wallet.evolving = ''
-					}, 10000)
+					this.$wallet.evolving = ''
 				} catch (err) {
 					this.$toast.show(err, {
 						title: 'Mint',
