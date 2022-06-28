@@ -334,17 +334,18 @@
 }
 
 ::-webkit-scrollbar-track {
-	background-color: rgba(214, 222, 225, 0.5);
+	background-color: rgba(214, 222, 225, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #d6dee1;
+	background-color: #3dff6e;
 	border: 4px solid transparent;
 	background-clip: content-box;
+	border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #a8bbbf;
+	background-color: #28c074;
 }
 </style>
 
