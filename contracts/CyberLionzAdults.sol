@@ -12,8 +12,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract CyberLionzAdults is ERC721, Ownable {
+
+contract CyberLionzAdults is ERC721, Ownable, AccessControl {
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE"); 
 
     event Mint(address to, uint tokenId);
 
@@ -21,18 +24,22 @@ contract CyberLionzAdults is ERC721, Ownable {
     using Strings for uint;
 
     Counters.Counter private _tokenIds;
-    address private immutable _cyberlionzMerger;
 
     bool public finalized = false;
     
     string private _baseUri;
 
+    modifier onlyMinter(){
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || 
+        hasRole(MINTER_ROLE, msg.sender), "Must be a Minter or Admin");
+        _;
+    }
+
     constructor(
-        string memory baseUri, 
-        address cyberlionzMerger
+        string memory baseUri
     ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
-        _cyberlionzMerger = cyberlionzMerger;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
 
@@ -75,10 +82,12 @@ contract CyberLionzAdults is ERC721, Ownable {
              emit Mint(to, id);
         }
     }
-    
-    function mintFromMerger(address to) external {
-        require(_msgSender() == _cyberlionzMerger, "Sender is not merger");
+
+    function mintFromMerger(address to) external onlyMinter() {
         _mintTokens(to, 1);
-        
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }

@@ -26,14 +26,20 @@ describe('CyberlionzMerger', function () {
     heatToken = await HeatToken.deploy();
     await heatToken.deployed()
 
+    const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
+    cyberlionzAdults = await CyberLionzAdults.deploy("www.cyberlionz.com");
+    await cyberlionzAdults.deployed()
+
     const CyberlionzMerger = await ethers.getContractFactory("CyberLionzMerger");
-    cyberlionzMerger = await CyberlionzMerger.deploy(cyberlionz.address, heatToken.address, ethers.utils.parseEther("100"));
+    cyberlionzMerger = await CyberlionzMerger.deploy(
+      cyberlionz.address, 
+      heatToken.address, 
+      cyberlionzAdults.address,
+      ethers.utils.parseEther("100")
+    );
     await cyberlionzMerger.deployed()
 
-    const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
-    cyberlionzAdults = await CyberLionzAdults.deploy("www.cyberlionz.com", cyberlionzMerger.address);
-
-    await cyberlionzMerger.setCyberLionzAdults(cyberlionzAdults.address);
+    await cyberlionzAdults.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")), cyberlionzMerger.address);
 
     await cyberlionz.airdrop(signers[1].address, 10);
 
@@ -91,6 +97,11 @@ describe('CyberlionzMerger', function () {
 
 
     expect(await cyberlionzMerger.cubTimesUsed(2)).to.be.equal(2);
+
+    //tries to mint from another account
+    await expect(
+      cyberlionzAdults.connect(signers[2]).mintFromMerger(signers[3].address)
+    ).to.be.revertedWith('Must be a Minter or Admin');
 
   });
 });
