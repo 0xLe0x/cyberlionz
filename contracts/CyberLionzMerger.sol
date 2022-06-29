@@ -32,12 +32,10 @@ contract CyberLionzMerger is Context, Ownable {
     constructor(
         address cyberLionz, 
         address heatToken, 
-        address cyberLionzAdults,
         uint256 mergePrice_) 
     {
         _cyberLionz = cyberLionz;
         _heatToken = heatToken;
-        _cyberLionzAdult = cyberLionzAdults;
         mergePrice = mergePrice_;
     }   
 
@@ -57,6 +55,12 @@ contract CyberLionzMerger is Context, Ownable {
     function withdrawFunds(address to) external onlyOwner {
         ERC20 token = ERC20(_heatToken);
         token.transfer(to, token.balanceOf(address(this)));
+    }
+
+    function setCyberLionzAdults(address cyberLionzAdult) external onlyOwner {
+        require(_cyberLionzAdult == address(0), "Contract already set");
+        require(cyberLionzAdult != address(0), "Contract address is 0");
+        _cyberLionzAdult = cyberLionzAdult;
     }
 
     function setMergePrice(uint256 mergePrice_) external onlyOwner {

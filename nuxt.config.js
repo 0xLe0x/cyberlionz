@@ -1,6 +1,19 @@
-import { abi  as cyberLizonAbi  } from  './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
-import { abi as clStakinABi } from  './artifacts/contracts/CLstaking.sol/CyberlionStaking.json'
-import { abi as heatContractAbi } from  './artifacts/contracts/HeatToken.sol/HeatToken.json'
+import { abi as cyberLizonAbi } from './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
+import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberLionzStaking.json'
+import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatToken.json'
+import { abi as cyberLionzAdultsAbi } from './artifacts/contracts/CyberLionzAdults.sol/CyberLionzAdults.json'
+import { abi as cyberLionzMergerAbi } from './artifacts/contracts/CyberLionzMerger.sol/CyberLionzMerger.json'
+
+// if (
+// 	process.env.LD_LIBRARY_PATH == null ||
+// 	!process.env.LD_LIBRARY_PATH.includes(
+// 		`${process.env.PWD}/node_modules/canvas/build/Release:`
+// 	)
+// ) {
+// 	process.env.LD_LIBRARY_PATH = `${
+// 		process.env.PWD
+// 	}/node_modules/canvas/build/Release:${process.env.LD_LIBRARY_PATH || ''}`
+// }
 
 export default {
 	ssr: false, 
@@ -14,6 +27,10 @@ export default {
 			cyberLizonAddress: process.env.CONTRACT_ADDRESS,
 			heatContractAbi: 	heatContractAbi,
 			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
+			cyberLionzAdultsAbi: cyberLionzAdultsAbi,
+			cyberLionzAdultsAddress: process.env.ADULTS_CONTRACT_ADDRESS,
+			cyberLionzMergerAbi: cyberLionzMergerAbi,
+			cyberLionzMergerAddress: process.env.MERGER_CONTRACT_ADDRESS,
 			cubzNetwork: process.env.CUBZ_NETWORK,
 			chainId: process.env.CHAIN_ID,
 			
@@ -27,8 +44,9 @@ export default {
 	},
 
 	env: {
-		hackslipsBackendServer:
-			process.env.HACKSLIPS_BACKEND_SERVER || 'http://localhost:5000',
+		evolvingHeat: process.env.EVOLVING_HEAT,
+		hackslipsServer: process.env.HACKSLIPS_SERVER,
+		s3Bucket: process.env.CL_S3_BUCKET_NAME,
 	},
 
 	// Global page headers: https://go.nuxtjs.dev/config-head

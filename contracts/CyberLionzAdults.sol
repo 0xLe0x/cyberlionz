@@ -20,10 +20,22 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
 
     event Mint(address to, uint tokenId);
 
+contract CyberLionzAdults is ERC721, Ownable {
+
+    event Mint(address to, uint tokenId);
+
     using Counters for Counters.Counter;
     using Strings for uint;
 
     Counters.Counter private _tokenIds;
+    address private immutable _revenueRecipient;
+    address private immutable _cyberlionzMerger;
+    bytes32 public presaleMerkleRoot;
+
+    uint public constant PUBLIC_MINT_LIMIT = 6;
+    uint public COLLECTION_SIZE = 500;
+    uint public constant MINT_PRICE = 0.077 ether;
+    SaleStatus public saleStatus = SaleStatus.PAUSED;
 
     bool public finalized = false;
     
@@ -36,10 +48,15 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
     }
 
     constructor(
-        string memory baseUri
+        string memory baseUri, 
+        bytes32 merkleRoot, 
+        address revenueRecipient,
+        address cyberlionzMerger
     ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        presaleMerkleRoot = merkleRoot;
+        _revenueRecipient = revenueRecipient;
+        _cyberlionzMerger = cyberlionzMerger;
     }
 
 
@@ -89,5 +106,11 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function mintFromMerger(address to) external {
+        require(_msgSender() == _cyberlionzMerger, "Sender is not merger");
+        _mintTokens(to, 1);
+        
     }
 }
