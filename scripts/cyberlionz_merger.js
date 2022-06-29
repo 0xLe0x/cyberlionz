@@ -2,7 +2,7 @@ const { ethers } = require('hardhat');
 
 
 module.exports = [
-    "0xC0467EDd079e42970f9C8FEC2084e38ddB0F322E",
-    "0x4Acfca6680537cFAC77381a54fB0B11d32C9acaC",
+    "0x4a5803706dD92dE4b56A19D4c120123ab356B8C3",
+    "0xB43A8939439BCAa3C356e7a87761757079781792",
     ethers.utils.parseEther("500")
   ];

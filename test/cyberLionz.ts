@@ -31,7 +31,7 @@ describe('CyberlionzMerger', function () {
     await cyberlionzMerger.deployed()
 
     const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
-    cyberlionzAdults = await CyberLionzAdults.deploy("www.cyberlionz.com", WHITELIST, signers[0].address, cyberlionzMerger.address);
+    cyberlionzAdults = await CyberLionzAdults.deploy("www.cyberlionz.com", cyberlionzMerger.address);
 
     await cyberlionzMerger.setCyberLionzAdults(cyberlionzAdults.address);
 

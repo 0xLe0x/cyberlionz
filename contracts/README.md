@@ -5,7 +5,7 @@ Here are some prior production contracts, modify to suit the needs of current la
 
 npx hardhat run --network rinkeby ./scripts/rinkeby_deploy.js
 
-npx hardhat verify 0x722Cac99AdAe6d451e775601348Cd0C7ed4E47BA --network rinkeby --constructor-args ./scripts/cyberlionz_adults.js
+npx hardhat verify 0xfAA547c280AE63471d2EbBDe70EcF2957e867FE2 --network rinkeby --constructor-args ./scripts/cyberlionz_merger.js
 
 
 ## Rinkeby
