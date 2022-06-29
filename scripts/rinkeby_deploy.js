@@ -26,30 +26,28 @@ async function main() {
   await heatToken.deployed();
   console.log("HeatToken deployed at address:", heatToken.address)
 
+  // Deploy CyberLionzAdults
+  const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
+  const cyberLionzAdults = await CyberLionzAdults.deploy(
+    "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/",
+  )
+  await cyberLionzAdults.deployed()
+  console.log("CyberLionzAdults deployed at address:", cyberLionzAdults.address)
+
   // Deploy CyberLionzMerger
   const CyberLionzMerger = await ethers.getContractFactory("CyberLionzMerger");
   const cyberLionzMerger = await CyberLionzMerger.deploy(
     cyberLionzCubz.address,
     heatToken.address,
+    cyberLionzAdults.address,
     ethers.utils.parseEther("500")
   )
   await cyberLionzMerger.deployed();
   console.log("CyberLionzMerger deployed at address:", cyberLionzMerger.address)
 
-  // Deploy CyberLionzAdults
-  const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
-  const cyberLionzAdults = await CyberLionzAdults.deploy(
-    "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/",
-    WHITELIST,
-    REVENUE_RECIPIENT,
-    cyberLionzMerger.address
-  )
-  await cyberLionzAdults.deployed()
-  console.log("CyberLionzAdults deployed at address:", cyberLionzAdults.address)
-
-  // set CyberLionzAdults address in CyberLionzMerger
-  await cyberLionzMerger.setCyberLionzAdults(cyberLionzAdults.address);
-  console.log("CyberLionzAdults address set on CyberLionzMerger");
+  // set merger as minter role
+  await cyberLionzAdults.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")), cyberLionzMerger.address);
+  console.log("CyberLionzMerger set as minter role");
 
   const ClStaking = await ethers.getContractFactory("CyberLionzStaking");
   const clStaking = await ClStaking.deploy(
@@ -60,6 +58,7 @@ async function main() {
 
   //Set Collection
   await clStaking.setCollection(cyberLionzCubz.address, ethers.utils.parseEther("5"))
+  await clStaking.setCollection(cyberLionzAdults.address, ethers.utils.parseEther("10"))
 
 }
   
