@@ -3,9 +3,10 @@
 Here are some prior production contracts, modify to suit the needs of current launch
 
 
-npx hardhat run --network rinkeby ./scripts/rinkeby_deploy.js
+npx hardhat run --network mainnet ./scripts/mainnet_deploy.js
 
-npx hardhat verify 0x3C1d036e7C5A32e1cB1E3254e101489492999e66 --network rinkeby --constructor-args ./scripts/cyberlionz_merger.js
+npx hardhat verify 0xd6D53c74d0bc9C18d91aF7C9A26cA19f26d7834A --network mainnet --constructor-args ./scripts/cyberlionz_adults.js
+npx hardhat verify 0xb60bB63a5FE952A69e966be5d7f7eDd12209910c --network mainnet --constructor-args ./scripts/cyberlionz_merger.js
 
 
 ## Rinkeby
@@ -21,3 +22,5 @@ ClStaking deployed at address: 0x7363c1022352a620f91D3714945fFbBDa137Df8F
 CyberLionzCubz: 0x1013051039BD988E8f150CC6C676aa4e32BF6120
 HeatToken: 0x9948eAA3d985040C877e28739F5e61902Ddf6aFf
 ClStaking:0xaf0d04Ef65053b75EbC963206303524880F26d34
+CyberLionzAdults deployed at address: 0xd6D53c74d0bc9C18d91aF7C9A26cA19f26d7834A
+CyberLionzMerger deployed at address: 0xb60bB63a5FE952A69e966be5d7f7eDd12209910c
