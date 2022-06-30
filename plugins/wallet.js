@@ -221,7 +221,6 @@ export default async ({ $config, store }, inject) => {
 			)
 
 			try {
-				console.log()
 				this.claimableReward = ethers.utils.formatEther(
 					await stakingContract.totalClaimableReward(this.account, 0)
 				)
@@ -241,9 +240,13 @@ export default async ({ $config, store }, inject) => {
 				clStakinABi,
 				this.provider
 			)
-			this.claimableReward =
-				(await stakingContract.totalClaimableReward(this.account, 0)) +
-				(await stakingContract.totalClaimableReward(this.account, 1))
+			const cubzReward = ethers.utils.formatEther(
+				await stakingContract.totalClaimableReward(this.account, 0)
+			)
+			const lionzReward = ethers.utils.formatEther(
+				await stakingContract.totalClaimableReward(this.account, 1)
+			)
+			this.claimableReward = parseInt(cubzReward) + parseInt(lionzReward)
 			this.stakeInfo.userInfo.lionz = await stakingContract.getUserStakedTokens(
 				this.account,
 				1
@@ -358,7 +361,7 @@ export default async ({ $config, store }, inject) => {
 					group: 'foo',
 					type: 'success',
 					text: `Successfully Staked <b>${
-						lionzUnstakeCount + cubzUnstakeCount
+						lionzStakeCount + cubzStakeCount
 					} Item(s).</b>`,
 				})
 				Vue.notify({

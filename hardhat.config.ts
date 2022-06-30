@@ -5,7 +5,6 @@ import "@nomiclabs/hardhat-etherscan"
 import "solidity-coverage";
 
 const { 
-  ALCHEMY_ROPSTEN_API_KEY,
   ALCHEMY_RINKEBY_API_KEY,
   ALCHEMY_MAINNET_API_KEY,
   CONTRACT_OWNER_PRIVATE_KEY,
@@ -37,5 +36,9 @@ module.exports = {
       // url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_RINKEBY_API_KEY}`,
       // accounts: ['91a0167cac5860e16de9d5d3843e1b9f65bed565a4e84b522ff5966c4fedb45e']
     },
+    mainnet: {
+      url: `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_MAINNET_API_KEY}`,
+      accounts: [CONTRACT_OWNER_PRIVATE_KEY]
+    }
   }
 };
