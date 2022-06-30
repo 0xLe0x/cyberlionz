@@ -16,11 +16,6 @@
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "cyberLionzAdults",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "mergePrice_",
           "type": "uint256"
