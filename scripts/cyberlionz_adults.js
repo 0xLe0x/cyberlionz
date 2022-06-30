@@ -7,5 +7,5 @@ const {
 } = process.env
 
 module.exports = [
-    URI
+    "https://cyberlionz.s3.amazonaws.com/Cubz/json/"
   ];

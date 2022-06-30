@@ -27,6 +27,7 @@ async function main() {
   // set merger as minter role
   await cyberLionzAdults.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")), cyberLionzMerger.address);
   console.log("CyberLionzMerger set as minter role");
+
 }
   
   main()
