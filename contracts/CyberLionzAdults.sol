@@ -10,7 +10,6 @@ pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -24,8 +23,6 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
     using Strings for uint;
 
     Counters.Counter private _tokenIds;
-    address private immutable _revenueRecipient;
-    address private immutable _cyberlionzMerger;
 
     bool public finalized = false;
     
@@ -38,13 +35,9 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
     }
 
     constructor(
-        string memory baseUri, 
-        address revenueRecipient,
-        address cyberlionzMerger
+        string memory baseUri 
     ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
-        _revenueRecipient = revenueRecipient;
-        _cyberlionzMerger = cyberlionzMerger;
     }
 
 

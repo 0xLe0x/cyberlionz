@@ -32,10 +32,12 @@ contract CyberLionzMerger is Context, Ownable {
     constructor(
         address cyberLionz, 
         address heatToken, 
+        address cyberLionzAdults,
         uint256 mergePrice_) 
     {
         _cyberLionz = cyberLionz;
         _heatToken = heatToken;
+        _cyberLionzAdult = cyberLionzAdults;
         mergePrice = mergePrice_;
     }   
 
