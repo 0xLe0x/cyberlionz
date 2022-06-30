@@ -59,6 +59,12 @@ contract CyberLionzMerger is Context, Ownable {
         token.transfer(to, token.balanceOf(address(this)));
     }
 
+    function setCyberLionzAdults(address cyberLionzAdult) external onlyOwner {
+        require(_cyberLionzAdult == address(0), "Contract already set");
+        require(cyberLionzAdult != address(0), "Contract address is 0");
+        _cyberLionzAdult = cyberLionzAdult;
+    }
+
     function setMergePrice(uint256 mergePrice_) external onlyOwner {
         require(mergePrice_ > 0, "Merge price canno be 0");
         mergePrice = mergePrice_;

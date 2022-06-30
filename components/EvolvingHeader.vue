@@ -7,24 +7,17 @@
 				items-center
 				justify-between
 				py-5
+				mx-auto
 				gap-y-3
 				lg:flex-row
 				max-w-7xl
 				text-sm
 				sm:text-base
 			">
-			<div class="flex flex-wrap gap-x-5 justify-center">
-				<span class="text-[11px] leading-[14px] sm:text-base"
-					>Global Items Staked:
-					<span class="text-base sm:text-xl">{{
-						this.$wallet.stakeInfo.total
-					}}</span></span
-				>
-				<span
+			<div class="flex flex-wrap justify-center">
+				<span class="mr-5"
 					>$HEAT:
-					<span class="text-base sm:text-xl">{{
-						parseInt(this.$wallet.heatAmount)
-					}}</span></span
+					<span class="text-base sm:text-xl">{{ parseInt(this.$wallet.heatAmount) }}</span></span
 				>
 				<span
 					>Unclaimed $HEAT:
@@ -33,14 +26,7 @@
 					}}</span></span
 				>
 			</div>
-			<div
-				class="
-					inline-flex
-					items-center
-					space-x-6
-					justify-center
-					lg:justify-end
-				">
+			<div class="inline-flex items-center space-x-6 justify-center lg:justify-end">
 				<connected-button />
 			</div>
 		</div>
