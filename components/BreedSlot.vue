@@ -35,12 +35,14 @@ export default {
 			type: Number,
 		},
 		itemid: {
+			type: Number,
+		},
 	},
 	computed: {
 		image() {
-			if (this.index === undefined || this.$wallet.nfts.length === 0) return ''
-			return (
-			)
+			if (this.index === undefined || this.$wallet.nfts.length === 0)
+				return undefined
+			return this.$wallet.nfts[this.index].image
 		},
 	},
 	methods: {

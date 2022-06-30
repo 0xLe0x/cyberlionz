@@ -41,6 +41,7 @@ export default async ({ $config, store }, inject) => {
 		claimableReward: 0,
 		loaded: -1,
 		staking: '',
+		evolving: '',
 		Web3Modal: null,
 		isEvolved: [],
 
@@ -85,6 +86,7 @@ export default async ({ $config, store }, inject) => {
 				await this.updateClaimableReward()
 			}, 30 * 1000)
 		},
+
 		async getNfts(newAccount) {
 			const nftContract = new ethers.Contract(
 				cyberLizonAddress,
@@ -219,7 +221,6 @@ export default async ({ $config, store }, inject) => {
 			)
 
 			try {
-				console.log()
 				this.claimableReward = ethers.utils.formatEther(
 					await stakingContract.totalClaimableReward(this.account, 0)
 				)
@@ -239,9 +240,13 @@ export default async ({ $config, store }, inject) => {
 				clStakinABi,
 				this.provider
 			)
-			this.claimableReward =
-				(await stakingContract.totalClaimableReward(this.account, 0)) +
-				(await stakingContract.totalClaimableReward(this.account, 1))
+			const cubzReward = ethers.utils.formatEther(
+				await stakingContract.totalClaimableReward(this.account, 0)
+			)
+			const lionzReward = ethers.utils.formatEther(
+				await stakingContract.totalClaimableReward(this.account, 1)
+			)
+			this.claimableReward = parseInt(cubzReward) + parseInt(lionzReward)
 			this.stakeInfo.userInfo.lionz = await stakingContract.getUserStakedTokens(
 				this.account,
 				1
@@ -356,7 +361,7 @@ export default async ({ $config, store }, inject) => {
 					group: 'foo',
 					type: 'success',
 					text: `Successfully Staked <b>${
-						lionzUnstakeCount + cubzUnstakeCount
+						lionzStakeCount + cubzStakeCount
 					} Item(s).</b>`,
 				})
 				Vue.notify({
@@ -540,6 +545,7 @@ export default async ({ $config, store }, inject) => {
 				`Contected to: ${$config.smartContracts.cyberLizonAddress} Contract`
 			)
 		},
+
 		async getContract() {
 			if (this.contract) return this.contract
 			try {

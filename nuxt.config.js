@@ -16,16 +16,16 @@ import { abi as cyberLionzMergerAbi } from './artifacts/contracts/CyberLionzMerg
 // }
 
 export default {
-	ssr: false, 
-	target: 'static', //Static page generation 
+	ssr: false,
+	target: 'static', //Static page generation
 
 	publicRuntimeConfig: {
 		smartContracts: {
-			clStakinABi:clStakinABi,
-			clStakinAddress:process.env.STAKING_CONTRACT_ADDRESS,
-			cyberLizonAbi:cyberLizonAbi,
+			clStakinABi: clStakinABi,
+			clStakinAddress: process.env.STAKING_CONTRACT_ADDRESS,
+			cyberLizonAbi: cyberLizonAbi,
 			cyberLizonAddress: process.env.CONTRACT_ADDRESS,
-			heatContractAbi: 	heatContractAbi,
+			heatContractAbi: heatContractAbi,
 			heatContractAddress: process.env.HEAT_CONTRACT_ADDRESS,
 			cyberLionzAdultsAbi: cyberLionzAdultsAbi,
 			cyberLionzAdultsAddress: process.env.ADULTS_CONTRACT_ADDRESS,
@@ -33,14 +33,13 @@ export default {
 			cyberLionzMergerAddress: process.env.MERGER_CONTRACT_ADDRESS,
 			cubzNetwork: process.env.CUBZ_NETWORK,
 			chainId: process.env.CHAIN_ID,
-			
+			evolvingHeat: process.env.EVOLVING_HEAT,
 		},
 		hasDelayedReveal: false,
-		providers:{
+		providers: {
 			infuraId: process.env.INFURA_SECRET,
-			moralisApiKey: process.env.MORALIS_API_KEY,	
+			moralisApiKey: process.env.MORALIS_API_KEY,
 		},
-		hackslipsBackendServer: process.env.HACKSLIPS_BACKEND_SERVER,
 	},
 
 	env: {
@@ -51,7 +50,6 @@ export default {
 
 	// Global page headers: https://go.nuxtjs.dev/config-head
 	head: {
-
 		htmlAttrs: {
 			lang: 'en',
 		},
@@ -90,10 +88,7 @@ export default {
 	css: ['aos/dist/aos.css'],
 
 	// Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-	plugins: [
-		'@/plugins/wallet',
-		{ src: '@/plugins/aos', mode: 'client' },
-	],
+	plugins: ['@/plugins/wallet', { src: '@/plugins/aos', mode: 'client' }],
 
 	// Auto import components: https://go.nuxtjs.dev/config-components
 	components: true,
@@ -127,7 +122,7 @@ export default {
 	},
 
 	sitemap: {
-		hostname:process.env.URL,
+		hostname: process.env.URL,
 		exclude: ['/admin/**'],
 		defaults: {
 			changefreq: 'daily',
@@ -147,19 +142,17 @@ export default {
 
 	// Build Configuration: https://go.nuxtjs.dev/config-build
 	build: {
-		transpile:[
-			'web3modal-vue'
-		]
+		transpile: ['web3modal-vue'],
 	},
 
-	axios: {
-		proxy: true,
-	},
+	// axios: {
+	// 	proxy: true,
+	// },
 
-	proxy: {
-		'/.netlify/functions/': {
-			target: 'http://localhost:9999/.netlify/functions/',
-			pathRewrite: { '^/.netlify/functions/': '' },
-		},
-	},
+	// proxy: {
+	// 	'/.netlify/functions/': {
+	// 		target: 'http://localhost:9999/.netlify/functions/',
+	// 		pathRewrite: { '^/.netlify/functions/': '' },
+	// 	},
+	// },
 }

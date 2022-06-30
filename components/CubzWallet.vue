@@ -1,17 +1,18 @@
 <template>
-	<section class="relative bg-lionz-light-brown px-20" id="cubzwallet-section">
-		<div
-			class="
-				relative
-				bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
-				bg-no-repeat
-				bg-[length:100%_100%]
-				h-[100px]
-				flex
-				justify-around
-				items-center
-			">
-			<button
+	<section
+		class="
+			bg-[url('@/static/hero-bg-baked.jpg')]
+			relative
+			w-full
+			min-h-[53vw]
+			pb-[3rem]
+			overflow-hidden
+			bg-cover
+		"
+		id="cubzwallet-section">
+		<EvolvingHeader />
+		<div class="px-[5%]">
+			<div
 				class="
 					relative
 					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
@@ -136,6 +137,64 @@
 						class="flex-none pt-3">
 						<div class="relative">
 							<img
+								:src="`${item.image}?${timeStamp}`"
+								class="
+									w-[90px]
+									h-[90px]
+									sm:w-[140px] sm:h-[140px]
+									hover:cursor-pointer
+								"
+								data-aos="fade-right"
+								@dragstart="startDrag($event, item.id)"
+								@click="onTouchItem(item.id)" />
+							<div
+								class="
+									absolute
+									bg-[black]
+									opacity-80
+									left-0
+									top-0
+									w-[90px]
+									h-[90px]
+									sm:w-[140px] sm:h-[140px]
+									hover:cursor-pointer
+								"
+								v-if="item.id === itemId"
+								@click="onRetouchItem(item.id)" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="relative">
+				<img
+					src="/Evolving/Lions-UI_Boxes_New_9x.png"
+					class="w-full"
+					rel="preload" />
+				<breed-slot
+					:index="this.dropId1"
+					@dropped="onDrop_1"
+					@exchange="onExchange"
+					@click="onTouchSlot_1"
+					ref="slot1"
+					class="absolute left-[11%] top-[17.8%] w-[25.6%] h-[36%]"
+					:timeStamp="timeStamp"
+					:itemid="itemId" />
+				<trait-slot
+					:index="this.dropId1"
+					:toggleState="toggleValue"
+					class="absolute left-[13.8%] top-[58.5%] w-[18.5%] h-[38.3%]" />
+				<div>
+					<div class="absolute left-[43.05%] top-[12.8%] w-[14.3%] h-[20.1%]">
+						<loading
+							:active="previewImageLoading"
+							:width="100"
+							:height="100"
+							color="#f59e0b"
+							background-color="#000000"
+							loader="dots"
+							:opacity="0.7"
+							:is-full-page="false" />
+						<img
 							:src="`${this.previewImage}?${timeStamp}`"
 							data-aos="fade"
 							data-aos-offset="0px"
@@ -243,17 +302,29 @@
 					:toggleState="toggleValueR"
 					class="absolute left-[67.6%] top-[58.5%] w-[18.5%] h-[38.3%]" />
 			</div>
-			<breed-slot
-				:index="this.dropId2"
-				@dropped="onDrop_2"
-				@exchange="onExchange"
-				ref="slot2"
-				class="absolute left-[63.8%] top-[17.8%] w-[25.6%] h-[36%]" />
-			<trait-slot
-				:index="this.dropId2"
-				:toggleState="toggleValueR"
-				class="absolute left-[67.6%] top-[58.5%] w-[18.5%] h-[38.3%]" />
 		</div>
+		<loading
+			:active="this.$wallet.evolving != ''"
+			:width="120"
+			:height="120"
+			color="#f59e0b"
+			background-color="#000000"
+			loader="dots"
+			:opacity="0.8"
+			:is-full-page="true"
+			:lock-scroll="true"
+			><p class="text-[#d1d5db]">{{ this.$wallet.evolving }}</p></loading
+		>
+		<notifications group="foo" />
+
+		<VueFinalModal
+			v-model="showModal"
+			classes="modal-container"
+			content-class="modal-content">
+			<div>
+				<p class="text-gray-300">Coming Soon</p>
+			</div>
+		</VueFinalModal>
 	</section>
 </template>
 
@@ -299,7 +370,10 @@
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+import { VueFinalModal } from 'vue-final-modal'
 import axios from 'axios'
+import Vue from 'vue'
 
 export default {
 	data() {
@@ -314,7 +388,6 @@ export default {
 				'Hands',
 				'Mouth',
 				'Eyewear',
-				'Headwear',
 				'Companion',
 			],
 			toggleValue: {
@@ -343,6 +416,7 @@ export default {
 	components: {
 		Loading,
 		PerfectScrollbar,
+		VueFinalModal,
 	},
 	mounted() {
 		this.isMounted = true
@@ -455,6 +529,10 @@ export default {
 							index
 						].value)
 			)
+			params.Headwear = 'None'
+			let fn = ''
+			Object.entries(params).forEach(([key, value]) => (fn += value))
+			this.filename = fn
 			try {
 				this.previewImageLoading = true
 				this.previewImage = undefined
