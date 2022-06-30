@@ -6,7 +6,7 @@ async function main() {
 	// Deploy CyberLionzAdults
 	const CyberLionzAdults = await ethers.getContractFactory('CyberLionzAdults')
 	const cyberLionzAdults = await CyberLionzAdults.deploy(
-		'https://cyberlionz.s3.amazonaws.com/Lionz/json/'
+		'https://cyberlionz.s3.amazonaws.com/Cubz/json/'
 	)
 	await cyberLionzAdults.deployed()
 	console.log('CyberLionzAdults deployed at address:', cyberLionzAdults.address)
