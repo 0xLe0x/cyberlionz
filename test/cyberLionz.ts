@@ -6,6 +6,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-wit
 describe('CyberlionzMerger', function () {
 
   const WHITELIST = '0x0000000000000000000000000000000000000000000000000000000000000000'
+  const ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000'
  
   let signers: Array<SignerWithAddress>;
   let cyberlionzMerger: Contract;
@@ -50,6 +51,9 @@ describe('CyberlionzMerger', function () {
 
 
   it('Merge cubz', async function () {
+
+    await cyberlionzMerger.setCubMaxTimesAllowedToUse(1);
+
     expect((await cyberlionz.totalSupply()).toNumber()).to.be.equal(10)
 
     await heatToken.connect(signers[1]).approve(cyberlionzMerger.address, ethers.utils.parseEther("10000"));
@@ -74,6 +78,7 @@ describe('CyberlionzMerger', function () {
     expect((await cyberlionzAdults.balanceOf(signers[1].address)).toNumber()).to.be.equal(1);
     expect((await cyberlionzAdults.ownerOf(1)).toLowerCase()).to.be.equal(signers[1].address.toLowerCase())
 
+    expect((await heatToken.balanceOf(signers[0].address))).to.be.equal(ethers.utils.parseEther("0"))
     await cyberlionzMerger.withdrawFunds(signers[0].address);
     expect((await heatToken.balanceOf(cyberlionzMerger.address))).to.be.equal(ethers.utils.parseEther("0"));
     expect((await heatToken.balanceOf(signers[0].address))).to.be.equal(ethers.utils.parseEther("100"))
@@ -104,4 +109,21 @@ describe('CyberlionzMerger', function () {
     ).to.be.revertedWith('Must be a Minter or Admin');
 
   });
+
+  it("Grants Admin role and ownership", async function() {
+    await cyberlionzAdults.grantRole(ADMIN_ROLE, signers[4].address);
+    await cyberlionzAdults.renounceRole(ADMIN_ROLE, signers[0].address);
+    let hasRole = await cyberlionzAdults.hasRole(ADMIN_ROLE, signers[0].address);
+    expect(hasRole).to.be.false;
+    
+    hasRole = await cyberlionzAdults.hasRole(ADMIN_ROLE, signers[4].address)
+    expect(hasRole).to.be.true;
+    
+    await cyberlionzAdults.connect(signers[4]).mintFromMerger(signers[4].address);
+    expect((await cyberlionzAdults.balanceOf(signers[4].address)).toNumber()).to.be.equal(1);
+
+    await cyberlionzMerger.transferOwnership(signers[4].address);
+    expect((await cyberlionzMerger.owner()).toLowerCase()).to.equal(signers[4].address.toLowerCase())
+
+  })
 });
