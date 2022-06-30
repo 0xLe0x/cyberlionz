@@ -38,6 +38,7 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
         string memory baseUri 
     ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
 
