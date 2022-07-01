@@ -13,10 +13,11 @@ async function main() {
   // Deploy CyberLionzCubz
   const CyberLionzCubz = await ethers.getContractFactory("CyberLionzCubzMock");
   const cyberLionzCubz = await CyberLionzCubz.deploy(
-      "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/", 
+      "https://cyberlionz-test.s3.amazonaws.com/Cubz/json/1.json", 
       WHITELIST
   )
   await cyberLionzCubz.deployed();
+  await cyberLionzCubz.mint(10)
   console.log("CyberLionzCuz deployed to address:", cyberLionzCubz.address)
 
 
@@ -24,15 +25,16 @@ async function main() {
   const HeatToken = await ethers.getContractFactory("HeatTokenMock");
   const heatToken = await HeatToken.deploy()
   await heatToken.deployed();
+  await heatToken.mint(REVENUE_RECIPIENT, ethers.utils.parseEther("10000"))
   console.log("HeatToken deployed at address:", heatToken.address)
 
   // Deploy CyberLionzAdults
-  const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
-  const cyberLionzAdults = await CyberLionzAdults.deploy(
-    "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/",
-  )
-  await cyberLionzAdults.deployed()
-  console.log("CyberLionzAdults deployed at address:", cyberLionzAdults.address)
+  const CyberLionzAdults = await ethers.getContractFactory('CyberLionzAdults')
+	const cyberLionzAdults = await CyberLionzAdults.deploy(
+		'https://cyberlionz.s3.amazonaws.com/Cubz/json/'
+	)
+	await cyberLionzAdults.deployed()
+	console.log('CyberLionzAdults deployed at address:', cyberLionzAdults.address)
 
   // Deploy CyberLionzMerger
   const CyberLionzMerger = await ethers.getContractFactory("CyberLionzMerger");
@@ -48,6 +50,9 @@ async function main() {
   // set merger as minter role
   await cyberLionzAdults.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")), cyberLionzMerger.address);
   console.log("CyberLionzMerger set as minter role");
+
+  await cyberLionzCubz.setApprovalForAll(cyberLionzMerger.address, true)
+  await heatToken.approve(cyberLionzMerger.address, ethers.utils.parseEther("10000"))
 
   const ClStaking = await ethers.getContractFactory("CyberLionzStaking");
   const clStaking = await ClStaking.deploy(
