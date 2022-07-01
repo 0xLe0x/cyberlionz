@@ -116,7 +116,7 @@ export default async ({ $config, store }, inject) => {
 						},
 					}
 				)
-
+				
 				let cubz = [],
 					evolved = [],
 					i = 0
@@ -221,9 +221,13 @@ export default async ({ $config, store }, inject) => {
 			)
 
 			try {
-				this.claimableReward = ethers.utils.formatEther(
+				const cubzReward = ethers.utils.formatEther(
 					await stakingContract.totalClaimableReward(this.account, 0)
 				)
+				const lionzReward = ethers.utils.formatEther(
+					await stakingContract.totalClaimableReward(this.account, 1)
+				)
+				this.claimableReward = parseInt(cubzReward) + parseInt(lionzReward)
 			} catch (e) {
 				console.log(e)
 			}
