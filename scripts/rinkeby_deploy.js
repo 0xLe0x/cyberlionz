@@ -13,7 +13,7 @@ async function main() {
   // Deploy CyberLionzCubz
   const CyberLionzCubz = await ethers.getContractFactory("CyberLionzCubzMock");
   const cyberLionzCubz = await CyberLionzCubz.deploy(
-      "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/", 
+      "https://cyberlionz-test.s3.amazonaws.com/Cubz/json/1.json", 
       WHITELIST
   )
   await cyberLionzCubz.deployed();
@@ -27,12 +27,12 @@ async function main() {
   console.log("HeatToken deployed at address:", heatToken.address)
 
   // Deploy CyberLionzAdults
-  const CyberLionzAdults = await ethers.getContractFactory("CyberLionzAdults");
-  const cyberLionzAdults = await CyberLionzAdults.deploy(
-    "ipfs://QmYfsUQEdmaaw8zDmR8qR7Cua6dakPGBuXsAPks7pedX4u/",
-  )
-  await cyberLionzAdults.deployed()
-  console.log("CyberLionzAdults deployed at address:", cyberLionzAdults.address)
+  const CyberLionzAdults = await ethers.getContractFactory('CyberLionzAdults')
+	const cyberLionzAdults = await CyberLionzAdults.deploy(
+		'https://cyberlionz.s3.amazonaws.com/Cubz/json/'
+	)
+	await cyberLionzAdults.deployed()
+	console.log('CyberLionzAdults deployed at address:', cyberLionzAdults.address)
 
   // Deploy CyberLionzMerger
   const CyberLionzMerger = await ethers.getContractFactory("CyberLionzMerger");
