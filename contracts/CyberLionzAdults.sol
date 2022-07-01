@@ -10,6 +10,7 @@ pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -35,7 +36,7 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
     }
 
     constructor(
-        string memory baseUri 
+        string memory baseUri
     ) ERC721("CyberLionzAdults", "CLA") {
         _baseUri = baseUri;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -89,5 +90,4 @@ contract CyberLionzAdults is ERC721, Ownable, AccessControl {
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
-
 }
