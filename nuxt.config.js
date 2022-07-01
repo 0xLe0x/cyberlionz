@@ -1,6 +1,6 @@
 import { abi as cyberLizonAbi } from './artifacts/contracts/CyberLionz.sol/CyberLionzCubz.json'
 import { abi as clStakinABi } from './artifacts/contracts/CLstaking.sol/CyberLionzStaking.json'
-import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatToken.json'
+import { abi as heatContractAbi } from './artifacts/contracts/HeatToken.sol/HeatTokenMock.json'
 import { abi as cyberLionzAdultsAbi } from './artifacts/contracts/CyberLionzAdults.sol/CyberLionzAdults.json'
 import { abi as cyberLionzMergerAbi } from './artifacts/contracts/CyberLionzMerger.sol/CyberLionzMerger.json'
 
@@ -18,7 +18,6 @@ import { abi as cyberLionzMergerAbi } from './artifacts/contracts/CyberLionzMerg
 export default {
 	ssr: false,
 	target: 'static', //Static page generation
-
 	publicRuntimeConfig: {
 		smartContracts: {
 			clStakinABi: clStakinABi,
