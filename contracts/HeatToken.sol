@@ -1,4 +1,3 @@
-
 /*
 CyberLionz Heat Reward Staking
 https://cyberlionz.io
@@ -50,4 +49,3 @@ contract HeatToken is ERC20, AccessControl {
 		_burn(msg.sender, _amount);
 	}
 }
-
