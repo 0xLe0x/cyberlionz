@@ -17,6 +17,7 @@ async function main() {
       WHITELIST
   )
   await cyberLionzCubz.deployed();
+  await cyberLionzCubz.mint(10)
   console.log("CyberLionzCuz deployed to address:", cyberLionzCubz.address)
 
 
@@ -24,6 +25,7 @@ async function main() {
   const HeatToken = await ethers.getContractFactory("HeatTokenMock");
   const heatToken = await HeatToken.deploy()
   await heatToken.deployed();
+  await heatToken.mint(REVENUE_RECIPIENT, ethers.utils.parseEther("10000"))
   console.log("HeatToken deployed at address:", heatToken.address)
 
   // Deploy CyberLionzAdults
@@ -48,6 +50,9 @@ async function main() {
   // set merger as minter role
   await cyberLionzAdults.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")), cyberLionzMerger.address);
   console.log("CyberLionzMerger set as minter role");
+
+  await cyberLionzCubz.setApprovalForAll(cyberLionzMerger.address, true)
+  await heatToken.approve(cyberLionzMerger.address, ethers.utils.parseEther("10000"))
 
   const ClStaking = await ethers.getContractFactory("CyberLionzStaking");
   const clStaking = await ClStaking.deploy(
