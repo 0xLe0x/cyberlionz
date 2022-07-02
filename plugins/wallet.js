@@ -512,9 +512,7 @@ export default async ({ $config, store }, inject) => {
 
 				this.evolving = 'Evolving...'
 
-				const tx_merge = await mergerContract.mergeCubz(cub2, cub1, {
-					gasLimit: 500000,
-				})
+				const tx_merge = await mergerContract.mergeCubz(cub2, cub1)
 
 				await tx_merge.wait()
 				return true
