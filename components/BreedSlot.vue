@@ -22,7 +22,7 @@ export default {
 		image() {
 			if (this.index === undefined || this.$wallet.nfts.length === 0) return ''
 			return (
-				'https://ipfs.io/ipfs' + this.$wallet.nfts[this.index].image.substring(6)
+				'https://' + this.$wallet.nfts[this.index].image.substring(6)
 			)
 		},
 	},

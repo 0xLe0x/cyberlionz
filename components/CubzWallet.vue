@@ -80,7 +80,7 @@
 						:key="i"
 						class="flex-none p-3">
 						<img
-							:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
+							:src="'https://' + item.image.substring(6)"
 							class="w-[140px] h-[140px] hover:cursor-pointer"
 							data-aos="fade-right"
 							@dragstart="startDrag($event, item.id)" />

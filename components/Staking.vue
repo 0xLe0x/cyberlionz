@@ -104,7 +104,7 @@
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
-									:src="'https://ipfs.io/ipfs' + item.image.substring(6)"
+									:src="'https://' + item.image.substring(6)"
 									class="w-[120px] h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton

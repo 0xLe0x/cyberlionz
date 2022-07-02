@@ -100,7 +100,7 @@ export default async ({ $config, store }, inject) => {
 				for (let nft of res.data.result) {
 					const token_uri = await nftContract.tokenURI(parseInt(nft.token_id))
 					let metadata = await axios.get(
-						'https://ipfs.io/ipfs' + token_uri.substring(6)
+						'https://' + token_uri.substring(6)
 					)
 					metadata.data.id = i++
 					results.push(metadata.data)
