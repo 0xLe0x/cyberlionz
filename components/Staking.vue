@@ -18,14 +18,14 @@
 					bg-[url('@/static/Evolving/Lions-UI_Control_Panel_Underlay.png')]
 					bg-no-repeat
 					bg-[length:100%_100%]
-					h-[50px]
+					h-[40px]
 					md:h-[100px]
 					flex
 					justify-around
 					items-center
 					mb-3
 				">
-				<button
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-stake.gif')]
 						hover:bg-[url('@/static/Buttons/btn-stake-hover.gif')]
@@ -33,8 +33,9 @@
 						bg-no-repeat bg-contain bg-center
 						h-[60%]
 						w-[20%]
-					"></button>
-				<button
+					"
+					href="#"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-evolve.gif')]
 						hover:bg-[url('@/static/Buttons/btn-evolve-hover.gif')]
@@ -43,8 +44,8 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
-				<button
+					href="/evolve"></a>
+				<a
 					class="
 						bg-[url('@/static/Buttons/btn-market.gif')]
 						hover:bg-[url('@/static/Buttons/btn-market-hover.gif')]
@@ -53,9 +54,10 @@
 						h-[60%]
 						w-[20%]
 					"
-					@click="showModal = true"></button>
+					href="#"
+					@click="showModal = true"></a>
 			</div>
-			<div class="grid grid-cols-4 gap-4">
+			<div class="md:grid md:grid-cols-4 md:gap-4">
 				<div
 					class="
 						relative
@@ -64,8 +66,9 @@
 						bg-[length:100%_100%]
 						px-[5%]
 						py-3
-						h-[220px]
-						col-span-3
+						h-[160px]
+						sm:h-[220px]
+						md:col-span-3
 					">
 					<loading
 						:active="this.$wallet.loaded == false"
@@ -76,40 +79,74 @@
 						loader="dots"
 						:opacity="0.5"
 						:is-full-page="false" />
-					<div class="ml-[18%] mt-1 text-gray-300">
-						<span class="text-xl">{{
-							$wallet.nfts !== undefined && $wallet.nfts.length
-						}}</span>
+					<div class="ml-[15%] sm:ml-[18%] mt-0 sm:mt-1 text-gray-300 text-xs sm:text-xl">
+						{{
+							$wallet.nfts !== undefined
+								? $wallet.nfts.length +
+								  ($wallet.nftsLionz !== undefined
+										? $wallet.nftsLionz.length
+										: 0)
+								: $wallet.nftsLionz !== undefined
+								? $wallet.nftsLionz.length
+								: 0
+						}}
 						ITEMS
 					</div>
 					<div
 						v-if="
 							$wallet.nfts !== undefined &&
 							$wallet.loaded &&
-							$wallet.nfts.length == 0 &&
-							$wallet.loaded != -1
+							$wallet.nfts.length === 0 &&
+							$wallet.nftsLionz !== undefined &&
+							$wallet.nftsLionz.length === 0 &&
+							$wallet.loaded !== -1
 						"
-						class="flex justify-center items-center h-[170px]">
-						<p class="text-[#d1d5db]">Inventory is empty</p>
+						class="flex justify-center items-center h-[110px] sm:h-[170px]">
+						<p class="text-[#d1d5db] text-center">Inventory is empty</p>
 					</div>
 					<div
 						v-if="$wallet.loaded == -1"
-						class="flex justify-center items-center h-[170px]">
-						<p class="text-[#d1d5db]">Please connect your wallet</p>
+						class="flex justify-center items-center h-[110px] sm:h-[170px]">
+						<p class="text-[#d1d5db] text-center">Please connect your wallet</p>
 					</div>
-					<div class="flex gap-6 overflow-x-auto hover:scroll-auto custom-scrollbar">
+					<div
+						class="
+							flex
+							gap-3
+							sm:gap-6
+							overflow-x-auto
+							hover:scroll-auto
+							custom-scrollbar
+						">
 						<div
-							v-for="(item, i) in this.$wallet.nfts"
-							:key="i"
+							v-for="(item, i) in this.$wallet.nftsLionz"
+							:key="`Lion-${i}`"
 							class="flex-none pt-3">
 							<div class="flex flex-col justify-center gap-y-1">
 								<img
-									:src="'https://' + item.image.substring(6)"
-									class="w-[120px] h-[120px]"
+									:src="item.image.substring(6)"
+									class="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]"
 									data-aos="fade-right" />
 								<CheckButton
-									@toggle="onStakeCheck(item.id)"
-									:value="stakeItems.includes(item.id)"
+									@toggle="onStakeLionzCheck(item.id)"
+									:value="stakeItems.lionz.includes(item.id)"
+									color="#db2777"
+									>Select</CheckButton
+								>
+							</div>
+						</div>
+						<div
+							v-for="(item, i) in this.$wallet.nfts"
+							:key="`Cub-${i}`"
+							class="flex-none pt-3">
+							<div class="flex flex-col justify-center gap-y-1">
+								<img
+									:src="item.image.substring(6)"
+									class="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]"
+									data-aos="fade-right" />
+								<CheckButton
+									@toggle="onStakeCubzCheck(item.id)"
+									:value="stakeItems.cubz.includes(item.id)"
 									color="#db2777"
 									>Select</CheckButton
 								>
@@ -118,23 +155,32 @@
 					</div>
 				</div>
 
-				<ul class="bg-opacity-30 border-4 rounded border-[#24142c]">
+				<ul
+					class="mt-3 sm:mt-0 bg-opacity-30 border-4 rounded border-[#24142c]">
 					<li
-						class="text-[#3dff6e] text-center h-[25px] bg-[#24142c] overflow-hidden">
+						class="
+							text-[#3dff6e] text-center
+							h-[25px]
+							bg-[#24142c]
+							overflow-hidden
+						">
 						STAKED ITEMS({{
-							this.$wallet.stakeInfo.userInfo.length
-								? this.$wallet.stakeInfo.userInfo.length
-								: 0
+							$wallet.stakeInfo.userInfo.lionz.length +
+							$wallet.stakeInfo.userInfo.cubz.length
 						}})
 					</li>
 					<div
 						v-if="
-							this.$wallet.loaded == false && !this.$wallet.stakeInfo.userInfo.length
+							this.$wallet.loaded == false &&
+							!this.$wallet.stakeInfo.userInfo.lionz.length &&
+							!this.$wallet.stakeInfo.userInfo.cubz.length
 						"
-						class="h-[187px] bg-[#061f5f] relative">
+						class="h-[135px] sm:h-[187px] bg-[#061f5f] relative">
 						<loading
 							:active="
-								this.$wallet.loaded != -1 && !this.$wallet.stakeInfo.userInfo.length
+								this.$wallet.loaded != -1 &&
+								!this.$wallet.stakeInfo.userInfo.lionz.length &&
+								!this.$wallet.stakeInfo.userInfo.cubz.length
 							"
 							:width="80"
 							:height="80"
@@ -146,15 +192,25 @@
 					</div>
 					<div
 						v-else-if="
-							this.$wallet.stakeInfo.userInfo.length == 0
+							!this.$wallet.stakeInfo.userInfo.lionz.length &&
+							!this.$wallet.stakeInfo.userInfo.cubz.length
 						"
-						class="h-[187px] px-2 bg-[#061f5f] flex items-center">
-						<p class="text-center text-[#9ca3af]">No Staked Items</p>
+						class="
+							h-[135px]
+							sm:h-[187px]
+							px-2
+							bg-[#061f5f]
+							flex
+							justify-center
+							items-center
+						">
+						<p class="text-[#9ca3af] text-center">No Staked Items</p>
 					</div>
 					<div
 						v-else
 						class="
-							h-[187px]
+							h-[135px]
+							sm:h-[187px]
 							overflow-y-auto overflow-x-hidden
 							hover:scroll-auto
 							custom-scrollbar
@@ -162,8 +218,8 @@
 							bg-[#061f5f]
 						">
 						<li
-							v-for="item in this.$wallet.stakeInfo.userInfo"
-							:key="`li-${item}`"
+							v-for="item in this.$wallet.stakeInfo.userInfo.lionz"
+							:key="`li-lion-${item}`"
 							class="
 								flex flex-wrap
 								p-2
@@ -172,16 +228,38 @@
 								last:border-b-0
 								border-[#3dff6e] border-opacity-30
 								justify-center
-							"
-							data-aos="fade-right"
-							data-aos-offset="0px">
+							">
 							<img
-								:src="`https://ipfs.io/ipfs/QmP6U3ED69wcZxAYL2xbNoNL2HNW7EmhBUB5LPToKzxmbv/${item}.gif`"
+								:src="`https://${s3Bucket}.s3.amazonaws.com/Lionz/gifs/${item}.gif`"
 								class="w-[50px] h-[50px] rounded" />
 							<div class="flex items-center">
 								<CheckButton
-									@toggle="onUnstakeCheck(item)"
-									:value="unstakeItems.includes(item)"
+									@toggle="onUnstakeLionzCheck(item)"
+									:value="unstakeItems.lionz.includes(item)"
+									color="#28c074"
+									>Select</CheckButton
+								>
+							</div>
+						</li>
+						<li
+							v-for="item in this.$wallet.stakeInfo.userInfo.cubz"
+							:key="`li-cub-${item}`"
+							class="
+								flex flex-wrap
+								p-2
+								gap-[15%] gap-y-2
+								border-b
+								last:border-b-0
+								border-[#3dff6e] border-opacity-30
+								justify-center
+							">
+							<img
+								:src="`https://${s3Bucket}.s3.amazonaws.com/Cubz/gifs/${item}.gif`"
+								class="w-[50px] h-[50px] rounded" />
+							<div class="flex items-center">
+								<CheckButton
+									@toggle="onUnstakeCubzCheck(item)"
+									:value="unstakeItems.cubz.includes(item)"
 									color="#28c074"
 									>Select</CheckButton
 								>
@@ -192,7 +270,16 @@
 			</div>
 		</div>
 
-		<div class="h-[100px] flex justify-center items-center gap-4">
+		<div
+			class="
+				h-[50px]
+				sm:h-[100px]
+				flex
+				justify-center
+				items-center
+				gap-4
+				sm:gap-10
+			">
 			<button
 				class="
 					bg-[url('@/static/Buttons/Lions-Blue_Stake_Button.png')]
@@ -200,7 +287,8 @@
 					active:bg-[url('@/static/Buttons/Lions-Blue_Stake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
-					w-[20%]
+					w-[35%]
+					sm:w-[20%]
 				"
 				@click="onStake"
 				data-aos="fade-right"
@@ -212,7 +300,8 @@
 					active:bg-[url('@/static/Buttons/Lions-Red_Unstake_Button_Active.png')]
 					bg-no-repeat bg-contain bg-center
 					h-[60%]
-					w-[20%]
+					w-[35%]
+					sm:w-[20%]
 				"
 				@click="onUnstake"
 				data-aos="fade-left"
@@ -248,17 +337,18 @@
 }
 
 ::-webkit-scrollbar-track {
-	background-color: rgba(214, 222, 225, 0.5);
+	background-color: rgba(214, 222, 225, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #d6dee1;
+	background-color: #3dff6e;
 	border: 4px solid transparent;
 	background-clip: content-box;
+	border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #a8bbbf;
+	background-color: #28c074;
 }
 </style>
 
@@ -289,9 +379,16 @@ import { VueFinalModal } from 'vue-final-modal'
 export default {
 	data() {
 		return {
-			stakeItems: [],
-			unstakeItems: [],
+			stakeItems: {
+				lionz: [],
+				cubz: [],
+			},
+			unstakeItems: {
+				lionz: [],
+				cubz: [],
+			},
 			showModal: false,
+			s3Bucket: process.env.s3Bucket,
 		}
 	},
 	components: {
@@ -300,21 +397,39 @@ export default {
 		VueFinalModal,
 	},
 	methods: {
-		onStakeCheck(id) {
-			const index = this.stakeItems.indexOf(id)
-			if (index != -1) this.stakeItems.splice(index, 1)
-			else this.stakeItems.push(id)
+		onStakeLionzCheck(id) {
+			const index = this.stakeItems.lionz.indexOf(id)
+			if (index != -1) this.stakeItems.lionz.splice(index, 1)
+			else this.stakeItems.lionz.push(id)
 		},
-		onUnstakeCheck(id) {
-			const index = this.unstakeItems.indexOf(id)
-			if (index != -1) this.unstakeItems.splice(index, 1)
-			else this.unstakeItems.push(id)
+		onStakeCubzCheck(id) {
+			const index = this.stakeItems.cubz.indexOf(id)
+			if (index != -1) this.stakeItems.cubz.splice(index, 1)
+			else this.stakeItems.cubz.push(id)
 		},
-		onStake() {
-			this.$wallet.stake(this.stakeItems)
+		onUnstakeLionzCheck(id) {
+			const index = this.unstakeItems.lionz.indexOf(id)
+			if (index != -1) this.unstakeItems.lionz.splice(index, 1)
+			else this.unstakeItems.lionz.push(id)
 		},
-		onUnstake() {
-			this.$wallet.unstake(this.unstakeItems)
+		onUnstakeCubzCheck(id) {
+			const index = this.unstakeItems.cubz.indexOf(id)
+			if (index != -1) this.unstakeItems.cubz.splice(index, 1)
+			else this.unstakeItems.cubz.push(id)
+		},
+		async onStake() {
+			await this.$wallet.stake(this.stakeItems)
+			this.stakeItems = {
+				lionz: [],
+				cubz: [],
+			}
+		},
+		async onUnstake() {
+			await this.$wallet.unstake(this.unstakeItems)
+			this.unstakeItems = {
+				lionz: [],
+				cubz: [],
+			}
 		},
 	},
 }

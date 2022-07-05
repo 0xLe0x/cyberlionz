@@ -1,3 +1,4 @@
+
 /*
 CyberLionz Heat Reward Staking
 https://cyberlionz.io
@@ -13,7 +14,7 @@ pragma solidity ^0.8.13;
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
-contract HeatToken is ERC20, AccessControl {
+contract HeatTokenMock is ERC20, AccessControl {
 	bytes32 private _MINTER_ROLE = keccak256('MINTER_ROLE');
 
 	function isAdmin(address account) public view virtual returns (bool) {
@@ -41,7 +42,7 @@ contract HeatToken is ERC20, AccessControl {
 		_setupRole(_MINTER_ROLE, minter);
 	}
 
-	function mint(address to, uint256 amount) external onlyMinters {
+	function mint(address to, uint256 amount) external {
 		_mint(to, amount);
 	}
 
@@ -49,3 +50,4 @@ contract HeatToken is ERC20, AccessControl {
 		_burn(msg.sender, _amount);
 	}
 }
+
